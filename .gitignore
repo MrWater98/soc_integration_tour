@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+external/
+build/
+out/
+results/
+*.vcd
+*.fst
+*.bit
+*.gds
+*.gdsii
+*.oas
+build-*/
