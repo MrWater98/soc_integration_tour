@@ -1,26 +1,69 @@
-# 02 — Wishbone Slave Contract
+# 02 — Wishbone Requests, Responses, and Failure Capture
 
-## Integration change
+Here the CPU is temporarily removed. A deterministic Migen test master talks to one 32-bit register slave at byte address `0x1000` (Wishbone word address `0x400`). Removing the CPU makes it possible to control the request and deliberately create bad response timing.
 
-Run a Migen simulation with a deterministic Wishbone master and a single 32-bit register slave at byte address `0x1000` (word address `0x400`). The register starts at `0x11223344`; writes honor the four byte select lanes.
+```text
+test master ── cyc/stb, adr, we, sel, dat_w ──> register slave
+            <──────────── ack, err, dat_r ─────
+```
 
-The checker captures each clock cycle to CSV and VCD. It tests reads, writes, readback, zero/two wait cycles, individual byte lanes, missing ACK, ACK while idle, ACK held after completion, and an address with no responding target.
+## Read one transaction
 
-## Run and acceptance
+The master asserts `cyc` and `stb`, sets the address and operation, and holds the request fields stable until completion. A read has `we=0`; a write has `we=1`. On a read, `dat_r` is consumed when `ack` completes the transaction. `sel` selects byte lanes; `sel=0001` changes only the lowest byte of a 32-bit word.
+
+```text
+             request       wait       response       idle
+cyc/stb         1/1          1/1          1/1           0/0
+ack               0            0            1             0
+```
+
+The initial register value is `0x11223344`. Seeing that value on `dat_r` while `ack=0` is not yet a completed read. The master only accepts the value on the response cycle.
+
+## Questions and answers
+
+### What does each signal mean here?
+
+| Signal | Meaning in this test |
+| --- | --- |
+| `cyc`, `stb` | A transaction is active and the current request is valid |
+| `adr` | Wishbone word address; `0x400` represents byte address `0x1000` |
+| `we` | `0` reads, `1` writes |
+| `dat_w`, `dat_r` | Write data toward the slave; read data back from it |
+| `sel` | Four byte enables for the 32-bit data word |
+| `ack` | The slave has completed this request |
+| `err` | Error response; this test expects it to remain low |
+
+### How did we capture the failure instead of just seeing a failed run?
+
+The test checks protocol conditions at specific points and records every cycle to CSV and VCD. Before it starts a request, it requires ACK to be low. While requesting, it waits cycle by cycle up to a fixed limit. After ACK, it withdraws `cyc/stb` and requires ACK to return low. Those observations identify whether the problem occurred before, during, or after a transaction.
+
+| Injected case | What the checker samples | How it identifies the fault |
+| --- | --- | --- |
+| `no_ack` | Correct address `0x400`, request remains active, ACK sampled every cycle | No ACK appears within six cycles, so the bounded wait raises a timeout |
+| `unmapped` | Request uses word address `0x401`, outside this slave's one-word decode | The trace shows the wrong address and no ACK; timeout is attributed to the unimplemented address |
+| `early_ack` | ACK before the master asserts a request | The pre-request check sees ACK high while the bus is idle and raises a protocol error immediately |
+| `held_ack` | ACK after master deasserts `cyc/stb` | The post-response check sees ACK still high on an idle bus and raises a protocol error |
+| `wait2` | ACK timing for an otherwise valid request | The trace contains two additional wait cycles before the single ACK |
+
+This is why the test has both a transaction checker and a passive cycle recorder. The checker decides pass/fail; the CSV/VCD preserves the evidence that explains that decision. A timeout alone would not distinguish an absent target from a target that saw the request but failed to respond; the recorded address and handshake signals do.
+
+### Why ACK must belong to the active request?
+
+The master interprets ACK as “this transaction is complete.” An ACK while idle can be mistaken for a response to a later request. An ACK held after completion can make one request look like multiple completions. Requiring a fresh, single response cycle tied to an active `cyc/stb` avoids stale or duplicate responses.
+
+### What do the byte-lane tests verify?
+
+The test first writes `0xaabbccdd`, then writes each lane separately and reads the register back. Each `sel` bit controls one byte. A final `sel=0` write must leave the value unchanged. These checks catch a slave that ignores the byte enables or updates the wrong byte.
+
+## Run and inspect
 
 ```sh
 python3 chapters/02-wishbone/verify.py
 python3 chapters/02-wishbone/verify.py --case wait2
 ```
 
-The default run must print a PASS marker for each scenario and exit nonzero if a protocol assertion or timeout check fails. Outputs are written under `results/02/`.
+The default run covers normal read/write/readback, byte enables, zero select, two wait cycles, missing ACK, early ACK, held ACK, and an unmapped address. It writes `results/02/<case>.csv` and `.vcd`. Start with `normal.csv`: find `cyc=stb=1`, follow the same address until `ack=1`, then check that request and ACK return low. The CSV is readable without a waveform viewer; the VCD can be opened with GTKWave.
 
-## Interface constraints
+## What does a PASS prove?
 
-| Signal | Direction | Contract |
-| --- | --- | --- |
-| `cyc`, `stb` | master → slave | Both high for an active request |
-| `adr`, `we`, `sel`, `dat_w` | master → slave | Address, operation, byte lanes and write data stay stable until response |
-| `dat_r`, `ack`, `err` | slave → master | Read data and completion/error response |
-
-The 32-bit bus uses word addresses in this test: byte address `0x1000` maps to `adr=0x400`. ACK is accepted only for an active request and for one response cycle. The fault-injection modes exist only in this verification model.
+The normal-case PASS proves the register slave returns and stores the expected values under the tested timing and byte-enable rules. A negative-case PASS means the named protocol violation was detected. It does not prove that every Wishbone feature (bursts, multiple masters, or arbitration) is implemented; this is a single-master, single-slave Classic transaction model.
