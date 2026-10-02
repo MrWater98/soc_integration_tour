@@ -31,9 +31,9 @@
 复位 PC=0
    │
    ▼
-ROM: _start ──复制 .data 的 LMA→VMA──> main RAM
+ROM: _start ──设置 sp──────────────> main RAM 顶端
+   │          ──复制 .data 的 LMA→VMA──> main RAM
    │          ──把 .bss 清零────────> main RAM（仿真初值故意设为 A5）
-   │          ──设置 sp─────────────> main RAM 顶端
    ▼
 main(): 检查初值/零值、读写 scratch、嵌套调用用栈函数
    │
@@ -41,6 +41,47 @@ main(): 检查初值/零值、读写 scratch、嵌套调用用栈函数
 ```
 
 输入是 ELF 链接规则、C/汇编源文件和 SoC 地址图；输出是 ELF、ROM 加载镜像、链接地图、段表、反汇编和 CPU 完成记录。
+
+## `.data` 是怎样从 ROM 搬到 RAM 的？
+
+这不是 ROM 主动把数据推到 RAM，也不是 LiteX 在仿真开始时替 CPU 复制。链接器安排好两处地址，CPU 执行 `_start` 中的 `lw` 和 `sw`，一字一字搬过去。
+
+链接脚本里的 `.data ... > main_ram AT > rom` 同时指定两件事：`.data` 在程序运行时位于 main RAM（VMA），它的初始字节则存放在 ROM 镜像中（LMA）。`__data_load_start` 是 ROM 源地址，`__data_start` 和 `__data_end` 是 RAM 目的范围。
+
+```text
+链接时：initialized_data 的初始值放进 ROM 镜像
+
+运行时：CPU 执行 _start
+ROM 0x0000019c ── lw ──> CPU 寄存器 t3 ── sw ──> RAM 0x40000000
+                       0x11223344
+```
+
+本次生成的地图里，`__data_load_start = 0x0000019c`，`__data_start = 0x40000000`，`__data_end = 0x40000004`。所以本例 `.data` 长 4 字节，只循环一次。对应启动汇编是：
+
+```asm
+lw   t3, 0(t0)    # t0 指向 ROM 加载地址，读一个 32 位字
+sw   t3, 0(t1)    # t1 指向 RAM 运行地址，把这个字写入 RAM
+addi t0, t0, 4    # 源地址前进 4 字节
+addi t1, t1, 4    # 目的地址前进 4 字节
+```
+
+`la` 把链接器给出的符号地址放进寄存器；循环在目的指针到达 `__data_end` 时停止。`lw` 读 ROM，`sw` 写 RAM，二者都是 CPU 的普通 load/store 事务，由 SoC 地址译码把访问送到对应存储器。`t3` 是中途暂存数据的 CPU 寄存器。
+
+## 为什么还要清 `.bss`？
+
+`.bss` 放的是有静态存储期、按 C 规则应当初值为零的变量。本章的 `zero_initialized` 没有显式赋值，`scratch[4]` 也没有显式赋值，因此它们都应在 `main()` 开始前为零。链接脚本把 `.bss` 标为 `NOLOAD`：它不带一份 ROM 初始数据，不能指望从 ROM 拷贝出零来。
+
+因此 `_start` 用 `__bss_start` 和 `__bss_end` 遍历这块 RAM，并逐字写入 0。实际构建中 `.bss` 范围是 `[0x40000004, 0x40000018)`，包含 `zero_initialized` 和 4 个 `scratch` 元素。
+
+仿真把 main RAM 预先填成 `0xa5a5a5a5`，这是为了让“忘了清 `.bss`”变成可见错误，而不是碰巧读到 0。若去掉清零循环，`zero_initialized` 和 `scratch[0]` 会读到哨兵值 `0xa5a5a5a5`，C 检查就不会通过；只有检查通过，程序才向完成端点写成功码 `0x5a`。真实 RAM 上电后的内容通常没有这种保证，不能把它当作零。
+
+```text
+RAM 仿真初值： A5 A5 A5 A5 A5 A5 ...
+                   │ _start 对 .bss 逐字写 0
+                   ▼
+main() 看到：   00 00 00 00 00 00 ...
+                └─ zero_initialized 和 scratch[0] 都通过检查
+```
 
 ## 最小实现与参数
 
@@ -69,9 +110,9 @@ main(): 检查初值/零值、读写 scratch、嵌套调用用栈函数
 
 LMA 是初始镜像存放的位置；VMA 是程序运行时访问该段的位置。`initialized_data` 的初始字节放在 ROM 的 `.text` 后面，但 C 代码使用它时地址位于 main RAM。启动代码负责把这两处连起来。可以在 `sections.txt` 或 `objdump -h` 中对照查看。
 
-### 怎么确认 `.bss` 确实被清零了？
+### 为什么没清 `.bss` 时检查会失败？
 
-仿真会先把 main RAM 的 4096 个字填成 `0xa5a5a5a5`。如果启动代码没清 `.bss`，`zero_initialized` 和 scratch 缓冲区就不会碰巧是 0。固件检查这些变量后才写完成码。
+全局变量 `zero_initialized` 和 `scratch` 按 C 规则应当初值为零，但它们在 ELF 的 `.bss` 里，不占 ROM 初始化字节。LiteX 仿真先把 main RAM 填成 `0xa5a5a5a5`，启动代码必须逐字覆盖 `.bss`。`main()` 在改写 `scratch[0]` 之前先检查 `zero_initialized==0` 和 `scratch[0]==0`；漏清零时会读到 `0xa5a5a5a5`，写入的是失败码而不是 `0x5a`。这项预填是仿真用的哨兵，真实 RAM 的上电值不一定是 A5，但同样不能假设它天然为零。
 
 ### 256 字节负例说明什么？
 
