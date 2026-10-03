@@ -16,6 +16,29 @@ LiteX Builder: gateware, csr.csv/csr.json, simulator project
         └── compile Verilator model → run VexiiRiscv → check SOC_COMPLETE
 ```
 
+## What does this chapter configure with `SoCCore`?
+
+In this stage, the `SoCCore` configuration grows from the two-instruction CPU test into a mapped SoC with ROM and SRAM. LiteX Builder then exports the resulting address map. The `ProjectSoC` settings match the firmware checks:
+
+| Parameter | Stage 06 value | Why this stage needs it |
+| --- | --- | --- |
+| `integrated_rom_size` | `0x1000` (4 KiB) | Maps enough ROM to check its first and final words. The reset address remains zero, so the ROM starts at zero. |
+| `integrated_rom_init` | `rom_words` (1024 words) | `cpu_sim.py` compiles and pads the image; its last word is `0x5a6b7c8d` for the boundary readback. These are ROM contents, not the ROM address. |
+| `integrated_sram_size` | `0x1000` (4 KiB) | Creates LiteX SRAM. `program.S` writes and reads back its first and final words to check the generated region. |
+| `integrated_main_ram_size` | `0` | This assembly test accesses SRAM directly and needs no C data section or stack. |
+| `with_uart / with_timer / with_ctrl` | All `False` | These peripherals are outside this test, so they are disabled. |
+| `ident` | `"SoC Integration Tour Stage 06"` | Identifies this generated SoC build. |
+
+The CPU, reset vector, simulation platform, and clock remain configured in `super().__init__(...)`. `bus_standard` is not specified, so LiteX uses its default Wishbone main bus. VexiiRiscv's peripheral port is AXI-Lite; LiteX inserts `AXILite2Wishbone` when it registers the CPU master.
+
+### Why add a custom `CompletionSlave`?
+
+It is not a standard `SoCCore` peripheral. It is this chapter's simulation-only Wishbone slave: when firmware writes the expected completion code to its mapped address, it prints `SOC_COMPLETE` and ends simulation. That gives the runner evidence that the CPU executed to the firmware check, rather than merely constructing the SoC.
+
+### Why add a custom `CompletionSlave`?
+
+It is not a standard `SoCCore` peripheral. It is this chapter's simulation-only Wishbone slave: when firmware writes the expected completion code to its mapped address, it prints `SOC_COMPLETE` and ends simulation. That gives the runner evidence that the CPU executed to the firmware check, rather than merely constructing the SoC.
+
 ## Questions and answers
 
 ### Where is `AXILite2Wishbone` called?

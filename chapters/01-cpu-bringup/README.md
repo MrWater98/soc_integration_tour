@@ -20,6 +20,39 @@ VexiiRiscv pBus (AXI-Lite, byte address)
 
 The CPU's peripheral bus is AXI-Lite. The LiteX main bus in this setup is Wishbone. LiteX inserts the protocol adapter when it registers the CPU bus master; this project does not implement the adapter.
 
+## First use of `SoCCore`: what do these parameters configure?
+
+This chapter's `ProjectSoC` inherits from LiteX `SoCCore`. Calling `super().__init__(...)` asks LiteX to build the CPU, main bus, and integrated memories from the supplied parameters. The chapter then adds its own `WriteTarget` as the CPU store destination; `SoCCore` does not create this experiment-specific endpoint.
+
+| Parameter | Value here | Why it is set this way |
+| --- | --- | --- |
+| `platform` | Simulation `SimPlatform` | Describes the simulated clock/pins, not a physical board. The runner adds a `CRG` for the `sys` clock domain. |
+| `clk_freq` | `1_000_000` | Declares the system clock frequency for LiteX and simulation configuration. This two-instruction test does not depend on peripheral baud timing. |
+| `cpu_type` | `"vexiiriscv"` | Selects LiteX's natively registered VexiiRiscv wrapper. |
+| `cpu_variant` | `"standard"` | Selects the VexiiRiscv configuration used by this project. |
+| `cpu_reset_address` | `0` | Sets the CPU reset vector. LiteX passes it to the VexiiRiscv generator, and the generated RTL resets PC to zero. |
+| `integrated_rom_size` | `0x40` (64 bytes) | Allocates only enough ROM for this short instruction sequence. SoCCore maps the ROM at the CPU reset address, zero. |
+| `integrated_rom_init` | 16 machine-code words | Loads the `addi`, `sw`, stop loop, and NOP fill into ROM; it does not set the CPU reset location. |
+| `integrated_sram_size` | `0` | No SRAM region is needed for this first CPU experiment. |
+| `integrated_main_ram_size` | `0` | The program has no C runtime, stack, or writable data section, so it does not need main RAM yet. |
+| `with_uart / with_timer / with_ctrl` | All `False` | Disables default UART, Timer, and control modules unused here, keeping the observed path small. |
+
+`bus_standard` is not passed, so LiteX uses its default Wishbone main bus. VexiiRiscv exposes an AXI-Lite peripheral port; LiteX detects the protocol difference when registering the CPU master and inserts `AXILite2Wishbone`. This is why the code uses `SoCCore` but never calls the bridge directly.
+
+### Why does PC return to zero on reset?
+
+`cpu_reset_address=0` is a build-time setting; Python does not write PC on every clock. LiteX calls the CPU wrapper's `set_reset_address(0)` and passes `--reset-vector 0` while generating VexiiRiscv RTL. The CPU reset signal makes RTL reset PC to zero; after reset is released, the CPU fetches from address zero. SoCCore also maps the integrated ROM at the reset address, so ROM contents are available at zero.
+
+```text
+SoCCore: cpu_reset_address=0
+       ├── VexiiRiscv RTL: reset PC ← 0
+       └── integrated ROM: origin = 0
+                                  │
+CPU fetches from 0 after reset ───┘
+```
+
+The reset vector must match the ROM contents: firmware must be stored where the CPU begins fetching. This first experiment has no ELF `ENTRY` or linker script; the ROM is initialized directly through `integrated_rom_init`.
+
 ## Questions and answers
 
 ### Why start with only two instructions?

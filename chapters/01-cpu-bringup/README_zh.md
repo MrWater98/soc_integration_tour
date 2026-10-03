@@ -20,6 +20,39 @@ VexiiRiscv pBus（AXI-Lite，字节地址）
 
 CPU 外设总线是 AXI-Lite，本系统 LiteX 主总线是 Wishbone。LiteX 注册 CPU master 时会插入协议适配器；项目没有自己实现这座桥。
 
+## 第一次用 `SoCCore`：这些参数在配置什么？
+
+本章的 `ProjectSoC` 继承 LiteX 的 `SoCCore`。`super().__init__(...)` 让 LiteX 按参数建立 CPU、主总线和集成存储器；之后代码再自己添加 `WriteTarget`，作为 CPU store 的目标。`SoCCore` 不会自动生成这个实验端点。
+
+| 参数 | 本章设置 | 为什么这样设置 |
+| --- | --- | --- |
+| `platform` | 仿真 `SimPlatform` | 描述仿真时钟/引脚，不是实体开发板；运行器再用 `CRG` 建立 `sys` 时钟域。 |
+| `clk_freq` | `1_000_000` | 声明系统时钟频率，供 LiteX 与仿真配置使用。这个两指令实验不依赖外设波特率。 |
+| `cpu_type` | `"vexiiriscv"` | 选择 LiteX 原生注册的 VexiiRiscv CPU 封装。 |
+| `cpu_variant` | `"standard"` | 选择本项目使用的 VexiiRiscv 参数组合。 |
+| `cpu_reset_address` | `0` | 设置 CPU 复位向量。LiteX 将它交给 VexiiRiscv 生成器，生成的 RTL 在复位时把 PC 设为 0。 |
+| `integrated_rom_size` | `0x40`（64 字节） | 只给本实验的短指令序列分配最小 ROM。SoCCore 把 ROM 映射到 CPU 的复位地址，也就是 0。 |
+| `integrated_rom_init` | 16 个机器码字 | 把 `addi`、`sw`、停机跳转和填充 NOP 放进 ROM；不是告诉 CPU 从哪里复位。 |
+| `integrated_sram_size` | `0` | 本章不验证 SRAM，先不创建 SRAM 区域。 |
+| `integrated_main_ram_size` | `0` | 程序不使用 C 运行时、栈或可写数据区，所以暂时不需要 main RAM。 |
+| `with_uart / with_timer / with_ctrl` | 都为 `False` | 关闭本实验不使用的默认 UART、Timer 和控制模块，让系统只保留当前要观察的路径。 |
+
+`bus_standard` 没有显式传入，因此使用 LiteX 默认的 Wishbone 主总线。VexiiRiscv 的外设口是 AXI-Lite；LiteX 在注册 CPU master 时识别到协议不同并插入 `AXILite2Wishbone`。这就是为什么代码选了 `SoCCore`，却没有自己调用这个桥。
+
+### 复位时 PC 为什么回到 0？
+
+`cpu_reset_address=0` 是构建配置，不是 Python 在每个时钟周期写 PC。LiteX 调用 CPU 封装的 `set_reset_address(0)`，生成 VexiiRiscv RTL 时传入 `--reset-vector 0`。复位信号作用于 CPU 后，RTL 把 PC 复位为 0；复位释放后，CPU 从地址 0 取指。SoCCore 同时把集成 ROM 映射在 reset address 上，因此地址 0 正好有 ROM 内容。
+
+```text
+SoCCore: cpu_reset_address=0
+       ├── VexiiRiscv RTL：复位 PC ← 0
+       └── integrated ROM：映射起点 = 0
+                              │
+复位释放后，CPU 从 0 取指 ────┘
+```
+
+复位向量和 ROM 内容必须匹配：PC 从哪里取指，固件就必须放到哪里。这里还没有 ELF 的 `ENTRY` 或 linker script；ROM 由 `integrated_rom_init` 直接初始化。
+
 ## 常见问题
 
 ### 为什么只用两条指令？

@@ -100,39 +100,19 @@ main() 看到：   00 00 00 00 00 00 ...
 
 链接脚本用 `__heap_start` 和 `__heap_end` 标出堆的候选空间：它从 `.bss` 后开始，在栈底保留量前结束。当前程序没有堆分配器，因而不会实际使用该空间；真实运行时还需要检查堆增长不与栈碰撞。
 
-## `SoCCore` 的参数在配置什么？
+## 本章在 SoC 配置上增加了什么？
 
-`SoCCore` 是 LiteX 提供的 SoC 基类。它根据参数注册 CPU、主总线和内存区域，也可以顺带添加 UART、Timer、控制器等常用模块。本章的 `ProjectSoC` 先调用 `SoCCore`，再额外挂上一个只用于仿真结束检查的 `CompletionSlave`。这里解释的是本章显式设置的参数，不是 `SoCCore` 全部可选项。
+本章沿用前面已经建立的 CPU、复位向量、ROM 和 LiteX SRAM 配置，重点新增可写 main RAM，给 C 运行时放 `.data`、`.bss` 和栈。参数仍集中在 `ProjectSoC` 的 `super().__init__(...)` 调用中：
 
-| 参数 | 本章设置 | 为什么这样设置 |
+| 参数 | 第 07 章的值 | 对本章有什么用 |
 | --- | --- | --- |
-| `platform` | 仿真的 `SimPlatform` | 描述仿真目标有哪些时钟/引脚；不是某块真实 FPGA 板卡。运行器再用 `CRG` 建立 `sys` 时钟域。 |
-| `clk_freq` | `1_000_000` | 告诉 LiteX 系统时钟频率。本章没有 UART 等依赖波特率的外设，选 1 MHz 主要让仿真配置明确、方便和日志对应。 |
-| `cpu_type` | `"vexiiriscv"` | 选择 LiteX 注册的 VexiiRiscv CPU 封装。 |
-| `cpu_variant` | `"standard"` | 选择本项目固定使用的 CPU 参数组合。 |
-| `cpu_reset_address` | `0x00000000` | 设置 CPU 复位向量。本构建中 LiteX 把它传给 VexiiRiscv 生成器；复位时 RTL 把 PC 置为该向量。 |
-| `integrated_rom_size` | `0x1000`（4 KiB） | 创建可执行 ROM 区域，装下 `_start`、程序代码和 `.data` 的加载副本。 |
-| `integrated_rom_init` | `rom_words` | 把 `baremetal.py` 从 ELF 镜像整理出的 32 位字装入 ROM。它是镜像内容，不是 ROM 地址。 |
-| `integrated_sram_size` | `0x1000`（4 KiB） | 保留一块独立的 LiteX SRAM，在本构建的地址图中位于 `0x10000000`。本章链接脚本没有把 C 的 `.data`、`.bss` 或栈放在这里；它们使用下面的 main RAM。它不是 `.data` 复制所必需的，本例保留它是为了能在地图里区分 LiteX SRAM 和 main RAM。 |
-| `integrated_main_ram_size` | `16 * 1024` 字节 | 创建 16 KiB main RAM，链接脚本把 `.data`、`.bss` 和栈都放在这里。 |
-| `integrated_main_ram_init` | 4096 个 `0xa5a5a5a5` 字 | 仿真开始时给 16 KiB RAM 填入非零哨兵，检查启动代码是否真的清 `.bss`。它不是 C 程序的初始化手段。 |
-| `with_uart / with_timer / with_ctrl` | 都为 `False` | 关闭本实验不用的默认 UART、Timer 和控制器模块，避免额外外设影响地址图和理解重点。 |
-| `ident` | `"SoC Integration Tour Chapter 07"` | 给 LiteX 的 identifier 信息命名，便于在生成的 SoC/CSR 信息里识别构建。 |
+| `integrated_main_ram_size` | `16 * 1024` 字节 | 把 16 KiB main RAM 接入 SoC，地址为 `0x40000000`；linker script 把 `.data`、`.bss` 和栈放到这里。 |
+| `integrated_main_ram_init` | `[0xa5a5a5a5] * 4096` | 仿真开始时给 16 KiB RAM 每个字填哨兵值，让漏掉 `.bss` 清零时一定能被固件发现。 |
+| `integrated_sram_size` | `0x1000`（4 KiB） | 保留另一块独立 SRAM，当前 map 中位于 `0x10000000`。本章 linker script 不把 C 数据和栈放在那里；保留它是为了区分 LiteX SRAM 与 main RAM。 |
 
-这里 `CompletionSlave` 是本章自己加的 Wishbone 从设备：CPU 写入约定地址和 `0x5a` 后，它打印 `SOC_COMPLETE` 并结束仿真。它不是 C 运行环境，也不负责搬运 `.data`。
+复位地址仍是 `0`，ROM 也仍从 `0` 开始。本章 linker script 用 `ENTRY(_start)` 声明 ELF 入口，并通过 `KEEP(*(.text.init))` 把 `_start` 放在 ROM 最前面。注意 `ENTRY` 只是 ELF 元数据；真正让 CPU 从 0 开始取指的是 VexiiRiscv 的复位向量配置。两者和 ROM 内容对齐后，CPU 才能从复位直接执行 `_start`。
 
-### 复位向量怎样和 ROM、`_start` 对上？
-
-`cpu_reset_address=0` 不是说 Python 每拍把 PC 写成 0。LiteX 调用 VexiiRiscv 封装的 `set_reset_address(0)`，生成 CPU RTL 时传入 `--reset-vector 0`；复位逻辑在硬件里把 PC 复位到该值。复位释放后，CPU 从 0 发起取指。
-
-同时，`SoCCore` 把集成 ROM 的起点设为 CPU 的 reset address，因此 ROM 也映射在 0。本章 [linker.ld](linker.ld) 将 ROM 的 `ORIGIN` 设为 0，把 `.text.init` 放在 `.text` 最前面；其中 `_start` 是第一段启动代码。`ENTRY(_start)` 是 ELF 的入口元数据，方便链接器/工具识别程序入口；真正让硬件 PC 从 0 开始的是 CPU 的 reset vector。两边地址必须一致：CPU 从 0 取指，地址 0 就必须有 `_start` 的指令。
-
-```text
-cpu_reset_address=0 ──> VexiiRiscv RTL 复位 PC=0
-                              │ 复位释放后取指
-                              ▼
-SoCCore 的 ROM 区域从 0 开始 ──> _start 位于 ROM 地址 0
-```
+本章自己的 `CompletionSlave` 负责测试收尾：CPU 写入 `0x5a`，它打印 `SOC_COMPLETE` 并结束仿真。它不属于 C 运行时，也不负责 `.data` 复制或 `.bss` 清零。
 
 ## 常见问题
 

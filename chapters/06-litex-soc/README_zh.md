@@ -16,6 +16,24 @@ LiteX Builder：gateware、csr.csv/csr.json、仿真工程
         └── 编译 Verilator 模型 → 运行 VexiiRiscv → 检查 SOC_COMPLETE
 ```
 
+## 本章的 `SoCCore` 配置对应什么实验？
+
+这里沿用 LiteX SoC 的 CPU、主总线和 CSR 结构，重点是让 `SoCCore` 集成 ROM 与 SRAM，再由 Builder 导出地址图。`ProjectSoC` 的配置和固件检查一一对应：
+
+| 参数 | 第 06 章的值 | 为什么这样设置 |
+| --- | --- | --- |
+| `cpu_reset_address` | `0` | 仍从 ROM 地址 0 启动。LiteX 将 ROM 映射到复位地址，固件也从这里开始。 |
+| `integrated_rom_size` | `0x1000`（4 KiB） | 比最小启动实验的 ROM 更大，便于检查 ROM 的首地址和末地址。 |
+| `integrated_rom_init` | `write_rom_init(...)` 生成的 1024 个字 | `cpu_sim.py` 编译固件，补齐 ROM 镜像，并把末字设为 `0x5a6b7c8d`，供程序做边界读回。 |
+| `integrated_sram_size` | `0x1000`（4 KiB） | 创建 LiteX SRAM。`program.S` 对首字、末字都做写入和读回，验证 Builder 生成的 SRAM 区域确实可访问。 |
+| `integrated_main_ram_size` | `0` | 本章是汇编测试，不需要 C 数据区或栈；SRAM 测试由程序直接访问。 |
+| `with_uart / with_timer / with_ctrl` | 都为 `False` | 本章不测试这些外设，关闭它们避免额外模块干扰地址图。 |
+| `ident` | `"SoC Integration Tour Stage 06"` | 标识这次生成的 LiteX SoC。 |
+
+CPU 类型、变体、`platform` 和时钟配置在 `soc.py` 的 `super().__init__(...)` 中也明确给出。未指定的总线参数采用 LiteX 默认值；此处 LiteX 主总线为 Wishbone，VexiiRiscv 外设口为 AXI-Lite，因此 LiteX 自动插入协议适配器。
+
+本章 `CompletionSlave` 仍是项目自己的仿真端点。它和 SoCCore 自动集成的 ROM/SRAM 不同：端点只负责记录固件探针和完成码，并在成功后结束仿真。
+
 ## 常见问题
 
 ### `AXILite2Wishbone` 到底在哪里调用？

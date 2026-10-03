@@ -26,39 +26,19 @@ main(): check globals, scratch RAM, nested calls
 
 The linker script defines the memory regions and output sections. The `.data` section has a load address (LMA) in ROM and a virtual/runtime address (VMA) in main RAM. `.bss` is `NOBITS`, so it has no initialized bytes in the ROM image and must be cleared by startup code.
 
-## What do these `SoCCore` parameters configure?
+## What does this chapter add to the SoC configuration?
 
-`SoCCore` is LiteX's base class for constructing a SoC. It registers the CPU, main bus, and memory regions, and can add common modules such as UART, Timer, and a control block. This chapter's `ProjectSoC` calls `SoCCore` first, then adds its own simulation-only `CompletionSlave`. The table covers the parameters explicitly set here, not every option accepted by `SoCCore`.
+This chapter keeps the CPU, reset vector, ROM, and LiteX SRAM setup, then adds writable main RAM for C `.data`, `.bss`, and the stack. The settings remain in the `super().__init__(...)` call in `ProjectSoC`:
 
-| Parameter | Value here | Why it is set this way |
+| Parameter | Stage 07 value | Why this stage needs it |
 | --- | --- | --- |
-| `platform` | A simulation `SimPlatform` | Describes the simulated target's clock/pins; it is not a physical FPGA board. The runner adds a `CRG` for the `sys` clock domain. |
-| `clk_freq` | `1_000_000` | Tells LiteX the system clock frequency. No UART or other baud-rate peripheral is used here; 1 MHz keeps the simulation configuration explicit and easy to relate to logs. |
-| `cpu_type` | `"vexiiriscv"` | Selects LiteX's registered VexiiRiscv CPU wrapper. |
-| `cpu_variant` | `"standard"` | Selects this project's pinned CPU configuration. |
-| `cpu_reset_address` | `0x00000000` | Sets the CPU reset vector. LiteX passes it to the VexiiRiscv generator; the generated RTL resets PC to this vector. |
-| `integrated_rom_size` | `0x1000` (4 KiB) | Creates an executable ROM region large enough for `_start`, program code, and the load image for `.data`. |
-| `integrated_rom_init` | `rom_words` | Loads the 32-bit words prepared from the ELF image by `baremetal.py`. This is image content, not the ROM address. |
-| `integrated_sram_size` | `0x1000` (4 KiB) | Keeps a separate LiteX SRAM region, mapped at `0x10000000` in this build. The linker puts C `.data`, `.bss`, and stack in main RAM instead. This SRAM is not needed for `.data` copying; it is retained so the generated map shows LiteX SRAM and main RAM as distinct regions. |
-| `integrated_main_ram_size` | `16 * 1024` bytes | Creates 16 KiB of main RAM, where the linker places `.data`, `.bss`, and the stack. |
-| `integrated_main_ram_init` | 4096 words of `0xa5a5a5a5` | Prefills the simulated 16 KiB RAM with a nonzero sentinel to check that startup really clears `.bss`. It is not how the C program initializes its variables. |
-| `with_uart / with_timer / with_ctrl` | All `False` | Disables default UART, Timer, and control modules unused in this experiment, keeping the map and focus smaller. |
-| `ident` | `"SoC Integration Tour Chapter 07"` | Names LiteX's identifier information so the generated SoC/CSR data identifies this build. |
+| `integrated_main_ram_size` | `16 * 1024` bytes | Adds 16 KiB of main RAM at `0x40000000`; the linker puts `.data`, `.bss`, and the stack there. |
+| `integrated_main_ram_init` | `[0xa5a5a5a5] * 4096` | Prefills every word of simulated 16 KiB RAM with a sentinel, so firmware detects a missing `.bss` clear. |
+| `integrated_sram_size` | `0x1000` (4 KiB) | Keeps a separate SRAM at `0x10000000` in this map. The linker does not put C data or stack there; retaining it shows LiteX SRAM and main RAM as distinct regions. |
 
-`CompletionSlave` is a chapter-specific Wishbone slave: when the CPU writes `0x5a` to the agreed endpoint, it prints `SOC_COMPLETE` and ends simulation. It is not part of the C runtime and does not copy `.data`.
+The reset address is still zero, and the ROM still starts there. The linker script declares `ENTRY(_start)` and uses `KEEP(*(.text.init))` to put `_start` first in ROM. `ENTRY` is ELF metadata; the VexiiRiscv reset vector is what makes the CPU fetch from address zero. The reset vector, ROM contents, and `_start` location must agree for the CPU to execute startup code after reset.
 
-### How do the reset vector, ROM, and `_start` line up?
-
-`cpu_reset_address=0` does not mean Python writes PC to zero every cycle. LiteX calls the VexiiRiscv wrapper's `set_reset_address(0)` and passes `--reset-vector 0` while generating the CPU RTL. The hardware reset logic sets PC to this vector; after reset is released, the CPU fetches from address zero.
-
-`SoCCore` also places the integrated ROM at the CPU reset address, so this ROM starts at zero. The [linker script](linker.ld) sets the ROM origin to zero and puts `.text.init` first; `_start` is the first startup code there. `ENTRY(_start)` is ELF entry metadata for the linker and tools. The CPU's reset vector is what makes hardware start at zero. These addresses must agree: if the CPU fetches from zero, address zero must contain `_start` instructions.
-
-```text
-cpu_reset_address=0 ──> VexiiRiscv RTL resets PC to 0
-                               │ fetch after reset is released
-                               ▼
-SoCCore ROM region starts at 0 ──> _start is stored at ROM address 0
-```
+This chapter's `CompletionSlave` handles the test finish: the CPU writes `0x5a`, and the endpoint prints `SOC_COMPLETE` and ends simulation. It is not part of the C runtime and does not copy `.data` or clear `.bss`.
 
 ## How does `.data` get from ROM into RAM?
 
