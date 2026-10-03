@@ -8,6 +8,12 @@
 
 这个模型适合验证地址译码、读写、字节使能、初始化假设和固件访问；它不描述某颗芯片的模拟特性、建立保持时间、数据保持、功耗或专有时序角落。
 
+## LiteX 怎样把这块 SRAM 放进 SoC？
+
+本章没有使用 `integrated_sram_size`，而是显式创建 `wishbone.SRAM(sram_size)`，再用 `bus.add_slave` 接到 Wishbone 主总线上。`SoCRegion(origin=0x10000, size=sram_size, mode="rw", cached=True)` 同时给出起点、容量、读写权限和缓存属性。这里 4 KiB 的大小与固件首末地址 `0x10000`、`0x10ffc` 配套；负例把参数改成 256 字节，固件仍访问 `0x10ffc`，所以 CPU 报 store access fault。只缩小 SRAM 却把测试地址也移进范围，就不会再验证越界故障。
+
+`mode="rw"` 只声明区域权限，并不会生成另外一种 SRAM 电路；实际仿真应答来自 `wishbone.SRAM`。`cached=True` 是给 CPU/互连的区域属性，普通 RAM 可缓存；完成寄存器使用 `cached=False`，因为每次读写都可能有外部可见副作用。真实硬件若换成 BRAM 或 SRAM macro，还要让 wrapper 的延迟、byte enable 和应答时序符合具体存储器接口。
+
 ### FPGA 和 ASIC 里怎样接真实存储器？
 
 FPGA 综合时，推断出的存储器或厂商 block RAM primitive 通常会映射到器件内部 RAM 资源。要检查综合结果和时序报告，确认它实际映射到 BRAM，并核对读延迟和写掩码行为。仿真中的 LiteX RAM 本身不能证明 FPGA 已正确映射。

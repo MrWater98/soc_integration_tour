@@ -7,6 +7,14 @@ test master ── cyc/stb, adr, we, sel, dat_w ──> register slave
             <──────────── ack, err, dat_r ─────
 ```
 
+## Which LiteX and Migen interfaces are used here?
+
+This chapter does not create a `SoCCore`. It uses LiteX's `wishbone.Interface` to describe the slave port, then Migen's `Module`, `Signal`, `comb`, and `sync` to implement the register behavior. The Python generator in `verify.py` is the test master: it drives the same bus signals cycle by cycle. `run_simulation` runs the master and slave together. This isolates the Wishbone response rules before an interface like this is attached to a full SoC.
+
+`RegisterSlave` combines `data_width=32`, `address_width=32`, and `addressing="word"`: each transfer carries 32 bits, and `adr` counts words rather than bytes, so byte address `0x1000` is `adr=0x400`. The four `sel` bits independently enable the four bytes. Changing `addressing` to `"byte"` without changing the test address would access a different location; changing the data width to 64 bits would also require widening the byte select and data mask.
+
+`wait_cycles` controls how long the state machine stays in `WAIT`; it changes response latency, not the address. `fault` deliberately makes ACK early, holds it too long, or never asserts it. With `no_ack`, the master still holds `cyc/stb`, so the test's wait limit is necessary to stop the check instead of waiting forever.
+
 ## Read one transaction
 
 The master asserts `cyc` and `stb`, sets the address and operation, and holds the request fields stable until completion. A read has `we=0`; a write has `we=1`. On a read, `dat_r` is consumed when `ack` completes the transaction. `sel` selects byte lanes; `sel=0001` changes only the lowest byte of a 32-bit word.

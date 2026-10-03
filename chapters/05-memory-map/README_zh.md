@@ -14,6 +14,12 @@
 
 `memory_map.py` 中的检查器是软件侧的一致性检查。真正把 ROM、SRAM 和寄存器接进主总线的是 LiteX SoC 区域。CSV 同时写出字节地址和字地址，便于检查地址单位转换。
 
+## LiteX 的区域声明怎样变成真正的连接？
+
+本章仍用 `SoCCore` 建立 CPU、主总线和 ROM，但把内建 SRAM 大小设为 0，再用 `wishbone.SRAM(4096)` 显式创建 SRAM。`bus.add_slave(..., region=SoCRegion(...))` 把 SRAM 和自定义寄存器从设备接入主总线；LiteX 根据 `origin` 和 `size` 做地址选择。寄存器还单独登记 `SoCIORegion`，并设 `cached=False`；SRAM 标记 `cached=True`。`memory_map.py` 只是另一份软件侧契约和检查器，不会代替这些 LiteX 连接。
+
+这里的参数必须同步：SoC 声明 ROM 4 KiB、SRAM 从 `0x10000` 起 4 KiB、寄存器从 `0x20000000` 起 4 KiB；`REGIONS`、`memory_map.py`、固件使用的地址和 Builder 输出都应一致。移动或扩容某一段时，至少要检查相邻区域是否重叠、固件是否仍访问预期地址、生成 CSV 是否更新。`cached=False` 对寄存器很重要；若把寄存器当普通缓存内存，CPU 可能复用旧读值或延后写入，仿真完成端点就无法按每笔访问观察行为。
+
 ## 常见问题
 
 ### 为什么 Wishbone 地址和固件地址不一样？

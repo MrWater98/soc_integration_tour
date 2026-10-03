@@ -7,6 +7,14 @@
            <────────── ack、err、dat_r ───────
 ```
 
+## 这里用到哪些 LiteX / Migen 接口？
+
+本章不创建 `SoCCore`，而是直接用 LiteX 的 `wishbone.Interface` 描述从设备接口，再用 Migen 的 `Module`、`Signal`、`comb` 和 `sync` 写寄存器行为。`verify.py` 里的 Python generator 是测试主设备，逐拍驱动同一组总线信号；`run_simulation` 执行主设备和从设备。这样先把 Wishbone 应答规则单独测清楚，再把同类接口接进完整 SoC。
+
+`RegisterSlave` 把 `data_width=32`、`address_width=32` 和 `addressing="word"` 配在一起：数据一次 32 位，`adr` 的单位是字而非字节，所以本章字节地址 `0x1000` 对应 `adr=0x400`。`sel` 有 4 位，逐位控制 4 个字节。若将 `addressing` 改成 `"byte"` 却不改测试地址，访问就会跑到完全不同的位置；若把数据宽度改成 64 位，byte select 和数据掩码也必须一起扩展。
+
+`wait_cycles` 控制状态机在 `WAIT` 状态停留多久；它只改变应答延迟，不改变地址。`fault` 则故意让 ACK 提前出现、保持过久或永不出现。特别是 `no_ack` 下主设备仍保持 `cyc/stb`，只能由测试设置的等待上限退出，否则软件测试会无限等下去。
+
 ## 读一笔事务
 
 主设备拉高 `cyc` 和 `stb`，给出地址和操作，并在完成前保持请求字段稳定。`we=0` 是读，`we=1` 是写。读操作在 `ack` 完成事务时取用 `dat_r`。`sel` 选择数据字节通道；`sel=0001` 只改 32 位字的最低字节。

@@ -39,6 +39,12 @@ This chapter's `ProjectSoC` inherits from LiteX `SoCCore`. Calling `super().__in
 
 `bus_standard` is not passed, so LiteX uses its default Wishbone main bus. VexiiRiscv exposes an AXI-Lite peripheral port; LiteX detects the protocol difference when registering the CPU master and inserts `AXILite2Wishbone`. This is why the code uses `SoCCore` but never calls the bridge directly.
 
+### How does this chapter attach a custom block to LiteX?
+
+`SoCCore` creates the common SoC structure; the project must register its own endpoint. `add_module("write_target", ...)` adds the Migen module to the design hierarchy, `bus.add_slave(...)` connects its Wishbone interface to LiteX's main bus, and `SoCRegion(origin=0x40, size=0x40, ...)` tells the decoder which addresses it answers. `SoCIORegion` also registers this low range as a CPU-visible I/O region. Creating a module without `add_slave` would leave CPU bus accesses disconnected from it.
+
+Read these settings as a group: the CPU reset vector is `0`, the integrated ROM also starts at `0`, and its initialized words must contain code for that location. The endpoint starts at `0x40`, immediately after the ROM range `0x00–0x3f`, so the regions do not overlap. `integrated_rom_size` is measured in bytes, while each item in `integrated_rom_init` is one 32-bit word; 16 words are exactly 64 bytes here. If the ROM is enlarged without moving the endpoint, the ROM claims address `0x40`; if only the reset address changes, the CPU fetches from a location that the current image was not linked for.
+
 ### Why does PC return to zero on reset?
 
 `cpu_reset_address=0` is a build-time setting; Python does not write PC on every clock. LiteX calls the CPU wrapper's `set_reset_address(0)` and passes `--reset-vector 0` while generating VexiiRiscv RTL. The CPU reset signal makes RTL reset PC to zero; after reset is released, the CPU fetches from address zero. SoCCore also maps the integrated ROM at the reset address, so ROM contents are available at zero.

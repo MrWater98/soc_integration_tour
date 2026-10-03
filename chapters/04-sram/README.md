@@ -8,6 +8,12 @@ The design uses LiteX's `wishbone.SRAM`, a Migen-described behavioral memory wit
 
 That model is enough to test address decoding, read/write behavior, byte enables, initialization assumptions, and firmware use of RAM. It does not model a particular chip's analog behavior, setup/hold limits, retention, power, or proprietary timing corners.
 
+## How does LiteX place this SRAM in the SoC?
+
+This chapter does not use `integrated_sram_size`. It explicitly creates `wishbone.SRAM(sram_size)` and attaches it to the Wishbone main bus with `bus.add_slave`. `SoCRegion(origin=0x10000, size=sram_size, mode="rw", cached=True)` declares its base, capacity, access mode, and cache attribute. The nominal 4 KiB setting matches the firmware's first and last addresses, `0x10000` and `0x10ffc`. The negative run changes the size to 256 bytes but keeps the firmware access at `0x10ffc`, so the CPU reports a store access fault. Shrinking the SRAM while also moving the test address inside the range would stop testing the out-of-range failure.
+
+`mode="rw"` declares region permissions; it does not create a different SRAM circuit. The simulated response comes from `wishbone.SRAM`. `cached=True` is region metadata for the CPU/interconnect, appropriate for ordinary RAM. The completion register uses `cached=False` because each access can have an externally visible side effect. A real BRAM or SRAM macro also needs a wrapper whose latency, byte enables, and response timing match that memory's interface.
+
 ### How would this become real FPGA or ASIC SRAM?
 
 An FPGA implementation generally maps an inferred memory or vendor block-RAM primitive into the device's memory resources. The synthesis result and timing report determine whether the memory really became a BRAM and what read latency and write-mask behavior it has. A LiteX simulation memory is not by itself proof of FPGA mapping.

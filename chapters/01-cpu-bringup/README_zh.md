@@ -39,6 +39,12 @@ CPU 外设总线是 AXI-Lite，本系统 LiteX 主总线是 Wishbone。LiteX 注
 
 `bus_standard` 没有显式传入，因此使用 LiteX 默认的 Wishbone 主总线。VexiiRiscv 的外设口是 AXI-Lite；LiteX 在注册 CPU master 时识别到协议不同并插入 `AXILite2Wishbone`。这就是为什么代码选了 `SoCCore`，却没有自己调用这个桥。
 
+### 本章怎样把自定义模块接进 LiteX？
+
+`SoCCore` 创建的是通用 SoC 结构；自定义端点要由项目明确注册。`add_module("write_target", ...)` 把 Migen 模块纳入设计层次，`bus.add_slave(...)` 把它的 Wishbone 接口接到 LiteX 主总线，`SoCRegion(origin=0x40, size=0x40, ...)` 告诉地址译码器它响应哪段地址。`SoCIORegion` 还把这段低地址登记为 CPU 可访问的 I/O 区域。只创建模块而不 `add_slave`，CPU 的总线访问就到不了它。
+
+这些参数要一起看：CPU 复位向量是 `0`，集成 ROM 也从 `0` 开始，ROM 初始化内容必须对应这个起点；端点从 `0x40` 开始，不能与 ROM 的 `0x00–0x3f` 重叠。`integrated_rom_size` 的单位是字节，而 `integrated_rom_init` 每项是一个 32 位字，本章 16 字正好是 64 字节。若只扩大 ROM 却不移动端点，`0x40` 会被 ROM 占用；若只改 reset address 而不重链或重排 ROM 镜像，CPU 会从错误位置取指。
+
 ### 复位时 PC 为什么回到 0？
 
 `cpu_reset_address=0` 是构建配置，不是 Python 在每个时钟周期写 PC。LiteX 调用 CPU 封装的 `set_reset_address(0)`，生成 VexiiRiscv RTL 时传入 `--reset-vector 0`。复位信号作用于 CPU 后，RTL 把 PC 复位为 0；复位释放后，CPU 从地址 0 取指。SoCCore 同时把集成 ROM 映射在 reset address 上，因此地址 0 正好有 ROM 内容。

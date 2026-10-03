@@ -14,6 +14,12 @@ The decoder uses an address to select which target may answer a request. For exa
 
 The map checker in `memory_map.py` is a software-side consistency check. LiteX's bus regions provide the actual integration in this stage. The CSV records both byte and word addresses so that the address-unit conversion can be inspected.
 
+## How do LiteX region declarations become real connections?
+
+This stage still uses `SoCCore` for the CPU, main bus, and ROM, but sets the integrated SRAM size to zero and explicitly creates `wishbone.SRAM(4096)`. `bus.add_slave(..., region=SoCRegion(...))` attaches the SRAM and custom register slave to the main bus; LiteX uses each region's `origin` and `size` to select a responder. The register also has a `SoCIORegion` entry and `cached=False`; SRAM is marked `cached=True`. `memory_map.py` is a second, software-side contract and checker; it does not replace these LiteX connections.
+
+Keep these values aligned: the SoC declares a 4 KiB ROM, a 4 KiB SRAM at `0x10000`, and a 4 KiB register range at `0x20000000`. `REGIONS`, `memory_map.py`, firmware addresses, and the Builder output should agree. When moving or resizing one region, check for overlap, confirm firmware still accesses the intended target, and regenerate/check the CSV. `cached=False` matters for registers: treating them as ordinary cached memory could let the CPU reuse an old read or delay a write, preventing the simulation endpoint from observing each access as intended.
+
 ## Questions and answers
 
 ### Why does Wishbone show a different address from firmware?
