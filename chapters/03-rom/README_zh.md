@@ -28,6 +28,23 @@ program.elf ── objcopy -O binary ──> program.bin（字节）
 
 完成端点则是项目自己写的 Wishbone 从设备。`self.add_module(...)` 注册 Migen 模块，`self.bus.add_slave(...)` 把接口接入主总线，`SoCRegion` 声明 `0x20000000–0x20000fff` 地址范围；`SoCIORegion` 登记 CPU 的 I/O 区域。`cached=False` 标记它是有副作用的 MMIO 端点，不应按普通内存处理。`Builder(..., compile_software=False)` 只构建 gateware/仿真工程，软件编译由本章的 `cpu_sim.py` 单独控制，便于先检查 ELF、二进制镜像和边界条件。
 
+## 从 Python 调用追到生成的 RTL
+
+这些 Python 函数在构建阶段运行。`build_program()` 调工具链生成 ELF 和二进制；`write_rom_init()` 把字节打包为 32 位字并补齐；之后 `ProjectSoC(..., rom_words=words)` 把这些字交给 `SoCCore`。LiteX Builder elaboration 时，`integrated_rom_size=len(words)*4` 建立 ROM 存储体，`integrated_rom_init=words` 成为初始化内容。RTL 快照 [`work/rtl/03-rom-soc.v`](work/rtl/03-rom-soc.v) 中能看到：
+
+```verilog
+reg [31:0] rom[0:255];
+initial begin
+    $readmemh("sim_rom.init", rom);
+end
+always @(posedge sys_clk_1)
+    rom_dat0 <= rom[projectsoc_sram_memory0];
+```
+
+这就是“固件在 ROM 里”对应的硬件：ROM 有 256 个 32 位存储单元，仿真启动时从初始化文件装入内容；CPU 取指地址经过 Wishbone 地址单位转换后选择 `rom[...]` 索引，数据在时钟沿后返回。板级 FPGA 构建会把同类存储描述映射到芯片内部存储资源；这里的 `$readmemh` 是仿真 RTL 的初始化方式。
+
+完成端点的连接与 01 章相同：`wishbone.Interface` 给出一组信号，`SoCRegion` 描述 CPU 可访问的地址范围，`bus.add_slave` 让 LiteX 把端点接入共享总线。查看 RTL 的 `decoder`、`projectsoc_registerslave_cyc` 和寄存器 ACK 逻辑，就能把 Python 中的 `SoCRegion`、端点 `self.sync` 与 Verilog 对起来。运行 `run.py` 会重新生成这份 RTL 快照。
+
 ## 常见问题
 
 ### 为什么需要好几个镜像文件？

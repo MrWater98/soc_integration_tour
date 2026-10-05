@@ -15,6 +15,7 @@ from tour_paths import add_litex_to_path
 add_litex_to_path(ROOT)
 
 from migen import run_simulation
+from migen.fhdl import verilog
 from migen.sim import passive
 from register import RegisterSlave, WORD_ADDRESS
 
@@ -119,9 +120,18 @@ def main():
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=True)
     cases = ("normal", "wait2", "no_ack", "early_ack", "held_ack", "unmapped") if args.case == "all" else (args.case,)
+    rtl_dir = CHAPTER / "work" / "rtl"
+    rtl_dir.mkdir(parents=True, exist_ok=True)
     for case in cases:
         fault = case if case in ("no_ack", "early_ack", "held_ack") else None
         dut = RegisterSlave(wait_cycles=2 if case == "wait2" else 0, fault=fault)
+        if case != "unmapped":
+            rtl_dut = RegisterSlave(wait_cycles=2 if case == "wait2" else 0, fault=fault)
+            bus = rtl_dut.bus
+            ios = {bus.adr, bus.dat_w, bus.dat_r, bus.sel, bus.cyc, bus.stb,
+                   bus.we, bus.ack, bus.err, rtl_dut.value}
+            (rtl_dir / f"02-{case}.v").write_text(
+                str(verilog.convert(rtl_dut, ios=ios, name="wishbone_register_slave")))
         rows = []
         run_simulation(dut, [make_master(dut, case), capture(dut.bus, rows)], vcd_name=str(out / f"{case}.vcd"))
         active = [r for r in rows if r["cyc"] and r["stb"]]

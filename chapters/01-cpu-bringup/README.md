@@ -45,6 +45,34 @@ This chapter's `ProjectSoC` inherits from LiteX `SoCCore`. Calling `super().__in
 
 The `0x40` endpoint base and `0x40`-byte region are choices for this tiny test. The program's `sw` address must land inside that region; if either changes, update the instruction/data expectation and the region together. Likewise, the 64-byte ROM size is derived from the chosen image depth and must still contain the reset instruction at address zero.
 
+## How do these Python calls become RTL?
+
+Python describes the hardware during the build; these are not functions the CPU calls at runtime. Consider the connection:
+
+```python
+self.add_module("write_target", WriteTarget())
+self.bus.add_slave(
+    name="write_target",
+    slave=self.write_target.bus,
+    region=SoCRegion(origin=0x40, size=0x40, mode="rw", cached=False),
+)
+```
+
+`WriteTarget()` creates a Migen submodule, and `self.add_module` places it in the SoC hierarchy. `wishbone.Interface(...)` creates a bundle of signals such as `adr`, `dat_w`, `dat_r`, `sel`, `cyc`, `stb`, `we`, and `ack`; it does not define how ACK is generated. `slave=...bus` gives this bundle to LiteX's bus manager. `SoCRegion` supplies the decode rule: byte base `0x40`, 64-byte range, read/write access, and uncached behavior. During SoC elaboration, LiteX builds the address decoder, request routing, and response selection from this information.
+
+This interface is word-addressed, so the generated Wishbone `adr` is a 30-bit word address: byte address `0x40` becomes `adr=0x10`. The generated RTL contains logic like this (generated names can vary by LiteX/Migen version):
+
+```verilog
+decoder0[1] = (adr[29:4] == 1'd1); // select byte addresses 0x40–0x7f
+projectsoc_writetarget_cyc = cyc & decoder0[1];
+projectsoc_writetarget_adr = adr;
+projectsoc_writetarget_dat_w = dat_w;
+```
+
+The Migen statements inside `WriteTarget` become registers and combinational logic: `bus.dat_r.eq(0)` and `bus.err.eq(0)` become constant outputs; the ACK code under `self.sync` becomes clocked logic; Python `If` conditions become hardware comparisons and muxes. The CPU's AXI-Lite request first passes through LiteX's `AXILite2Wishbone`, then the decoder routes `cyc` only to the matching slave. The selected slave's `ack/dat_r` return through the shared bus to the CPU.
+
+After `run.py`, this chapter keeps LiteX's generated top-level RTL in [`work/rtl/01-normal.v`](work/rtl/01-normal.v) and [`work/rtl/01-no-ack.v`](work/rtl/01-no-ack.v). The first shows the ACK response path; the second shows the same endpoint configured never to respond. Running the chapter refreshes these snapshots. VexiiRiscv itself is supplied as separately generated CPU RTL; these top-level files show how it connects to the LiteX bus adapter.
+
 Read these settings as a group: the CPU reset vector is `0`, the integrated ROM also starts at `0`, and its initialized words must contain code for that location. The endpoint starts at `0x40`, immediately after the ROM range `0x00–0x3f`, so the regions do not overlap. `integrated_rom_size` is measured in bytes, while each item in `integrated_rom_init` is one 32-bit word; 16 words are exactly 64 bytes here. If the ROM is enlarged without moving the endpoint, the ROM claims address `0x40`; if only the reset address changes, the CPU fetches from a location that the current image was not linked for.
 
 ### Why does PC return to zero on reset?

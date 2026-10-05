@@ -45,6 +45,34 @@ CPU 外设总线是 AXI-Lite，本系统 LiteX 主总线是 Wishbone。LiteX 注
 
 端点基址 `0x40` 和 `0x40` 字节的区域大小是这个小实验的选择。程序的 `sw` 地址必须落在区域内；改基址或范围时，要同步改指令/数据检查和 `SoCRegion`。同理，64 字节 ROM 来自当前镜像深度，并且必须覆盖地址 0 的复位指令。
 
+## 这些 Python 调用怎样变成 RTL？
+
+Python 在构建阶段描述硬件，不是 CPU 运行时调用的函数。看这段连接：
+
+```python
+self.add_module("write_target", WriteTarget())
+self.bus.add_slave(
+    name="write_target",
+    slave=self.write_target.bus,
+    region=SoCRegion(origin=0x40, size=0x40, mode="rw", cached=False),
+)
+```
+
+`WriteTarget()` 创建 Migen 子模块；`self.add_module` 把它放进 SoC 硬件层次。`wishbone.Interface(...)` 创建由 `adr`、`dat_w`、`dat_r`、`sel`、`cyc`、`stb`、`we`、`ack` 等信号组成的接口，但它本身不规定 ACK 怎么产生。`slave=...bus` 把这组信号交给 LiteX 总线管理器。`SoCRegion` 给出译码条件：字节地址从 `0x40` 开始，大小 64 字节，允许读写，并标记为不可缓存。SoC elaboration 阶段，LiteX 根据这些信息生成地址译码、请求分发和读回应答选择逻辑。
+
+接口采用字寻址，所以生成 RTL 中的 Wishbone `adr` 是 30 位字地址；字节地址 `0x40` 对应 `adr=0x10`。生成 RTL 中能找到类似结构（LiteX/Migen 生成的信号名可能随版本改变）：
+
+```verilog
+decoder0[1] = (adr[29:4] == 1'd1); // 选中 0x40–0x7f 端点区域
+projectsoc_writetarget_cyc = cyc & decoder0[1];
+projectsoc_writetarget_adr = adr;
+projectsoc_writetarget_dat_w = dat_w;
+```
+
+`WriteTarget` 中的 Migen 语句会变成寄存器和组合逻辑：`bus.dat_r.eq(0)`、`bus.err.eq(0)` 对应常量输出；`self.sync` 中的 ACK 逻辑对应时钟沿触发的寄存器更新；Python `If` 条件对应硬件比较器和选择器。CPU 的 AXI-Lite 请求先经过 LiteX 的 `AXILite2Wishbone` 转成 Wishbone 信号，译码器只把匹配区域的 `cyc` 送给 slave，slave 的 `ack/dat_r` 再通过共享总线返回 CPU。
+
+运行 `run.py` 后，本章会把 LiteX 实际生成的顶层 RTL 保存到 [`work/rtl/01-normal.v`](work/rtl/01-normal.v) 和 [`work/rtl/01-no-ack.v`](work/rtl/01-no-ack.v)。前者展示正常 ACK 路径，后者展示同一端点配置成永不应答时的逻辑。重新运行会刷新文件。VexiiRiscv 核由单独生成的 CPU RTL 提供；这里的顶层文件展示它怎样连接到 LiteX 总线桥。
+
 这些参数要一起看：CPU 复位向量是 `0`，集成 ROM 也从 `0` 开始，ROM 初始化内容必须对应这个起点；端点从 `0x40` 开始，不能与 ROM 的 `0x00–0x3f` 重叠。`integrated_rom_size` 的单位是字节，而 `integrated_rom_init` 每项是一个 32 位字，本章 16 字正好是 64 字节。若只扩大 ROM 却不移动端点，`0x40` 会被 ROM 占用；若只改 reset address 而不重链或重排 ROM 镜像，CPU 会从错误位置取指。
 
 ### 复位时 PC 为什么回到 0？

@@ -13,6 +13,21 @@ This chapter does not create a `SoCCore`. It uses LiteX's `wishbone.Interface` t
 
 `RegisterSlave` combines `data_width=32`, `address_width=32`, and `addressing="word"`: each transfer carries 32 bits, and `adr` counts words rather than bytes, so byte address `0x1000` is `adr=0x400`. The four `sel` bits independently enable the four bytes. Changing `addressing` to `"byte"` without changing the test address would access a different location; changing the data width to 64 bits would also require widening the byte select and data mask.
 
+## How does `wishbone.Interface` become RTL?
+
+`wishbone.Interface(...)` creates a bundle of Migen signals. It is a connector, not a complete bus implementation: the master and slave use matching wires, while the module's assignments define what the slave does.
+
+```python
+self.bus = bus = wishbone.Interface(
+    data_width=32, address_width=32, addressing="word")
+self.comb += [bus.dat_r.eq(self.value), bus.err.eq(0)]
+self.sync += If(state == RESP, ...)
+```
+
+The combinational assignments become continuous RTL connections such as `assign dat_r = value; assign err = 0;`. Synchronous statements become registers and next-state logic inside `always @(posedge sys_clk)`. The exported Verilog is in [`work/rtl/02-normal.v`](work/rtl/02-normal.v); inspect its `ack`, `dat_r`, and `always` blocks. `verify.py`'s Python generator is the test master, so it does not become RTL. It drives the interface while Migen simulates the hardware slave.
+
+There is no `SoC.bus.add_slave` here because this chapter has no SoC address decoder. The test master directly drives the slave interface. `RegisterSlave` compares the incoming word address with `WORD_ADDRESS`; an unmatched address never leaves `IDLE`, so it never receives an ACK. In chapters 01 and 03, LiteX's `add_slave(..., region=SoCRegion(...))` does the address selection at the SoC level before the request reaches a slave.
+
 `wait_cycles` controls how long the state machine stays in `WAIT`; it changes response latency, not the address. `fault` deliberately makes ACK early, holds it too long, or never asserts it. With `no_ack`, the master still holds `cyc/stb`, so the test's wait limit is necessary to stop the check instead of waiting forever.
 
 The values `wait_cycles=2`, `max_wait=6` in the negative cases, register address `0x1000`, and data patterns such as `0xaabbccdd` are test parameters. Six cycles is the checker's timeout bound, not a Wishbone response limit; changing it changes when the test declares a timeout, not how the protocol works. The word-address conversion depends on the configured 32-bit, word-addressed interface: if its width or addressing mode changes, update the address and byte-lane checks together.
@@ -75,6 +90,8 @@ python3 chapters/02-wishbone/verify.py --case wait2
 ```
 
 The default run covers normal read/write/readback, byte enables, zero select, two wait cycles, missing ACK, early ACK, held ACK, and an unmapped address. It writes `results/02/<case>.csv` and `.vcd`. Start with `normal.csv`: find `cyc=stb=1`, follow the same address until `ack=1`, then check that request and ACK return low. The CSV is readable without a waveform viewer; the VCD can be opened with GTKWave.
+
+Each run also exports the slave RTL for that constructor setting to `work/rtl/02-<case>.v`. The `unmapped` case changes only the Python test master's address, so it uses the normal slave RTL. Comparing `02-normal.v`, `02-wait2.v`, and `02-no_ack.v` shows how a Python parameter or fault branch changes the generated state machine.
 
 ## What does a PASS prove?
 

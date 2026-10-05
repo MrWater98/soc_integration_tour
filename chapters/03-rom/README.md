@@ -28,6 +28,23 @@ The code is linked to address `0x0`, because the CPU reset address is `0x0` and 
 
 The completion endpoint is a project-written Wishbone slave. `self.add_module(...)` registers the Migen module, `self.bus.add_slave(...)` connects its interface to the main bus, and `SoCRegion` declares `0x20000000–0x20000fff`; `SoCIORegion` registers the CPU I/O range. `cached=False` marks this side-effecting MMIO endpoint as non-cacheable. `Builder(..., compile_software=False)` builds gateware and the simulator only; `cpu_sim.py` controls software compilation separately, making the ELF, binary image, and boundary checks easy to inspect.
 
+## Follow the Python calls into generated RTL
+
+These Python functions run during the build. `build_program()` invokes the toolchain to create an ELF and binary; `write_rom_init()` packs bytes into 32-bit words and pads the image. `ProjectSoC(..., rom_words=words)` passes those words to `SoCCore`. During LiteX Builder elaboration, `integrated_rom_size=len(words)*4` creates the ROM storage and `integrated_rom_init=words` supplies its initialization data. The RTL snapshot [`work/rtl/03-rom-soc.v`](work/rtl/03-rom-soc.v) contains logic like this:
+
+```verilog
+reg [31:0] rom[0:255];
+initial begin
+    $readmemh("sim_rom.init", rom);
+end
+always @(posedge sys_clk_1)
+    rom_dat0 <= rom[projectsoc_sram_memory0];
+```
+
+This is how the firmware resides in ROM hardware: 256 32-bit storage words are initialized from a file for simulation; the CPU's fetch address is converted to a Wishbone word index and selects `rom[...]`; the word is returned on a clock edge. An FPGA build maps the same memory description to the target device's memory resources; `$readmemh` is the simulation RTL initialization mechanism.
+
+The completion endpoint is connected like the one in chapter 01: `wishbone.Interface` provides its signals, `SoCRegion` describes its CPU-visible address range, and `bus.add_slave` asks LiteX to attach it to the shared bus. In the generated RTL, inspect `decoder`, `projectsoc_registerslave_cyc`, and the register's ACK logic to connect Python's region and `self.sync` statements to Verilog. Running `run.py` refreshes this RTL snapshot.
+
 ## Questions and answers
 
 ### Why are there several image files?

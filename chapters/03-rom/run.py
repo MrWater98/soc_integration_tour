@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Compile a complete ROM image, then boot it on native VexiiRiscv."""
 from pathlib import Path
+import shutil
 import sys
 
 CHAPTER = Path(__file__).resolve().parent
@@ -46,12 +47,15 @@ def main():
         rejection("03-MISALIGNED-RESET", lambda: validate_reset_address(1))]
     (out / "config.log").write_text("\n".join(messages) + "\n")
     print("\n".join(messages))
-    build_and_run(root=ROOT, chapter="03", soc=lambda p: ProjectSoC(p,
+    output = build_and_run(root=ROOT, chapter="03", soc=lambda p: ProjectSoC(p,
         rom_words=words, expected=0x35, finish_at_first=True),
         expected="SOC_COMPLETE data=0x00000035",
         regions={"rom": (0, 1024), "registers": (0x20000000, 4096),
                  "csr": (0xf0000000, 65536), "clint": (0xf0010000, 65536),
                  "plic": (0xf0c00000, 4194304)})
+    rtl_dir = CHAPTER / "work" / "rtl"
+    rtl_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(output / "gateware" / "sim.v", rtl_dir / "03-rom-soc.v")
     print(f"ROM image: {count} program words / {ROM_WORDS} total words")
 
 

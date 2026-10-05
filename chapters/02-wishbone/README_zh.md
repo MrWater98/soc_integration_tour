@@ -13,6 +13,21 @@
 
 `RegisterSlave` 把 `data_width=32`、`address_width=32` 和 `addressing="word"` 配在一起：数据一次 32 位，`adr` 的单位是字而非字节，所以本章字节地址 `0x1000` 对应 `adr=0x400`。`sel` 有 4 位，逐位控制 4 个字节。若将 `addressing` 改成 `"byte"` 却不改测试地址，访问就会跑到完全不同的位置；若把数据宽度改成 64 位，byte select 和数据掩码也必须一起扩展。
 
+## `wishbone.Interface` 怎样变成 RTL？
+
+`wishbone.Interface(...)` 创建一组 Migen 信号。它是连接器，不是完整的总线实现：主设备和从设备使用匹配的信号线，从设备具体做什么由模块里的赋值决定。
+
+```python
+self.bus = bus = wishbone.Interface(
+    data_width=32, address_width=32, addressing="word")
+self.comb += [bus.dat_r.eq(self.value), bus.err.eq(0)]
+self.sync += If(state == RESP, ...)
+```
+
+组合赋值会变成连续 RTL 连接，例如 `assign dat_r = value; assign err = 0;`。同步语句会变成 `always @(posedge sys_clk)` 中的寄存器和下一状态逻辑。导出的 Verilog 在 [`work/rtl/02-normal.v`](work/rtl/02-normal.v)，可以查看其中 `ack`、`dat_r` 和 `always` 逻辑。`verify.py` 中的 Python generator 是测试主设备，不会变成 RTL；它在 Migen 仿真中驱动硬件从设备。
+
+本章没有 `SoC.bus.add_slave`，因为这里没有 SoC 地址译码器。测试主设备直接驱动从设备接口。`RegisterSlave` 自己比较输入字地址和 `WORD_ADDRESS`；地址不匹配时状态机不会离开 `IDLE`，所以不会产生 ACK。01/03 章的 LiteX `add_slave(..., region=SoCRegion(...))` 则是在 SoC 总线上先选择从设备，再把请求送进去。
+
 `wait_cycles` 控制状态机在 `WAIT` 状态停留多久；它只改变应答延迟，不改变地址。`fault` 则故意让 ACK 提前出现、保持过久或永不出现。特别是 `no_ack` 下主设备仍保持 `cyc/stb`，只能由测试设置的等待上限退出，否则软件测试会无限等下去。
 
 `wait_cycles=2`、负例中的 `max_wait=6`、寄存器地址 `0x1000` 和 `0xaabbccdd` 等数据都是本实验的测试参数。六拍是检查器的超时上限，不是 Wishbone 规定的应答期限；改它只会改变检查器何时判超时，不会改变协议。字节地址到字地址的换算则依赖当前 32 位、按字寻址的接口；若改总线宽度或寻址方式，测试地址和 byte-lane 检查也要一起调整。
@@ -75,6 +90,8 @@ python3 chapters/02-wishbone/verify.py --case wait2
 ```
 
 默认运行覆盖正常读写和读回、字节使能、零选择、等待两拍、无 ACK、提前 ACK、ACK 悬挂和未映射地址。输出写到 `results/02/<case>.csv` 和 `.vcd`。先看 `normal.csv`：找到 `cyc=stb=1`，沿着同一地址找到 `ack=1`，然后确认请求与 ACK 都回到低。CSV 不需要波形查看器也能读；VCD 可用 GTKWave 查看。
+
+每次运行还会按构造参数把从设备 RTL 导出到 `work/rtl/02-<case>.v`。`unmapped` 只改变 Python 测试主设备的地址，因此使用正常从设备 RTL。对比 `02-normal.v`、`02-wait2.v` 和 `02-no_ack.v`，可以看到 Python 参数或故障分支怎样改变生成的状态机。
 
 ## PASS 能证明什么？
 
