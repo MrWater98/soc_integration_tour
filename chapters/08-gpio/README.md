@@ -15,6 +15,12 @@ gpio_in pins = 0101 → two-stage MultiReg synchronizer → CSRStatus
 
 ## Questions and answers
 
+### What SoC settings does this GPIO experiment rely on?
+
+The `SoCCore` configuration keeps a 4 KiB ROM, 4 KiB integrated SRAM, and 16 KiB main RAM for the bare-metal C image, while disabling the default UART, Timer, and control block. The GPIO banks are project modules with their own CSRs; they are not LiteX's `GPIOIn`/`GPIOOut` instances. `GPIOInput` combines `CSRStatus(4)` with a two-stage `MultiReg`, while `GPIOOutput` combines `CSRStorage(4, reset=0)` with a direct pin assignment. The width and reset value describe the pin bank, not a memory region.
+
+Adding these CSR banks changes CSR allocation: bank names and register names become part of the generated software interface. Keep the module names, explicit CSR names, generated `csr.h`, and firmware build from the same SoC configuration. Changing `csr_paging` or adding another CSR bank can move later bank addresses; code should consume the newly generated header rather than preserve numeric addresses by hand.
+
 ### What is a CSR, and how does C access it?
 
 A CSR is a small control/status register exposed to software at an address. LiteX Builder assigns the CSR bank and register addresses and generates `generated/csr.h`, which provides C accessors such as `gpio_out_output_write()` and `gpio_in_input_read()`. These accessors ultimately cause ordinary CPU load/store transactions through the CSR bridge. The GPIO is not directly connected to a C variable.

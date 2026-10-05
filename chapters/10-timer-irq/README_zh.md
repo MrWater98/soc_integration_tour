@@ -26,6 +26,12 @@ timer0 count 到 0
   → CPU 回到被打断的主程序
 ```
 
+## LiteX 的哪些配置把定时器接到 CPU？
+
+SoC 使用 1 MHz 时钟、复位地址 0、4 KiB ROM、4 KiB 片上 SRAM 和 16 KiB main RAM。main RAM 放 C 数据、栈和陷阱处理程序保存的寄存器。这里关闭 `with_timer`，因为本章改为实例化 CSR 名称明确的 `ProjectTimer`。`add_module("timer0", ...)` 把 CSR/事件逻辑加入设计，`self.irq.add("timer0", use_loc_if_exists=True)` 则通过 LiteX IRQ 结构连接事件；本次生成地图中它是 PLIC source 1。
+
+`load` 和 `reload` 的单位是 `sys` 时钟周期，不是微秒：1 MHz 时 1200 次计数约为 1.2 ms。改 `clk_freq` 会改变实际经过时间，但不会改变计数值；把 `reload` 从 0 改成正数，则从单次事件变成周期事件。测试预期和固件配置必须同时跟着调整。
+
 这里有**四道条件**：定时器事件的 `ev_enable`、PLIC 中源 1 的使能/优先级与 CPU 的 mie.MEIE，以及全局 `mstatus.MIE`。它们都允许后，pending 才能让 CPU 进 ISR。进入陷阱时 CPU 保存返回 PC 到机器态 CSR；本章 `trap_entry` 再把会被 C 函数改写的通用寄存器存入栈，返回前恢复，最后执行 `mret`。`sp` 所指的内存位于 main RAM，因此嵌套调用与中断都需要足够栈空间。
 
 ## 定时器怎么接进 LiteX

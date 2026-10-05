@@ -65,6 +65,12 @@ CPU 发起写入，CSRStorage 保存输出值，外设逻辑把它送到输出�
 
 ## 常见问题
 
+### 本章 GPIO 实验依赖哪些 SoC 配置？
+
+`SoCCore` 保留 4 KiB ROM、4 KiB 集成 SRAM 和 16 KiB main RAM，供裸机 C 镜像与运行时使用，同时关闭默认 UART、Timer 和控制器。GPIO bank 是本章自己写的 CSR 模块，不是 LiteX 的 `GPIOIn` / `GPIOOut` 实例：`GPIOInput` 用 `CSRStatus(4)` 暴露输入，并用两级 `MultiReg` 同步；`GPIOOutput` 用 `CSRStorage(4, reset=0)` 保存输出值，再直接驱动引脚。这里的位宽和复位值配置的是 GPIO 引脚组，不是内存区域。
+
+新增 CSR bank 会改变 CSR 地址分配；bank 名和寄存器名也会成为软件接口的一部分。模块名、显式 CSR 名称、生成的 `csr.h` 和固件必须来自同一份 SoC 配置。修改 `csr_paging` 或再增加一个 CSR bank，都可能移动后续 bank 地址；固件应使用新生成的头文件，不要手写并沿用旧地址。
+
 ### CSR 是什么，C 代码怎么访问？
 
 CSR 是映射到 CPU 地址空间的一组小型控制/状态寄存器。LiteX Builder 分配寄存器地址并生成 `generated/csr.h`，头文件里的 `gpio_out_output_write()` 和 `gpio_in_input_read()` 最后会变成 CPU 的 load/store，再经 CSR bridge 到达外设。GPIO 不是直接连到 C 变量。

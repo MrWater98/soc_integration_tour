@@ -10,6 +10,12 @@ I²C: CPU → i2c_out CSR → SCL/SDA open-drain line → 0x42 device model
                              SDA ACK/data ← model → i2c_input CSR → CPU
 ```
 
+## Which LiteX settings form this bit-bang SoC?
+
+`SoCCore` provides the CPU, reset-at-zero ROM, 4 KiB on-chip SRAM, and 16 KiB main RAM for the freestanding C program. The default UART, Timer, and control block are disabled. SPI and I²C here are small `AutoCSR` modules, not hardware controllers: `CSRStorage` drives output pins, `CSRStatus` samples input pins, and C toggles those values to create each protocol edge. The completion register is a separate uncached Wishbone region at `0x80000000`.
+
+The widths and reset values are protocol state: SPI's 3-bit output resets to `4`, leaving active-low `CS_N` high; I²C's 2-bit output resets to `3`, releasing SCL and SDA. Changing either reset value can select the SPI device at boot or hold an I²C line low before START. Adding or renaming CSR banks changes generated CSR addresses, so the runner regenerates the header and compiles the C firmware against it. This pin-level approach is intentionally slow; replacing it with LiteX controllers changes the CSR interface and moves timing generation from software into hardware.
+
 ## Questions and answers
 
 ### How does the SPI transaction work?

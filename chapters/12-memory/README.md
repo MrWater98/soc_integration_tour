@@ -10,6 +10,18 @@ This stage builds three separate SoCs around the same VexiiRiscv core. The CPU a
 
 The SRAM and Flash tests use separate uncached IO regions so each bus read is visible as an external transaction. The SDRAM test maps DRAM as `main_ram` and uses the on-chip SRAM for its stack and C runtime during initialization. It checks data access; it does not execute code from SDRAM.
 
+## Why do the three `SoCCore` configurations differ?
+
+All three builds keep the same VexiiRiscv, reset address `0`, and 4 KiB boot ROM. Their writable memories differ to match the job each firmware performs:
+
+| Build | `integrated_sram_size` | `integrated_main_ram_size` | External LiteX block and sensitive settings |
+| --- | ---: | ---: | --- |
+| Async SRAM | 4 KiB | 16 KiB | `AsyncSRAM` at `0x90000000`, size 4 KiB, uncached; `read_cycles=2`, `write_cycles=3` set the byte-lane pin wait. |
+| SDRAM | 4 KiB | 0 | `add_sdram(..., origin=0x40000000, size=4 MiB, l2_cache_size=0)` provides `main_ram`; the 50 MHz SoC clock, LiteDRAM model, and PHY clock must agree. |
+| SPI Flash | 4 KiB | 16 KiB | A read-only bridge at `0xa0000000`, size 4 KiB, uncached; each CPU load becomes a serial read frame. |
+
+In the SDRAM build, do not add 4 MiB to `integrated_main_ram_size`: `add_sdram` creates the `main_ram` region itself, while the 4 KiB integrated SRAM holds startup stack and runtime data until DRAM initialization finishes. Changing model geometry without changing the mapped size creates a software/hardware capacity mismatch. For the SRAM and Flash builds, `cached=False` keeps each CPU read visible to the bridge and device model; making the region cacheable could hide repeated bus transactions from the protocol checks. Whenever a base or size changes, update the matching linker region and verify that build's generated `csr.csv`.
+
 ## 1. Asynchronous SRAM
 
 LiteX `AsyncSRAM` bridges the CPU's Wishbone access to a byte-wide SRAM pin model. A 32-bit write is split across four byte lanes. `ce_n` selects the chip; `we_n` and `oe_n` control writes and reads. The bridge uses `read_cycles=2` and `write_cycles=3`; the whole 32-bit Wishbone transaction takes longer because it performs the lane operations and then acknowledges.

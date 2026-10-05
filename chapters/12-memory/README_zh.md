@@ -15,6 +15,18 @@
 
 三项实验使用**三个单独构建的 SoC**，地址 `0x40000000` 在 SDRAM 项代表外部 DRAM，在另两项代表片上 main RAM。每项的 `csr.csv` 才是该项实际地址图，不能把三张图混成一张。SRAM 和 Flash 被放在 VexiiRiscv 的 `0x80000000` 以上 IO 窗口，以便直接观察不经缓存的总线交易；它们不作为本章的取指区域。SDRAM 以 `main_ram` 接入，地图标记为 cached/rwx；本章只验证数据访问，没有验证从 SDRAM 执行代码。
 
+## 为什么三个 SoC 的 `SoCCore` 参数不同？
+
+三套构建都保留同一类 VexiiRiscv、复位地址 `0` 和 4 KiB 启动 ROM。可写内存则按固件需要配置：
+
+| 构建 | `integrated_sram_size` | `integrated_main_ram_size` | LiteX 外部模块与敏感参数 |
+| --- | ---: | ---: | --- |
+| 异步 SRAM | 4 KiB | 16 KiB | `AsyncSRAM` 映射到 `0x90000000`，容量 4 KiB、不可缓存；`read_cycles=2`、`write_cycles=3` 控制字节通道的引脚等待。 |
+| SDRAM | 4 KiB | 0 | `add_sdram(..., origin=0x40000000, size=4 MiB, l2_cache_size=0)` 自己建立 `main_ram`；SoC 时钟、LiteDRAM model 和 PHY 时钟都设为 50 MHz。 |
+| SPI Flash | 4 KiB | 16 KiB | 只读桥映射到 `0xa0000000`，容量 4 KiB、不可缓存；每次 CPU load 都变成串行读取帧。 |
+
+SDRAM 版本不要再把 4 MiB 填进 `integrated_main_ram_size`：`add_sdram` 已经创建了 `main_ram` 区域；4 KiB 集成 SRAM 则在 DRAM 初始化完成前供启动栈和运行时数据使用。改 SDRAM 几何却不改映射容量，会造成固件地址图与实际模型容量不一致。异步 SRAM 和 Flash 设 `cached=False`，让每次 CPU 读都能到达桥和器件模型；改成可缓存可能让协议检查看不到重复总线访问。修改起始地址或容量时，也要同步修改 linker region，并重新核对该构建生成的 `csr.csv`。
+
 ## 1. 异步 SRAM：32 位 CPU 怎样接 8 位芯片
 
 `async-sram/soc.py` 使用 LiteX 的 `AsyncSRAM` Wishbone 桥，外部模型在 `async_sram_model.v`。CPU 一次 32 位写被桥拆成四次 8 位引脚写；`ce_n` 选中器件、`we_n` 为低时写，`oe_n` 为低时读。`read_cycles=2`、`write_cycles=3` 指每个字节阶段的等待设置，**整笔** Wishbone 字读写还包含四个通道和 ACK 周期，所以日志中的一次完整写可见 `wait=13`，读可见 `wait=9`。这些是当前配置的观测值。

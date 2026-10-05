@@ -13,6 +13,12 @@ timer counts to zero
   → resume interrupted main code
 ```
 
+## What LiteX configuration connects the timer to the CPU?
+
+The SoC uses a 1 MHz clock, reset-at-zero CPU, 4 KiB ROM, 4 KiB on-chip SRAM, and 16 KiB main RAM. Main RAM holds C data, the stack, and the trap handler's saved registers. The built-in `with_timer` option is disabled because this chapter instantiates its explicitly named `ProjectTimer` instead. `add_module("timer0", ...)` adds the CSR/event logic, and `self.irq.add("timer0", use_loc_if_exists=True)` routes its event through LiteX's IRQ infrastructure; the generated map places it at PLIC source 1 in this build.
+
+`load` and `reload` are counts of `sys` clock cycles, not microseconds: with a 1 MHz clock, 1200 counts are about 1.2 ms. Changing `clk_freq` changes elapsed time but not the count values; changing `reload` from zero to a positive value changes a one-shot into a periodic event. The test and firmware must agree on both settings.
+
 ## Questions and answers
 
 ### What must be enabled before the CPU enters the ISR?

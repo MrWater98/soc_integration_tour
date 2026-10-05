@@ -25,6 +25,12 @@ I²C: CPU → i2c_out CSR → SCL、SDA 释放/拉低 → 0x42 从设备
                                      从设备 SDA 拉低/释放 → i2c_input CSR → CPU
 ```
 
+## 这套 bit-bang SoC 用了哪些 LiteX 配置？
+
+`SoCCore` 提供 CPU、复位地址为 0 的 ROM、4 KiB 片上 SRAM 和给裸机 C 程序使用的 16 KiB main RAM；默认 UART、Timer 和控制器都关闭。本章的 SPI/I²C 是小型 `AutoCSR` 模块，不是硬件控制器：`CSRStorage` 驱动输出引脚，`CSRStatus` 采样输入引脚，C 程序逐次写 CSR 形成协议边沿。完成寄存器则是位于 `0x80000000` 的独立、不可缓存 Wishbone 区域。
+
+CSR 位宽和复位值直接定义协议初态：SPI 的 3 位输出复位为 `4`，让低有效 `CS_N` 保持高；I²C 的 2 位输出复位为 `3`，释放 SCL 和 SDA。改动复位值可能导致启动时 SPI 从设备被选中，或 I²C 线路在 START 前被拉低。增加或改名 CSR bank 会改变生成地址，所以运行器重新生成头文件，并用它编译 C 固件。这种引脚级方式刻意保持简单但速度慢；换成 LiteX 控制器后，CSR 接口会不同，协议时序也由硬件而非软件产生。
+
 CSR 地址由本章 LiteX Builder 生成：`i2c_out=0xf0000000`、`i2c_input=0xf0000004`、`spi_out=0xf0001000`、`spi_input=0xf0001004`。`run.py` 在编译固件前和完整构建后都检查这些值。这里的 `spi_input` / `i2c_input` 是**当前引脚状态**，不是一个会自动执行协议的专用主控制器。
 
 ## SPI：16 个时钟组成一笔交易

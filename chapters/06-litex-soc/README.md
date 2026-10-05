@@ -35,10 +35,6 @@ The CPU, reset vector, simulation platform, and clock remain configured in `supe
 
 It is not a standard `SoCCore` peripheral. It is this chapter's simulation-only Wishbone slave: when firmware writes the expected completion code to its mapped address, it prints `SOC_COMPLETE` and ends simulation. That gives the runner evidence that the CPU executed to the firmware check, rather than merely constructing the SoC.
 
-### Why add a custom `CompletionSlave`?
-
-It is not a standard `SoCCore` peripheral. It is this chapter's simulation-only Wishbone slave: when firmware writes the expected completion code to its mapped address, it prints `SOC_COMPLETE` and ends simulation. That gives the runner evidence that the CPU executed to the firmware check, rather than merely constructing the SoC.
-
 ## Questions and answers
 
 ### Where is `AXILite2Wishbone` called?

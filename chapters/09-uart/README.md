@@ -9,6 +9,12 @@ CPU store → CSR bridge → UART TX FIFO → UART PHY → TX pin
 CPU load  ← CSR bridge ← UART RX FIFO ← UART PHY ←───────────────┘
 ```
 
+## Which LiteX settings control the UART behavior?
+
+`SoCCore` is built at `SYS_CLK_HZ = 1_000_000`, then the project explicitly adds `UART` with `baudrate=100_000`, `fifo_depth=4`, and `rx_fifo_rx_we=True`. The first two timing values work together: `BIT_CYCLES = SYS_CLK_HZ // BAUD = 10`, so one UART bit lasts ten system clocks. If `clk_freq` changes, update the simulation clock and the monitor's `decode_cycles` as well; otherwise the UART and observer will disagree about bit timing. `fifo_depth=4` is why four queued bytes can fill TX FIFO; changing it changes the expected `txfull` observation. `rx_fifo_rx_we=True` makes a read of `rxtx` consume the received byte.
+
+The default UART is disabled in `SoCCore` (`with_uart=False`) so the design has only the explicitly named `serial` instance and stable CSR names. The UART's event interrupt is present but `ev_enable` remains off: this experiment polls status. Enabling events changes the CSR/IRQ behavior and requires firmware to configure and service that interrupt.
+
 ## Questions and answers
 
 ### What does 8N1 mean?
