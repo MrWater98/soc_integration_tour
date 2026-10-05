@@ -20,11 +20,11 @@ program.elf ── objcopy -O binary ──> program.bin (bytes)
                            LiteX ROM → VexiiRiscv instruction fetch
 ```
 
-The code is linked to address `0x0`, because the CPU reset address is `0x0` and the ROM begins there. `rv32im` selects the instruction set and `ilp32` the 32-bit ABI. The compiler builds software; it does not generate CPU RTL.
+The code is linked to address `0x0`, because the CPU reset address is `0x0` and the ROM begins there. `rv32im` selects the instruction set and `ilp32` the 32-bit ABI. These are software build settings and must be supported by the generated CPU; changing the ISA flags alone can produce instructions the core cannot execute. The compiler builds software; it does not generate CPU RTL.
 
 ## What does LiteX do at this stage?
 
-`ProjectSoC` still inherits from `SoCCore`: LiteX supplies the CPU, Wishbone main bus, CSR structure, and ROM bus. This chapter passes the compiled `words` as `integrated_rom_init` and sets ROM capacity to `len(words) * 4`. Image length, ROM capacity, reset address, and link address form one contract: 256 words are 1024 bytes, the reset PC is zero, and the firmware is linked at zero. If one changes, recheck the others and the generated map.
+`ProjectSoC` still inherits from `SoCCore`: LiteX supplies the CPU, Wishbone main bus, CSR structure, and ROM bus. This chapter passes the compiled `words` as `integrated_rom_init` and sets ROM capacity to `len(words) * 4`. Image length, ROM capacity, reset address, and link address form one contract: this experiment chooses 256 words (1024 bytes), the reset PC is zero, and the firmware is linked at zero. ROM depth is configurable; if it changes, update `ROM_WORDS`, the image padding/overflow checks, and the expected generated region along with the image.
 
 The completion endpoint is a project-written Wishbone slave. `self.add_module(...)` registers the Migen module, `self.bus.add_slave(...)` connects its interface to the main bus, and `SoCRegion` declares `0x20000000–0x20000fff`; `SoCIORegion` registers the CPU I/O range. `cached=False` marks this side-effecting MMIO endpoint as non-cacheable. `Builder(..., compile_software=False)` builds gateware and the simulator only; `cpu_sim.py` controls software compilation separately, making the ELF, binary image, and boundary checks easy to inspect.
 

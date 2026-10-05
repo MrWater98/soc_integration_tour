@@ -32,6 +32,8 @@ LiteX Builder：gateware、csr.csv/csr.json、仿真工程
 
 CPU 类型、变体、`platform` 和时钟配置在 `soc.py` 的 `super().__init__(...)` 中也明确给出。未指定的总线参数采用 LiteX 默认值；此处 LiteX 主总线为 Wishbone，VexiiRiscv 外设口为 AXI-Lite，因此 LiteX 自动插入协议适配器。
 
+4 KiB ROM/SRAM、1024 字镜像和关闭外设都是本章的配置，目的是清楚地观察首末边界读写，并减少无关模块。调整 ROM 时，要让 `write_rom_init`、`integrated_rom_size`、链接/镜像构建和 `check_generated_map` 保持一致；调整 SRAM 容量或区域地址时，也要更新固件访问地址和预期地址图。这些数值不是 LiteX 的固定要求。
+
 本章 `CompletionSlave` 仍是项目自己的仿真端点。它和 SoCCore 自动集成的 ROM/SRAM 不同：端点只负责记录固件探针和完成码，并在成功后结束仿真。
 
 ## 常见问题

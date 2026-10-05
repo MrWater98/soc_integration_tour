@@ -27,6 +27,8 @@
 
 SDRAM 版本不要再把 4 MiB 填进 `integrated_main_ram_size`：`add_sdram` 已经创建了 `main_ram` 区域；4 KiB 集成 SRAM 则在 DRAM 初始化完成前供启动栈和运行时数据使用。改 SDRAM 几何却不改映射容量，会造成固件地址图与实际模型容量不一致。异步 SRAM 和 Flash 设 `cached=False`，让每次 CPU 读都能到达桥和器件模型；改成可缓存可能让协议检查看不到重复总线访问。修改起始地址或容量时，也要同步修改 linker region，并重新核对该构建生成的 `csr.csv`。
 
+表格里反复出现的数值是本实验的配置，不是 SoC 的固定规则。例如，每个 4 KiB 区域都来自对应的 `SoCRegion` 和存储模型；ROM、片上 RAM 容量还要与链接脚本的 `MEMORY` 区域和固件镜像相符。SRAM/Flash 固件使用 16 KiB `main_ram`；SDRAM 构建则把 `integrated_main_ram_size` 设为 0，再把外部模型注册为 `main_ram`。只改其中一处，就会让生成的地址图、链接器假设或模型容量彼此不一致。
+
 ## 1. 异步 SRAM：32 位 CPU 怎样接 8 位芯片
 
 `async-sram/soc.py` 使用 LiteX 的 `AsyncSRAM` Wishbone 桥，外部模型在 `async_sram_model.v`。CPU 一次 32 位写被桥拆成四次 8 位引脚写；`ce_n` 选中器件、`we_n` 为低时写，`oe_n` 为低时读。`read_cycles=2`、`write_cycles=3` 指每个字节阶段的等待设置，**整笔** Wishbone 字读写还包含四个通道和 ACK 周期，所以日志中的一次完整写可见 `wait=13`，读可见 `wait=9`。这些是当前配置的观测值。
@@ -37,6 +39,8 @@ SDRAM 版本不要再把 4 MiB 填进 `integrated_main_ram_size`：`add_sdram` �
 
 `sdram/soc.py` 使用 LiteDRAM 的 `LiteDRAMCore` 与 `SDRAMPHYModel`。教学几何为 4 个 bank、2048 行、256 列、16 位数据：`4 × 2048 × 256 × 2 = 4,194,304` 字节，即 4 MiB，范围 `0x40000000..0x403fffff`。系统时钟 50 MHz。几何缩小是为了让仿真能快速完成；时序参数沿用 `MT48LC4M16` 的 SDR 类型。`sdram/run.py` 记录实际 LiteDRAM 源码路径并核对 Builder 生成的容量。
 
+这些几何和 50 MHz 都是当前仿真模型的参数。bank/row/column/数据宽度共同决定模型容量；`SDRAM_SIZE` 必须与容量、SoC 映射区域一致。改时钟时，也要让 SoC、PHY 模型和仿真时钟，以及生成的时序设置和按时钟计算的等待条件保持一致。这里的 4 MiB 是为了实验选的规模，不代表所有 SDRAM 芯片都只有这个容量。
+
 启动代码把栈和 C 的 `.data/.bss` 放在**片上 SRAM**。固件随后使用 LiteDRAM 自动生成的 `sdram_phy.h` 执行 SDR 初始化命令序列，最后把 DFI 控制权交给硬件控制器。只有 `SDRAM_PROBE value=0x00000001` 出现后，程序才开始访问 DRAM。它检查首字、第二字、4 MiB 末字和 16 个连续模式值。延时跨越多次刷新后再次读回；这次运行的刷新计数从 `0xd3` 到 `0x1a1`。检查器要求**写入之后**至少又发生两次自动刷新，再接受最终成功码。计数值可变，因果顺序不变。
 
 当前 Python 3.11 与 Migen 的 CSR 名称追踪不兼容；本章 `sdram/compat.py` 只在运行进程中补充 Python 3.11 字节码识别，避免修改 LiteX/LiteDRAM 源码。初始化和读写仍由实际 LiteDRAM 模型完成。
@@ -44,6 +48,8 @@ SDRAM 版本不要再把 4 MiB 填进 `integrated_main_ram_size`：`add_sdram` �
 ## 3. SPI Flash：读一个字也要发一帧命令
 
 `spi-flash/run.py` 生成 4 KiB 模型内容：前 256 字节是镜像，头四字节为 ASCII `SOCF`，随后四字节是小端长度 `256`，第 252–255 字节是前 252 字节的字节求和校验，余下填 `0xff`。它同时保存二进制 `flash_image.bin`、文本字节 `flash_image.hex` 和 `image-check.txt`。这是一种教学镜像格式，不是通用 SPI Flash 文件格式。
+
+4 KiB 映射窗口和 256 字节测试镜像是两个不同的长度：镜像只占窗口开头。24 位地址是桥当前 SPI 帧格式的一部分，`0x03` 是模型实现的读命令。改窗口或镜像大小时，要一起检查桥的地址切片、模型存储、固件边界/校验和及生成地址区域；改命令时要同步改桥与器件模型。
 
 CPU 读 `0xa0000000` 时，`FlashReadBridge` 向独立的 `spi_flash_model.v` 发送 8 位读命令 `0x03`、24 位字节地址，再用 32 个时钟取四个数据字节；一笔完整读共 **64 位**。桥把 SPI 的先发字节顺序换成 CPU 小端 32 位字。固件检查 `SOCF`、长度、镜像校验和，以及 4 KiB 窗口末字是否是 `0xffffffff`。模型只支持读命令，本章没有擦除或编程行为。
 

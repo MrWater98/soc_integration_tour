@@ -22,6 +22,8 @@ All three builds keep the same VexiiRiscv, reset address `0`, and 4 KiB boot ROM
 
 In the SDRAM build, do not add 4 MiB to `integrated_main_ram_size`: `add_sdram` creates the `main_ram` region itself, while the 4 KiB integrated SRAM holds startup stack and runtime data until DRAM initialization finishes. Changing model geometry without changing the mapped size creates a software/hardware capacity mismatch. For the SRAM and Flash builds, `cached=False` keeps each CPU read visible to the bridge and device model; making the region cacheable could hide repeated bus transactions from the protocol checks. Whenever a base or size changes, update the matching linker region and verify that build's generated `csr.csv`.
 
+The repeated-looking values in these tables are configuration choices, not fixed SOC rules. For example, each 4 KiB region comes from that experiment's `SoCRegion` and memory model; the ROM and on-chip RAM sizes also need to match the firmware linker's `MEMORY` entries and generated image. The 16 KiB `main_ram` is used by the SRAM/Flash firmware, while the SDRAM build deliberately sets `integrated_main_ram_size=0` and maps the external model as `main_ram`. Change one side alone and the generated address map, linker assumptions, or model capacity will disagree.
+
 ## 1. Asynchronous SRAM
 
 LiteX `AsyncSRAM` bridges the CPU's Wishbone access to a byte-wide SRAM pin model. A 32-bit write is split across four byte lanes. `ce_n` selects the chip; `we_n` and `oe_n` control writes and reads. The bridge uses `read_cycles=2` and `write_cycles=3`; the whole 32-bit Wishbone transaction takes longer because it performs the lane operations and then acknowledges.
@@ -34,6 +36,8 @@ The LiteX bridge drives the SRAM interface pins, but this test still needs a mem
 
 The model geometry is 4 banks × 2048 rows × 256 columns × 16 bits = 4 MiB. The system clock is 50 MHz. This reduced geometry keeps simulation manageable while retaining SDR SDRAM timing behavior based on `MT48LC4M16`.
 
+These dimensions and the 50 MHz clock are parameters for this simulation model. Bank/row/column/data-width determine the model's capacity; `SDRAM_SIZE` must agree with that capacity and with the SoC region. If you change the clock, keep the SoC, PHY model and simulation clocks, generated timing settings, and any clock-derived wait expectations consistent. The 4 MiB geometry is a chosen test size, not a claim about every SDRAM device.
+
 ### Why initialize SDRAM before using it?
 
 SDRAM powers up requiring a command sequence before reads and writes are valid. Startup first places the stack and C runtime in on-chip SRAM. Firmware then uses LiteDRAM's generated `sdram_phy.h` initialization sequence and gives DFI control back to the controller. Only after the initialization marker does it test DRAM contents. LiteDRAM's controller also schedules refresh; the checker requires at least two refreshes after writes and validates data afterward.
@@ -43,6 +47,8 @@ The pinned Python 3.11/Migen combination needs a compatibility helper for CSR va
 ## 3. Memory-mapped SPI Flash
 
 The model image is 4 KiB. Its first 256 bytes contain a small project-specific image: `SOCF`, a little-endian length, payload bytes, and a 32-bit byte-sum checksum; the rest is `0xff`. This format is for the experiment, not a general Flash filesystem.
+
+The 4 KiB mapped window and 256-byte test image are separate sizes: the image occupies only the beginning of the window. The 24-bit address is part of the bridge's SPI transaction format, and `0x03` is the read command implemented by this model. Changing window or image size requires updating bridge address slicing, model storage, firmware bounds/checksum, and the generated region; changing the command requires changing both the bridge and device model.
 
 ### What happens on a CPU load from Flash?
 

@@ -27,7 +27,7 @@ This chapter's `ProjectSoC` inherits from LiteX `SoCCore`. Calling `super().__in
 | Parameter | Value here | Why it is set this way |
 | --- | --- | --- |
 | `platform` | Simulation `SimPlatform` | Describes the simulated clock/pins, not a physical board. The runner adds a `CRG` for the `sys` clock domain. |
-| `clk_freq` | `1_000_000` | Declares the system clock frequency for LiteX and simulation configuration. This two-instruction test does not depend on peripheral baud timing. |
+| `clk_freq` | `1_000_000` | Declares this simulation's system clock. It is a convenient experiment setting, not a VexiiRiscv requirement; keep the LiteX clock declaration and simulator clock consistent if you change it. |
 | `cpu_type` | `"vexiiriscv"` | Selects LiteX's natively registered VexiiRiscv wrapper. |
 | `cpu_variant` | `"standard"` | Selects the VexiiRiscv configuration used by this project. |
 | `cpu_reset_address` | `0` | Sets the CPU reset vector. LiteX passes it to the VexiiRiscv generator, and the generated RTL resets PC to zero. |
@@ -42,6 +42,8 @@ This chapter's `ProjectSoC` inherits from LiteX `SoCCore`. Calling `super().__in
 ### How does this chapter attach a custom block to LiteX?
 
 `SoCCore` creates the common SoC structure; the project must register its own endpoint. `add_module("write_target", ...)` adds the Migen module to the design hierarchy, `bus.add_slave(...)` connects its Wishbone interface to LiteX's main bus, and `SoCRegion(origin=0x40, size=0x40, ...)` tells the decoder which addresses it answers. `SoCIORegion` also registers this low range as a CPU-visible I/O region. Creating a module without `add_slave` would leave CPU bus accesses disconnected from it.
+
+The `0x40` endpoint base and `0x40`-byte region are choices for this tiny test. The program's `sw` address must land inside that region; if either changes, update the instruction/data expectation and the region together. Likewise, the 64-byte ROM size is derived from the chosen image depth and must still contain the reset instruction at address zero.
 
 Read these settings as a group: the CPU reset vector is `0`, the integrated ROM also starts at `0`, and its initialized words must contain code for that location. The endpoint starts at `0x40`, immediately after the ROM range `0x00–0x3f`, so the regions do not overlap. `integrated_rom_size` is measured in bytes, while each item in `integrated_rom_init` is one 32-bit word; 16 words are exactly 64 bytes here. If the ROM is enlarged without moving the endpoint, the ROM claims address `0x40`; if only the reset address changes, the CPU fetches from a location that the current image was not linked for.
 

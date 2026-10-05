@@ -31,6 +31,8 @@ In this stage, the `SoCCore` configuration grows from the two-instruction CPU te
 
 The CPU, reset vector, simulation platform, and clock remain configured in `super().__init__(...)`. `bus_standard` is not specified, so LiteX uses its default Wishbone main bus. VexiiRiscv's peripheral port is AXI-Lite; LiteX inserts `AXILite2Wishbone` when it registers the CPU master.
 
+The 4 KiB ROM/SRAM, 1024-word image, and disabled peripheral flags are this stage's configuration. They are selected to make the boundary reads easy to see and keep unrelated devices out. If you resize ROM, keep `write_rom_init`, `integrated_rom_size`, the linker/build image, and `check_generated_map` in agreement; if you resize SRAM or move either region, update the firmware addresses and expected map too. The numbers are not fixed LiteX requirements.
+
 ### Why add a custom `CompletionSlave`?
 
 It is not a standard `SoCCore` peripheral. It is this chapter's simulation-only Wishbone slave: when firmware writes the expected completion code to its mapped address, it prints `SOC_COMPLETE` and ends simulation. That gives the runner evidence that the CPU executed to the firmware check, rather than merely constructing the SoC.

@@ -20,11 +20,11 @@ program.elf ── objcopy -O binary ──> program.bin（字节）
                            LiteX ROM → VexiiRiscv 取指
 ```
 
-代码链接到 `0x0`，因为 CPU 复位地址为 `0x0`，ROM 也从这里开始。`rv32im` 选择指令集，`ilp32` 选择 32 位 ABI。编译器构建的是软件，不是 CPU RTL。
+代码链接到 `0x0`，因为 CPU 复位地址为 `0x0`，ROM 也从这里开始。`rv32im` 选择指令集，`ilp32` 选择 32 位 ABI。这些是软件构建参数，必须和生成的 CPU 支持的指令集匹配；只改编译器 ISA 参数，可能生成 CPU 无法执行的指令。编译器构建的是软件，不是 CPU RTL。
 
 ## LiteX 在这里负责哪一段？
 
-`ProjectSoC` 仍继承 `SoCCore`：CPU、Wishbone 主总线、CSR 和 ROM 总线从 LiteX 来；本章把编译得到的 `words` 传给 `integrated_rom_init`，并把 ROM 容量设为 `len(words) * 4`。因此镜像长度、ROM 容量、复位地址、链接地址是一个整体：256 个字对应 1024 字节，复位 PC 为 0，固件也链接在 0。改变其中一个时，其余几项和生成地图都要重新核对。
+`ProjectSoC` 仍继承 `SoCCore`：CPU、Wishbone 主总线、CSR 和 ROM 总线从 LiteX 来；本章把编译得到的 `words` 传给 `integrated_rom_init`，并把 ROM 容量设为 `len(words) * 4`。因此镜像长度、ROM 容量、复位地址、链接地址是一个整体：本实验选择 256 个字（1024 字节），复位 PC 为 0，固件也链接在 0。ROM 深度可以改；改动时要同步更新 `ROM_WORDS`、镜像补齐/溢出检查和预期地址图。
 
 完成端点则是项目自己写的 Wishbone 从设备。`self.add_module(...)` 注册 Migen 模块，`self.bus.add_slave(...)` 把接口接入主总线，`SoCRegion` 声明 `0x20000000–0x20000fff` 地址范围；`SoCIORegion` 登记 CPU 的 I/O 区域。`cached=False` 标记它是有副作用的 MMIO 端点，不应按普通内存处理。`Builder(..., compile_software=False)` 只构建 gateware/仿真工程，软件编译由本章的 `cpu_sim.py` 单独控制，便于先检查 ELF、二进制镜像和边界条件。
 

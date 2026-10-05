@@ -32,6 +32,8 @@ SoC 使用 1 MHz 时钟、复位地址 0、4 KiB ROM、4 KiB 片上 SRAM 和 16 
 
 `load` 和 `reload` 的单位是 `sys` 时钟周期，不是微秒：1 MHz 时 1200 次计数约为 1.2 ms。改 `clk_freq` 会改变实际经过时间，但不会改变计数值；把 `reload` 从 0 改成正数，则从单次事件变成周期事件。测试预期和固件配置必须同时跟着调整。
 
+测试里的轮询 `load=600`、单次中断 `load=300` 和周期 `reload=1200` 都是为了让事件在短仿真里清楚可见而选择的参数，不是定时器架构规定的常数。改它们时，要一起检查轮询范围、事件等待上限和周期 ISR 次数。固件还选择 PLIC priority `1`、threshold `0`；这个单中断实验中，任何高于 threshold 的正优先级都可用。PLIC source 1 是本次构建的分配；增加其他中断源后它可能变化。
+
 这里有**四道条件**：定时器事件的 `ev_enable`、PLIC 中源 1 的使能/优先级与 CPU 的 mie.MEIE，以及全局 `mstatus.MIE`。它们都允许后，pending 才能让 CPU 进 ISR。进入陷阱时 CPU 保存返回 PC 到机器态 CSR；本章 `trap_entry` 再把会被 C 函数改写的通用寄存器存入栈，返回前恢复，最后执行 `mret`。`sp` 所指的内存位于 main RAM，因此嵌套调用与中断都需要足够栈空间。
 
 ## 定时器怎么接进 LiteX

@@ -19,6 +19,8 @@ The SoC uses a 1 MHz clock, reset-at-zero CPU, 4 KiB ROM, 4 KiB on-chip SRAM, an
 
 `load` and `reload` are counts of `sys` clock cycles, not microseconds: with a 1 MHz clock, 1200 counts are about 1.2 ms. Changing `clk_freq` changes elapsed time but not the count values; changing `reload` from zero to a positive value changes a one-shot into a periodic event. The test and firmware must agree on both settings.
 
+The test's `load=600` polling value, `load=300` one-shot value, and `reload=1200` periodic value are chosen to make the events visible in a short simulation. They are not architectural timer constants. If you change them, update the expected polling range, event timing bounds, and the number of periodic ISR observations together. Firmware also chooses PLIC priority `1` and threshold `0`; any positive priority above the threshold can be used for this single-source test. PLIC source 1 is this build's generated assignment; it may move when other interrupt sources are added.
+
 ## Questions and answers
 
 ### What must be enabled before the CPU enters the ISR?

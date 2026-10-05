@@ -8,6 +8,8 @@ This stage connects ROM, SRAM, and a register endpoint to one Wishbone main bus.
 | SRAM | `0x00010000–0x00010fff` | 4 KiB | Writable data and stack |
 | Registers | `0x20000000–0x20000fff` | 4 KiB | Probe/readback and completion |
 
+These bases and 4 KiB sizes are this SoC's selected map, not addresses required by Wishbone or LiteX. Moving or resizing a region means updating the `SoCRegion`, the software-side `REGIONS`/CSV contract, firmware addresses, and the generated-map check together. The aligned, non-overlapping regions are the invariant; the particular numbers are project choices.
+
 ## What does address decoding do?
 
 The decoder uses an address to select which target may answer a request. For example, an access at `0x00010000` should reach SRAM, while an access at `0x20000000` should reach the register endpoint. A well-formed map assigns a given address to at most one target. A hole has no target and should not accidentally alias a nearby memory.
@@ -32,7 +34,7 @@ No. Decode chooses a responder based on the address. Arbitration decides which m
 
 ### What happens for overlapping or unmapped addresses?
 
-An overlap is rejected before CPU simulation because two regions would claim the same address. The unit test deliberately adds an overlapping region and expects `validate()` to raise an error. For an unmapped read at `0x30000000`, no target responds. The CPU trap handler records `mcause=5` (load access fault) at the test endpoint, and the runner requires the fault marker with no normal completion.
+An overlap is rejected before CPU simulation because two regions would claim the same address. The unit test deliberately adds an overlapping region and expects `validate()` to raise an error. `0x30000000` is the chosen hole for this negative test; any address outside all configured regions should have the same unmapped behavior. The CPU trap handler records `mcause=5` (load access fault) at the test endpoint, and the runner requires the fault marker with no normal completion.
 
 ### How do we know which part failed?
 

@@ -13,7 +13,9 @@ CPU load  ← CSR bridge ← UART RX FIFO ← UART PHY ←───────�
 
 `SoCCore` is built at `SYS_CLK_HZ = 1_000_000`, then the project explicitly adds `UART` with `baudrate=100_000`, `fifo_depth=4`, and `rx_fifo_rx_we=True`. The first two timing values work together: `BIT_CYCLES = SYS_CLK_HZ // BAUD = 10`, so one UART bit lasts ten system clocks. If `clk_freq` changes, update the simulation clock and the monitor's `decode_cycles` as well; otherwise the UART and observer will disagree about bit timing. `fifo_depth=4` is why four queued bytes can fill TX FIFO; changing it changes the expected `txfull` observation. `rx_fifo_rx_we=True` makes a read of `rxtx` consume the received byte.
 
-The default UART is disabled in `SoCCore` (`with_uart=False`) so the design has only the explicitly named `serial` instance and stable CSR names. The UART's event interrupt is present but `ev_enable` remains off: this experiment polls status. Enabling events changes the CSR/IRQ behavior and requires firmware to configure and service that interrupt.
+The 1 MHz clock, 100 kbit/s baud rate, and four-byte FIFO are this simulation's settings, not universal UART values. Keep `SYS_CLK_HZ`, LiteX's `clk_freq`, the simulator clock, the integer `BIT_CYCLES`, and monitor sampling interval consistent. The 8N1 frame format describes this configured UART test; baud rate and FIFO depth can change without changing the meaning of 8N1.
+
+The default UART is disabled in `SoCCore` (`with_uart=False`) so the design has only the explicitly named `serial` instance and stable CSR names. The UART's event interrupt is present but `ev_enable` remains off: this experiment polls status. Enabling events changes the CSR/IRQ behavior and requires firmware to configure and service that interrupt. IRQ source 1 is the allocation in this generated SoC map, not a UART-wide fixed number; adding or reordering IRQ sources may change it.
 
 ## Questions and answers
 

@@ -15,6 +15,8 @@ This chapter does not create a `SoCCore`. It uses LiteX's `wishbone.Interface` t
 
 `wait_cycles` controls how long the state machine stays in `WAIT`; it changes response latency, not the address. `fault` deliberately makes ACK early, holds it too long, or never asserts it. With `no_ack`, the master still holds `cyc/stb`, so the test's wait limit is necessary to stop the check instead of waiting forever.
 
+The values `wait_cycles=2`, `max_wait=6` in the negative cases, register address `0x1000`, and data patterns such as `0xaabbccdd` are test parameters. Six cycles is the checker's timeout bound, not a Wishbone response limit; changing it changes when the test declares a timeout, not how the protocol works. The word-address conversion depends on the configured 32-bit, word-addressed interface: if its width or addressing mode changes, update the address and byte-lane checks together.
+
 ## Read one transaction
 
 The master asserts `cyc` and `stb`, sets the address and operation, and holds the request fields stable until completion. A read has `we=0`; a write has `we=1`. On a read, `dat_r` is consumed when `ack` completes the transaction. `sel` selects byte lanes; `sel=0001` changes only the lowest byte of a 32-bit word.
@@ -47,13 +49,15 @@ The test checks protocol conditions at specific points and records every cycle t
 
 | Injected case | What the checker samples | How it identifies the fault |
 | --- | --- | --- |
-| `no_ack` | Correct address `0x400`, request remains active, ACK sampled every cycle | No ACK appears within six cycles, so the bounded wait raises a timeout |
+| `no_ack` | Correct address `0x400`, request remains active, ACK sampled every cycle | `max_wait=6` is exceeded; because the checker increments before comparing, it reports seven counted wait cycles and raises a timeout |
 | `unmapped` | Request uses word address `0x401`, outside this slave's one-word decode | The trace shows the wrong address and no ACK; timeout is attributed to the unimplemented address |
 | `early_ack` | ACK before the master asserts a request | The pre-request check sees ACK high while the bus is idle and raises a protocol error immediately |
 | `held_ack` | ACK after master deasserts `cyc/stb` | The post-response check sees ACK still high on an idle bus and raises a protocol error |
 | `wait2` | ACK timing for an otherwise valid request | The trace contains two additional wait cycles before the single ACK |
 
 This is why the test has both a transaction checker and a passive cycle recorder. The checker decides pass/fail; the CSV/VCD preserves the evidence that explains that decision. A timeout alone would not distinguish an absent target from a target that saw the request but failed to respond; the recorded address and handshake signals do.
+
+The exact timeout number is a checker setting: `max_wait=6` means “allow six counted waits, then fail when the count becomes 7.” It is not a bus timing rule. The same bound is used for the unmapped-address case so both missing-response traces terminate predictably.
 
 ### Why ACK must belong to the active request?
 

@@ -27,7 +27,7 @@ CPU 外设总线是 AXI-Lite，本系统 LiteX 主总线是 Wishbone。LiteX 注
 | 参数 | 本章设置 | 为什么这样设置 |
 | --- | --- | --- |
 | `platform` | 仿真 `SimPlatform` | 描述仿真时钟/引脚，不是实体开发板；运行器再用 `CRG` 建立 `sys` 时钟域。 |
-| `clk_freq` | `1_000_000` | 声明系统时钟频率，供 LiteX 与仿真配置使用。这个两指令实验不依赖外设波特率。 |
+| `clk_freq` | `1_000_000` | 声明本次仿真的系统时钟，是方便观察的实验设置，不是 VexiiRiscv 的固定要求。修改时要让 LiteX 声明与仿真时钟保持一致。 |
 | `cpu_type` | `"vexiiriscv"` | 选择 LiteX 原生注册的 VexiiRiscv CPU 封装。 |
 | `cpu_variant` | `"standard"` | 选择本项目使用的 VexiiRiscv 参数组合。 |
 | `cpu_reset_address` | `0` | 设置 CPU 复位向量。LiteX 将它交给 VexiiRiscv 生成器，生成的 RTL 在复位时把 PC 设为 0。 |
@@ -42,6 +42,8 @@ CPU 外设总线是 AXI-Lite，本系统 LiteX 主总线是 Wishbone。LiteX 注
 ### 本章怎样把自定义模块接进 LiteX？
 
 `SoCCore` 创建的是通用 SoC 结构；自定义端点要由项目明确注册。`add_module("write_target", ...)` 把 Migen 模块纳入设计层次，`bus.add_slave(...)` 把它的 Wishbone 接口接到 LiteX 主总线，`SoCRegion(origin=0x40, size=0x40, ...)` 告诉地址译码器它响应哪段地址。`SoCIORegion` 还把这段低地址登记为 CPU 可访问的 I/O 区域。只创建模块而不 `add_slave`，CPU 的总线访问就到不了它。
+
+端点基址 `0x40` 和 `0x40` 字节的区域大小是这个小实验的选择。程序的 `sw` 地址必须落在区域内；改基址或范围时，要同步改指令/数据检查和 `SoCRegion`。同理，64 字节 ROM 来自当前镜像深度，并且必须覆盖地址 0 的复位指令。
 
 这些参数要一起看：CPU 复位向量是 `0`，集成 ROM 也从 `0` 开始，ROM 初始化内容必须对应这个起点；端点从 `0x40` 开始，不能与 ROM 的 `0x00–0x3f` 重叠。`integrated_rom_size` 的单位是字节，而 `integrated_rom_init` 每项是一个 32 位字，本章 16 字正好是 64 字节。若只扩大 ROM 却不移动端点，`0x40` 会被 ROM 占用；若只改 reset address 而不重链或重排 ROM 镜像，CPU 会从错误位置取指。
 

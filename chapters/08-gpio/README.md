@@ -1,6 +1,6 @@
 # 08 — Reading and Driving GPIO through LiteX CSR
 
-This stage connects four GPIO outputs and four GPIO inputs to the SoC. Bare-metal C writes `0x0`, then `0xa` to the output CSR. The simulation changes the external input pins from `0x0` to `0x5` after 1000 system-clock cycles. The CPU must observe both values by reading the input CSR.
+This stage connects four GPIO outputs and four GPIO inputs to the SoC. That 4+4 arrangement is an experiment choice, not a GPIO requirement: a design can choose its own width and directions. Four bits make it easy to observe output `0xa` (`1010`) and input `0x5` (`0101`). Bare-metal C writes `0x0`, then `0xa` to the output CSR. The simulation changes the external input pins from `0x0` to `0x5` after 1000 system-clock cycles. The CPU must observe both values by reading the input CSR.
 
 ```text
 C gpio_out_output_write(0xa)
@@ -20,6 +20,8 @@ gpio_in pins = 0101 → two-stage MultiReg synchronizer → CSRStatus
 The `SoCCore` configuration keeps a 4 KiB ROM, 4 KiB integrated SRAM, and 16 KiB main RAM for the bare-metal C image, while disabling the default UART, Timer, and control block. The GPIO banks are project modules with their own CSRs; they are not LiteX's `GPIOIn`/`GPIOOut` instances. `GPIOInput` combines `CSRStatus(4)` with a two-stage `MultiReg`, while `GPIOOutput` combines `CSRStorage(4, reset=0)` with a direct pin assignment. The width and reset value describe the pin bank, not a memory region.
 
 Adding these CSR banks changes CSR allocation: bank names and register names become part of the generated software interface. Keep the module names, explicit CSR names, generated `csr.h`, and firmware build from the same SoC configuration. Changing `csr_paging` or adding another CSR bank can move later bank addresses; code should consume the newly generated header rather than preserve numeric addresses by hand.
+
+The input transition after 1000 `sys` clocks is only the simulator's stimulus time. It is not a required GPIO delay or the synchronizer's latency. The two `MultiReg` stages determine when a changed pin value becomes visible to local logic; moving the stimulus earlier or later changes when the CPU observes it, so the polling window and expected event order must still allow both the initial and changed values to be read.
 
 ### What is a CSR, and how does C access it?
 

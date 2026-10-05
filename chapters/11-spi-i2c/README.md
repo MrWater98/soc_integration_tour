@@ -16,6 +16,8 @@ I²C: CPU → i2c_out CSR → SCL/SDA open-drain line → 0x42 device model
 
 The widths and reset values are protocol state: SPI's 3-bit output resets to `4`, leaving active-low `CS_N` high; I²C's 2-bit output resets to `3`, releasing SCL and SDA. Changing either reset value can select the SPI device at boot or hold an I²C line low before START. Adding or renaming CSR banks changes generated CSR addresses, so the runner regenerates the header and compiles the C firmware against it. This pin-level approach is intentionally slow; replacing it with LiteX controllers changes the CSR interface and moves timing generation from software into hardware.
 
+The SPI mode 0, `0x9f` command, `0xa5` model response, and I²C 7-bit address `0x42` are the choices for these device models and firmware. They are not requirements for every SPI or I²C device. To change the I²C address, update both the C transaction and `i2c_device.v`; `0x84` and `0x85` are derived wire bytes `(0x42 << 1) | R/W`. To change the SPI command or reply, update the CPU check and model together. The `0x86` address is deliberately wrong to exercise NACK.
+
 ## Questions and answers
 
 ### How does the SPI transaction work?
