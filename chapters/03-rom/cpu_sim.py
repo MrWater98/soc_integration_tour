@@ -15,7 +15,7 @@ def build_program(chapter: Path, *, build_name="build", defines=()):
     out = ROOT / "results" / build_name
     out.mkdir(parents=True, exist_ok=True)
     subprocess.run([
-        gcc, "-march=rv32im", "-mabi=ilp32", "-mno-relax", "-nostdlib", "-nostartfiles",
+        gcc, "-march=rv32i2p0", "-mabi=ilp32", "-mno-relax", "-nostdlib", "-nostartfiles",
         "-Wl,--build-id=none", "-Wl,-Ttext=0", "-Wl,-e,_start",
         *(f"-D{name}" for name in defines),
         str(chapter / "program.S"), "-o", str(out / "program.elf"),

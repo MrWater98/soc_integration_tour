@@ -15,8 +15,7 @@ from litex_builder import build_and_run, check_generated_map
 
 REGIONS = {"rom": (0, 4096), "sram": (0x10000000, 4096),
            "main_ram": (0x40000000, 4*1024*1024),
-           "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536),
-                 "clint": (0xf0010000, 65536), "plic": (0xf0c00000, 4194304)}
+           "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536)}
 
 
 def check_log(log):
@@ -38,8 +37,6 @@ def check_log(log):
 
 def main():
     add_litex_to_path(ROOT)
-    from vexii_config import configure_vexii
-    configure_vexii()
     litedram_root = os.environ.get("LITEDRAM_ROOT")
     if litedram_root:
         source = Path(litedram_root).expanduser().resolve()
@@ -87,10 +84,10 @@ def main():
         raise RuntimeError("缺少第 00 章 RISC-V 工具链")
     litex_root = Path(litex.__file__).resolve().parents[1]
     elf = image / "program.elf"
-    command = [gcc, "-march=rv32im", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
+    command = [gcc, "-march=rv32i2p0", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
         "-fno-builtin", "-nostdlib", "-nostartfiles", "-O1",
         "-I", str(header_dir.parent),
-        "-I", str(litex_root / "litex/soc/cores/cpu/vexiiriscv"),
+        "-I", str(litex_root / "litex/soc/cores/cpu/vexriscv"),
         "-I", str(litex_root / "litex/soc/software/include"),
         f"-Wl,-T,{CHAPTER / 'linker.ld'}", "-Wl,--build-id=none",
         f"-Wl,-Map={image / 'program.map'}",

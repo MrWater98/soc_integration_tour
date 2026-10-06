@@ -4,7 +4,7 @@ This stage connects four GPIO outputs and four GPIO inputs to the SoC. That 4+4 
 
 ```text
 C gpio_out_output_write(0xa)
-      │ CPU store → AXI-Lite → LiteX AXILite2Wishbone → Wishbone decode
+      │ VexRiscv dbus → LiteX Wishbone → address decode
       ▼
 CSR bridge → CSRStorage → gpio_out[3:0] = 1010
 
@@ -44,6 +44,7 @@ Adding CSR banks can move other CSR addresses. In this stage, the generated `gpi
 `GPIO_INPUT_DRIVE value=0x5` records the simulation changing the pads. `SOC_PROBE data=0x00000000` and later `SOC_PROBE data=0x00000005` are writes made by the CPU after its reads. The runner checks their order, in addition to `GPIO_OUTPUT value=0xa`. A final value alone would not prove that the CPU first observed zero and then observed the change.
 
 ## Run and inspect
+The built design's Verilog compiler inputs are copied to [`results/08/rtl`](../../results/08/rtl), including the SoC top, Vex CPU, RAM support modules, ROM/RAM initialization files, and a source manifest.
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/08-gpio/run.py

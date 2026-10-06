@@ -10,9 +10,9 @@
 
 ## LiteX 怎样把这块 SRAM 放进 SoC？
 
-本章没有使用 `integrated_sram_size`，而是显式创建 `wishbone.SRAM(sram_size)`，再用 `bus.add_slave` 接到 Wishbone 主总线上。`SoCRegion(origin=0x10000, size=sram_size, mode="rw", cached=True)` 同时给出起点、容量、读写权限和缓存属性。这里 4 KiB 的大小与固件首末地址 `0x10000`、`0x10ffc` 配套；负例把参数改成 256 字节，固件仍访问 `0x10ffc`，所以 CPU 报 store access fault。只缩小 SRAM 却把测试地址也移进范围，就不会再验证越界故障。
+本章没有使用 `integrated_sram_size`，而是显式创建 `wishbone.SRAM(sram_size)`，再用 `bus.add_slave` 接到 Wishbone 主总线上。`SoCRegion(origin=0x10000, size=sram_size, mode="rw", cached=True)` 给出起点、容量、读写权限和可缓存属性。当前 VexRiscv `minimal` 没有缓存，所以这个标记不会额外生成缓存，也不会挡住 SRAM 总线事务。这里 4 KiB 的大小与固件首末地址 `0x10000`、`0x10ffc` 配套；负例把参数改成 256 字节，但仍访问 `0x10ffc`。栈被放在这 256 字节内部，让程序先完成栈操作，再访问预期的越界地址。
 
-`mode="rw"` 只声明区域权限，并不会生成另外一种 SRAM 电路；实际仿真应答来自 `wishbone.SRAM`。`cached=True` 是给 CPU/互连的区域属性，普通 RAM 可缓存；完成寄存器使用 `cached=False`，因为每次读写都可能有外部可见副作用。真实硬件若换成 BRAM 或 SRAM macro，还要让 wrapper 的延迟、byte enable 和应答时序符合具体存储器接口。
+`mode="rw"` 只声明区域权限，并不会生成另外一种 SRAM 电路；实际仿真应答来自 `wishbone.SRAM`。`cached=True` 是给支持缓存的 CPU 配置使用的区域属性，本身不会实例化缓存。本章的 VexRiscv `minimal` 没有缓存，因此每次 SRAM 访问仍会到达 Wishbone。完成寄存器标记 `cached=False`，用于表达设备区策略。真实硬件若换成 BRAM 或 SRAM macro，还要让 wrapper 的延迟、byte enable 和应答时序符合具体存储器接口。
 
 ### FPGA 和 ASIC 里怎样接真实存储器？
 
@@ -103,16 +103,17 @@ int fact(int n) {
 
 ### SRAM 太小时怎样抓到错误？
 
-运行器再用只有 256 字节的 SRAM 跑同一个程序；程序使用的测试地址和栈空间已超出容量。VexiiRiscv trap handler 读取 `mcause`，把它写到完成端点，并报告 store access fault（`mcause=7`）。运行器要求出现故障标志，同时拒绝正常完成标志。这样错误由 CPU 的架构异常明确报告，而不是只看到仿真超时。
+运行器再用只有 256 字节的 SRAM 跑同一个程序。栈仍在这段范围内，最后访问的字节地址 `0x10ffc` 则在范围外，因此数据总线请求一直得不到 ACK。当前 VexRiscv `minimal` RTL 虽然有 Wishbone ERR 输入，但不会把无应答转成这里预期的 store access trap；本章如实捕获总线等待，不伪称读到了 `mcause`。
 
 ## 运行与观察
+每次运行都会把仿真器实际编译的 RTL 输入复制到 [`results/04/rtl`](../../results/04/rtl) 和 [`results/04-small-ram/rtl`](../../results/04-small-ram/rtl)。每个目录都含 `sim.v`、对应的 Vex CPU RTL、RAM 支持模块和 ROM 初始化文件；`rtl_sources.txt` 列出完整输入清单。
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/04-sram/run.py
 ```
 
-正常的 4 KiB 运行应通过读回检查；256 字节负例应报告预期 store fault。查看 `results/04/` 和 `results/04-small-ram/` 下的固件镜像、地址表、日志和 VCD。这个 32 位、按字寻址的 Wishbone 接口上，字节地址 `0x10000` 对应字地址 `0x4000`。
+正常的 4 KiB 运行应通过读回检查；256 字节负例应捕获越界 Wishbone 请求等待 ACK。查看 `results/04/` 和 `results/04-small-ram/` 下的固件镜像、地址表、日志和 VCD。这个 32 位、按字寻址的 Wishbone 接口上，字节地址 `0x10000` 对应字地址 `0x4000`。
 
 ## PASS 能证明什么？
 
-正常 PASS 检查了仿真 SRAM 的首末位置、字节通道和栈访问。负例 PASS 检查了容量不足时固件报告 store access fault。它不证明某颗 FPGA BRAM 或 ASIC SRAM 宏的物理时序；那要使用具体存储器实现和对应验证流程。
+正常 PASS 检查了仿真 SRAM 的首末位置、字节通道和栈访问。负例 PASS 检查了 CPU 发出了越界地址，而目标没有应答。它不证明某颗 FPGA BRAM 或 ASIC SRAM 宏的物理时序；那要使用具体存储器实现和对应验证流程。

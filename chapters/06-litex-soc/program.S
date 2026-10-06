@@ -13,7 +13,7 @@ _start:
     li    t4, 2
     bne   t1, t2, fail
 
-    lui   t0, 0x10000          # First LiteX VexiiRiscv SRAM word 0x10000000
+    lui   t0, 0x10000          # First LiteX VexRiscv SRAM word 0x10000000
     lui   t1, 0x12345
     addi  t1, t1, 0x678        # 0x12345678
     sw    t1, 0(t0)
@@ -27,7 +27,7 @@ _start:
     li    t4, 4
     bne   t1, t2, fail
 
-    lui   t0, 0x80000          # Test register in the LiteX VexiiRiscv IO window
+    lui   t0, 0x80000          # Test register in the LiteX VexRiscv IO window
     lui   t1, 0x2468a
     addi  t1, t1, 0x135        # 0x2468a135
     sw    t1, 0(t0)

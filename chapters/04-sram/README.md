@@ -10,7 +10,7 @@ That model is enough to test address decoding, read/write behavior, byte enables
 
 ## How does LiteX place this SRAM in the SoC?
 
-This chapter does not use `integrated_sram_size`. It explicitly creates `wishbone.SRAM(sram_size)` and attaches it to the Wishbone main bus with `bus.add_slave`. `SoCRegion(origin=0x10000, size=sram_size, mode="rw", cached=True)` declares its base, capacity, access mode, and cache attribute. The nominal 4 KiB setting matches the firmware's first and last addresses, `0x10000` and `0x10ffc`. The negative run changes the size to 256 bytes but keeps the firmware access at `0x10ffc`, so the CPU reports a store access fault. Shrinking the SRAM while also moving the test address inside the range would stop testing the out-of-range failure.
+This chapter does not use `integrated_sram_size`. It explicitly creates `wishbone.SRAM(sram_size)` and attaches it to the Wishbone main bus with `bus.add_slave`. `SoCRegion(origin=0x10000, size=sram_size, mode="rw", cached=True)` declares its base, capacity, access mode, and cacheability hint. The selected VexRiscv `minimal` core has no cache, so this flag does not create a cache or hide SRAM transactions. The nominal 4 KiB setting matches the firmware's first and last addresses, `0x10000` and `0x10ffc`. The negative run changes the size to 256 bytes but keeps the firmware access at `0x10ffc`, outside the range. The stack remains inside the smaller RAM so the test reaches that intended access.
 
 `mode="rw"` declares region permissions; it does not create a different SRAM circuit. The simulated response comes from `wishbone.SRAM`. `cached=True` is region metadata for the CPU/interconnect, appropriate for ordinary RAM. The completion register uses `cached=False` because each access can have an externally visible side effect. A real BRAM or SRAM macro also needs a wrapper whose latency, byte enables, and response timing match that memory's interface.
 
@@ -103,16 +103,17 @@ It writes `0x11223344` to the first word, replaces the low byte with `0xaa`, rep
 
 ### How is an undersized SRAM failure captured?
 
-The runner repeats the program with only 256 bytes of SRAM. The test's chosen addresses and stack reservation no longer fit. The VexiiRiscv trap handler reads `mcause`, records it at the completion endpoint, and reports a store access fault (`mcause=7`). The runner requires that fault marker and rejects a normal completion marker. This ties the failure to an architectural exception instead of treating a simulator timeout as an explanation.
+The runner repeats the program with only 256 bytes of SRAM. The stack is kept inside that range; the final test store to byte address `0x10ffc` is outside it. The request stays active without ACK. This VexRiscv `minimal` RTL exposes Wishbone ERR as an input but does not turn the missing response into the architectural store-access trap this test originally expected, so the chapter records the bus-level wait instead of claiming an `mcause` result.
 
 ## Run and inspect
+Each run snapshots the exact Verilog compiler inputs into [`results/04/rtl`](../../results/04/rtl) and [`results/04-small-ram/rtl`](../../results/04-small-ram/rtl). Each folder contains `sim.v`, the matching Vex CPU RTL, RAM support modules, and any ROM initialization files; `rtl_sources.txt` records the complete input list.
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/04-sram/run.py
 ```
 
-The nominal 4 KiB run must report the expected readback; the 256-byte run must report the expected store fault. Inspect `results/04/` and `results/04-small-ram/` for firmware images, maps, logs, and VCD traces. On this 32-bit word-addressed Wishbone interface, byte address `0x10000` is word address `0x4000`.
+The nominal 4 KiB run must report the expected readback; the 256-byte run must report the expected out-of-range Wishbone request waiting without ACK. Inspect `results/04/` and `results/04-small-ram/` for firmware images, maps, logs, and VCD traces. On this 32-bit word-addressed Wishbone interface, byte address `0x10000` is word address `0x4000`.
 
 ## What does a PASS prove?
 
-The normal PASS checks the simulated SRAM's first/last locations, byte lanes, and stack use. The negative PASS checks that this firmware detects the deliberately insufficient capacity through a CPU store access fault. It does not prove timing or physical properties of a particular FPGA BRAM or ASIC macro; those require the implementation-specific memory and its own verification flow.
+The normal PASS checks the simulated SRAM's first/last locations, byte lanes, and stack use. The negative PASS checks that the CPU requests the deliberately out-of-range address and the target does not acknowledge it. It does not prove timing or physical properties of a particular FPGA BRAM or ASIC macro; those require the implementation-specific memory and its own verification flow.

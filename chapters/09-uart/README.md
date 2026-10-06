@@ -15,7 +15,7 @@ CPU load  ← CSR bridge ← UART RX FIFO ← UART PHY ←───────�
 
 The 1 MHz clock, 100 kbit/s baud rate, and four-byte FIFO are this simulation's settings, not universal UART values. Keep `SYS_CLK_HZ`, LiteX's `clk_freq`, the simulator clock, the integer `BIT_CYCLES`, and monitor sampling interval consistent. The 8N1 frame format describes this configured UART test; baud rate and FIFO depth can change without changing the meaning of 8N1.
 
-The default UART is disabled in `SoCCore` (`with_uart=False`) so the design has only the explicitly named `serial` instance and stable CSR names. The UART's event interrupt is present but `ev_enable` remains off: this experiment polls status. Enabling events changes the CSR/IRQ behavior and requires firmware to configure and service that interrupt. IRQ source 1 is the allocation in this generated SoC map, not a UART-wide fixed number; adding or reordering IRQ sources may change it.
+The default UART is disabled in `SoCCore` (`with_uart=False`) so the design has only the explicitly named `serial` instance and stable CSR names. The UART's event interrupt is present but `ev_enable` remains off: this experiment polls status. Enabling events changes the CSR/IRQ behavior and requires firmware to configure and service that interrupt. The assigned `serial_interrupt` index is generated for this SoC; it is not a UART-wide fixed number and can change when IRQ sources are added or reordered.
 
 ## Questions and answers
 
@@ -44,6 +44,7 @@ The UART and CPU continue to run at the correct timing, but the external monitor
 The test asserts reset after the TX start bit but before that frame completes. It requires evidence of the incomplete frame and reset, then checks that the CPU restarts from ROM and retransmits and receives the full stream. A separate always-on simulation counter ensures the reset pulse occurs once rather than repeating after the CPU resets.
 
 ## Run and inspect
+The normal, wrong-baud, and TX-reset builds have separate complete RTL snapshots in [`results/09/rtl`](../../results/09/rtl), [`results/09-wrong-baud/rtl`](../../results/09-wrong-baud/rtl), and [`results/09-reset-tx/rtl`](../../results/09-reset-tx/rtl). Each directory includes every Verilog compiler input and memory initialization file, listed in `rtl_sources.txt`.
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/09-uart/run.py

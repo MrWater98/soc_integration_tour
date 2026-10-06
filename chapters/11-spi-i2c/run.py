@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run pin-level SPI and I2C protocol transactions from VexiiRiscv firmware."""
+"""Run pin-level SPI and I2C protocol transactions from VexRiscv firmware."""
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 import shutil
@@ -14,8 +14,7 @@ from litex_builder import build_and_run, check_generated_map
 
 REGIONS = {"rom": (0, 4096), "sram": (0x10000000, 4096),
            "main_ram": (0x40000000, 16384),
-           "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536),
-                 "clint": (0xf0010000, 65536), "plic": (0xf0c00000, 4194304)}
+           "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536)}
 REGISTERS = {"i2c_out": (0xf0000000, "rw"), "i2c_input": (0xf0000004, "ro"),
              "spi_out": (0xf0001000, "rw"), "spi_input": (0xf0001004, "ro")}
 
@@ -43,8 +42,6 @@ def check_protocol_log(log):
 
 def main():
     add_litex_to_path(ROOT)
-    from vexii_config import configure_vexii
-    configure_vexii()
     import litex
     from litex.build.generic_platform import Pins
     from litex.build.sim import SimPlatform
@@ -75,10 +72,10 @@ def main():
         raise RuntimeError("缺少第 00 章 RISC-V gcc/objcopy")
     litex_root = Path(litex.__file__).resolve().parents[1]
     elf = image / "program.elf"
-    command = [gcc, "-march=rv32im", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
+    command = [gcc, "-march=rv32i2p0", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
         "-fno-builtin", "-nostdlib", "-nostartfiles", "-O1",
         "-I", str(header.parents[1]),
-        "-I", str(litex_root / "litex/soc/cores/cpu/vexiiriscv"),
+        "-I", str(litex_root / "litex/soc/cores/cpu/vexriscv"),
         "-I", str(litex_root / "litex/soc/software/include"),
         f"-Wl,-T,{CHAPTER / 'linker.ld'}", "-Wl,--build-id=none",
         f"-Wl,-Map={image / 'program.map'}",

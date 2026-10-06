@@ -13,7 +13,7 @@ soc.py: SoCCore parameters + project endpoint
 LiteX Builder: gateware, csr.csv/csr.json, simulator project
         │
         ├── check_generated_map: compare hardware map to firmware contract
-        └── compile Verilator model → run VexiiRiscv → check SOC_COMPLETE
+        └── compile Verilator model → run VexRiscv → check SOC_COMPLETE
 ```
 
 ## What does this chapter configure with `SoCCore`?
@@ -29,7 +29,7 @@ In this stage, the `SoCCore` configuration grows from the two-instruction CPU te
 | `with_uart / with_timer / with_ctrl` | All `False` | These peripherals are outside this test, so they are disabled. |
 | `ident` | `"SoC Integration Tour Stage 06"` | Identifies this generated SoC build. |
 
-The CPU, reset vector, simulation platform, and clock remain configured in `super().__init__(...)`. `bus_standard` is not specified, so LiteX uses its default Wishbone main bus. VexiiRiscv's peripheral port is AXI-Lite; LiteX inserts `AXILite2Wishbone` when it registers the CPU master.
+The CPU, reset vector, simulation platform, and clock are configured in `super().__init__(...)`. VexRiscv provides two Wishbone masters, for instruction fetch and data access. This build uses the shared Wishbone bus with `bus_arbiter="transaction"`, so each master keeps ownership through the response.
 
 The 4 KiB ROM/SRAM, 1024-word image, and disabled peripheral flags are this stage's configuration. They are selected to make the boundary reads easy to see and keep unrelated devices out. If you resize ROM, keep `write_rom_init`, `integrated_rom_size`, the linker/build image, and `check_generated_map` in agreement; if you resize SRAM or move either region, update the firmware addresses and expected map too. The numbers are not fixed LiteX requirements.
 
@@ -39,19 +39,17 @@ It is not a standard `SoCCore` peripheral. It is this chapter's simulation-only 
 
 ## Questions and answers
 
-### Where is `AXILite2Wishbone` called?
+### Why are there two CPU bus masters?
 
-It is a native LiteX adapter and is not called directly from any chapter Python file. VexiiRiscv exposes an AXI-Lite peripheral bus. The LiteX `SoCCore` main bus in this setup is Wishbone. While the CPU master is registered, LiteX's `add_master()` / `add_adapter()` path looks up the protocol conversion and instantiates `AXILite2Wishbone` from `litex/soc/interconnect/axi/axi_lite_to_wishbone.py`.
+The VexRiscv wrapper exposes an instruction Wishbone interface and a data Wishbone interface. LiteX registers them as `cpu_bus0` and `cpu_bus1`. The shared bus arbiter chooses a requester, and the decoder routes its address to ROM, SRAM, or a device. This is direct Wishbone integration; there is no AXI-Lite adapter in this design.
 
 ```text
-cpu_type="vexiiriscv"
-    → native VexiiRiscv wrapper exposes AXI-Lite pBus
-    → SoCCore registers cpu_bus0 on its Wishbone main bus
-    → LiteX inserts AXILite2Wishbone
-    → ROM, SRAM, and project endpoint respond on Wishbone
+VexRiscv ibus ─┐
+               ├─ transaction arbiter ─ decoder ─ SoC slaves
+VexRiscv dbus ─┘
 ```
 
-The generated build log reports `cpu_bus0 Bus adapted from AXI-Lite 32-bit to Wishbone 32-bit`. That log line is the direct evidence that LiteX added the bridge in this build. The adapter converts transaction protocol and address representation; it does not decide the software memory map by itself.
+`bus_arbiter="transaction"` keeps the selected master until ACK/ERR. This matters because instruction fetch can remain active while a data access is pending.
 
 ### What is `tour_paths.add_litex_to_path`?
 
@@ -84,6 +82,7 @@ The firmware contains addresses in its instructions. Stage 05 placed SRAM at `0x
 The memory map lists byte addresses. The completion endpoint's last byte address is `0x80000fff`, and the firmware writes the final 32-bit word at byte address `0x80000ffc`. On the word-addressed Wishbone trace that is `0x80000ffc / 4 = 0x200003ff`. The log labels this value `word_address` so it is not confused with the software-visible byte address.
 
 ## Run and inspect
+The run also copies the exact simulator RTL inputs into [`results/06/rtl`](../../results/06/rtl), including the generated LiteX top, Vex CPU module, RAM support RTL, ROM initialization data, and `rtl_sources.txt`.
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/06-litex-soc/run.py
@@ -97,7 +96,7 @@ find LiteX source → assemble firmware for this map → create full ROM image
 → compile simulator → run CPU → require the expected SOC_COMPLETE log
 ```
 
-Look at `results/06/builder/csr.csv` for Builder's map, `results/06/memory_map.csv` for the copied map, `build.log` for the AXI-Lite-to-Wishbone adapter message, and `run.log` for CPU observations. `compile.log` captures the simulator build. `builder/gateware/sim.vcd` lets you follow clock/reset, CPU AXI-Lite signals, Wishbone after the adapter, and the completion endpoint.
+Look at `results/06/builder/csr.csv` for Builder's map, `results/06/memory_map.csv` for the copied map, `build.log` for LiteX bus and memory construction, and `run.log` for CPU observations. `compile.log` captures the simulator build. `builder/gateware/sim.vcd` lets you follow clock/reset, CPU instruction/data Wishbone signals, the shared bus, and the completion endpoint.
 
 ## What does a PASS prove?
 

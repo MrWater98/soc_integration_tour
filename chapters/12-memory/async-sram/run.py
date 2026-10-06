@@ -13,8 +13,7 @@ from litex_builder import build_and_run
 
 REGIONS = {"rom": (0, 4096), "sram": (0x10000000, 4096),
            "ext_sram": (0x90000000, 4096), "main_ram": (0x40000000, 16384),
-           "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536),
-                 "clint": (0xf0010000, 65536), "plic": (0xf0c00000, 4194304)}
+           "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536)}
 
 
 def check_log(log):
@@ -34,8 +33,6 @@ def check_log(log):
 
 def main():
     add_litex_to_path(ROOT)
-    from vexii_config import configure_vexii
-    configure_vexii()
     from soc import ProjectSoC
     result = ROOT / "results/12-async-sram"
     image = result / "firmware"
@@ -45,7 +42,7 @@ def main():
     if not gcc or not objcopy:
         raise RuntimeError("缺少第 00 章 RISC-V 工具链")
     elf = image / "program.elf"
-    command = [gcc, "-march=rv32im", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
+    command = [gcc, "-march=rv32i2p0", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
         "-fno-builtin", "-nostdlib", "-nostartfiles", "-O1",
         f"-Wl,-T,{CHAPTER / 'linker.ld'}", "-Wl,--build-id=none",
         f"-Wl,-Map={image / 'program.map'}",

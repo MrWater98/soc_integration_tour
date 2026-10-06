@@ -41,7 +41,7 @@ class CompletionSlave(Module):
 class ProjectSoC(SoCCore):
     def __init__(self, platform, *, rom_words):
         super().__init__(platform,
-            clk_freq=SYS_CLK_HZ, cpu_type="vexiiriscv", cpu_variant="standard",
+            clk_freq=SYS_CLK_HZ, cpu_type="vexriscv", cpu_variant="minimal", bus_arbiter="transaction",
             cpu_reset_address=0, integrated_rom_size=0x1000,
             integrated_rom_init=rom_words, integrated_sram_size=0x1000,
             integrated_main_ram_size=0, with_uart=False, with_timer=False,

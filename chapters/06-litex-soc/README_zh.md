@@ -13,7 +13,7 @@ soc.py：SoCCore 参数 + 项目完成端点
 LiteX Builder：gateware、csr.csv/csr.json、仿真工程
         │
         ├── check_generated_map：地址图与固件约定比较
-        └── 编译 Verilator 模型 → 运行 VexiiRiscv → 检查 SOC_COMPLETE
+        └── 编译 Verilator 模型 → 运行 VexRiscv → 检查 SOC_COMPLETE
 ```
 
 ## 本章的 `SoCCore` 配置对应什么实验？
@@ -30,7 +30,7 @@ LiteX Builder：gateware、csr.csv/csr.json、仿真工程
 | `with_uart / with_timer / with_ctrl` | 都为 `False` | 本章不测试这些外设，关闭它们避免额外模块干扰地址图。 |
 | `ident` | `"SoC Integration Tour Stage 06"` | 标识这次生成的 LiteX SoC。 |
 
-CPU 类型、变体、`platform` 和时钟配置在 `soc.py` 的 `super().__init__(...)` 中也明确给出。未指定的总线参数采用 LiteX 默认值；此处 LiteX 主总线为 Wishbone，VexiiRiscv 外设口为 AXI-Lite，因此 LiteX 自动插入协议适配器。
+CPU 类型、变体、`platform` 和时钟配置在 `soc.py` 的 `super().__init__(...)` 中明确给出。VexRiscv 提供取指和数据两个 Wishbone master；本章的 `bus_arbiter="transaction"` 让每个 master 保持总线直到收到应答。
 
 4 KiB ROM/SRAM、1024 字镜像和关闭外设都是本章的配置，目的是清楚地观察首末边界读写，并减少无关模块。调整 ROM 时，要让 `write_rom_init`、`integrated_rom_size`、链接/镜像构建和 `check_generated_map` 保持一致；调整 SRAM 容量或区域地址时，也要更新固件访问地址和预期地址图。这些数值不是 LiteX 的固定要求。
 
@@ -38,19 +38,17 @@ CPU 类型、变体、`platform` 和时钟配置在 `soc.py` 的 `super().__init
 
 ## 常见问题
 
-### `AXILite2Wishbone` 到底在哪里调用？
+### 为什么 CPU 有两个总线 master？
 
-它是 LiteX 原生适配器，不会由某个章节 Python 文件直接调用。VexiiRiscv 暴露 AXI-Lite 外设总线，而这里 `SoCCore` 的主总线是 Wishbone。LiteX 注册 CPU master 时，`add_master()` / `add_adapter()` 会查询协议转换关系，并从 `litex/soc/interconnect/axi/axi_lite_to_wishbone.py` 实例化 `AXILite2Wishbone`。
+VexRiscv wrapper 提供独立的取指 Wishbone 和数据 Wishbone。LiteX 将它们注册为 `cpu_bus0`、`cpu_bus1`。共享总线仲裁器选择请求者，地址译码器再把访问送到 ROM、SRAM 或外设。这条路径直接使用 Wishbone，没有 AXI-Lite 适配器。
 
 ```text
-cpu_type="vexiiriscv"
-    → 原生 VexiiRiscv 封装提供 AXI-Lite pBus
-    → SoCCore 把 cpu_bus0 注册到 Wishbone 主总线
-    → LiteX 插入 AXILite2Wishbone
-    → ROM、SRAM、项目端点通过 Wishbone 应答
+VexRiscv ibus ─┐
+               ├─ 事务仲裁器 ─ 地址译码 ─ SoC 从设备
+VexRiscv dbus ─┘
 ```
 
-构建日志中的 `cpu_bus0 Bus adapted from AXI-Lite 32-bit to Wishbone 32-bit` 是这次构建插入桥的直接证据。桥负责协议和地址表示转换；它本身不会决定软件 memory map。项目增加 Wishbone 端点，不重复实现协议桥。
+`bus_arbiter="transaction"` 会让当前 master 一直占有事务，直到 ACK/ERR。取指可能持续进行，而数据端口也会发请求，因此需要按事务完成点切换 master。
 
 ### `tour_paths.add_litex_to_path` 是什么？
 
@@ -83,6 +81,7 @@ cpu_type="vexiiriscv"
 地图使用字节地址。完成端点的最后一个字节地址是 `0x80000fff`，固件向末尾 32 位字节地址 `0x80000ffc` 写入。按字寻址的 Wishbone 上它是 `0x80000ffc / 4 = 0x200003ff`。日志写明 `word_address`，表示这是字地址，不是软件字节地址。
 
 ## 运行与观察
+运行时还会把仿真器实际使用的 RTL 输入复制到 [`results/06/rtl`](../../results/06/rtl)，包括 LiteX 顶层、Vex CPU、RAM 支持 RTL、ROM 初始化数据和 `rtl_sources.txt`。
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/06-litex-soc/run.py
@@ -96,7 +95,7 @@ PYTHONHASHSEED=0 python3 chapters/06-litex-soc/run.py
 → 编译仿真器 → 运行 CPU → 要求日志出现 SOC_COMPLETE
 ```
 
-查看 `results/06/builder/csr.csv` 中 Builder 的地址图、`results/06/memory_map.csv` 中的副本、`build.log` 中 AXI-Lite 到 Wishbone 的适配记录，以及 `run.log` 中的 CPU 运行信息。`compile.log` 是仿真器构建日志；`builder/gateware/sim.vcd` 可观察时钟/复位、CPU AXI-Lite 信号、桥后的 Wishbone 和完成端点。
+查看 `results/06/builder/csr.csv` 中 Builder 的地址图、`results/06/memory_map.csv` 中的副本、`build.log` 中 LiteX 的总线和存储器构建信息，以及 `run.log` 中的 CPU 运行信息。`compile.log` 是仿真器构建日志；`builder/gateware/sim.vcd` 可观察时钟/复位、CPU 取指/数据 Wishbone、共享总线和完成端点。
 
 ## PASS 能证明什么？
 

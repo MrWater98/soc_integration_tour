@@ -1,0 +1,8 @@
+Standalone RTL snapshots for the Wishbone register slave:
+02-normal.v: RegisterSlave with immediate normal response.
+02-wait2.v: RegisterSlave configured for two wait cycles.
+02-no_ack.v: RegisterSlave configured never to assert ACK.
+02-early_ack.v: RegisterSlave fault mode that asserts ACK while idle.
+02-held_ack.v: RegisterSlave fault mode that keeps ACK asserted after completion.
+The unmapped case uses 02-normal.v; verify.py changes the Python master address to an undecoded word.
+The test master and cycle recorder are Python generators in verify.py, not RTL modules.

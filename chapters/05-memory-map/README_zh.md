@@ -18,9 +18,9 @@
 
 ## LiteX 的区域声明怎样变成真正的连接？
 
-本章仍用 `SoCCore` 建立 CPU、主总线和 ROM，但把内建 SRAM 大小设为 0，再用 `wishbone.SRAM(4096)` 显式创建 SRAM。`bus.add_slave(..., region=SoCRegion(...))` 把 SRAM 和自定义寄存器从设备接入主总线；LiteX 根据 `origin` 和 `size` 做地址选择。寄存器还单独登记 `SoCIORegion`，并设 `cached=False`；SRAM 标记 `cached=True`。`memory_map.py` 只是另一份软件侧契约和检查器，不会代替这些 LiteX 连接。
+本章仍用 `SoCCore` 建立 CPU、主总线和 ROM，但把内建 SRAM 大小设为 0，再用 `wishbone.SRAM(4096)` 显式创建 SRAM。`bus.add_slave(..., region=SoCRegion(...))` 把 SRAM 和自定义寄存器从设备接入主总线；LiteX 根据 `origin` 和 `size` 做地址选择。寄存器还单独登记 `SoCIORegion`，并设 `cached=False`；SRAM 标记 `cached=True`。这些是区域属性，不是缓存电路。本项目使用无缓存的 VexRiscv `minimal`，因此每次访问都会上总线；属性描述的是支持缓存的 CPU 应如何看待这些区域。`memory_map.py` 只是另一份软件侧契约和检查器，不会代替这些 LiteX 连接。
 
-这里的参数必须同步：SoC 声明 ROM 4 KiB、SRAM 从 `0x10000` 起 4 KiB、寄存器从 `0x20000000` 起 4 KiB；`REGIONS`、`memory_map.py`、固件使用的地址和 Builder 输出都应一致。移动或扩容某一段时，至少要检查相邻区域是否重叠、固件是否仍访问预期地址、生成 CSV 是否更新。`cached=False` 对寄存器很重要；若把寄存器当普通缓存内存，CPU 可能复用旧读值或延后写入，仿真完成端点就无法按每笔访问观察行为。
+这里的参数必须同步：SoC 声明 ROM 4 KiB、SRAM 从 `0x10000` 起 4 KiB、寄存器从 `0x20000000` 起 4 KiB；`REGIONS`、`memory_map.py`、固件使用的地址和 Builder 输出都应一致。移动或扩容某一段时，至少要检查相邻区域是否重叠、固件是否仍访问预期地址、生成 CSV 是否更新。`cached=False` 表达寄存器区的设备内存策略。当前无缓存的 `minimal` 核本来就会让每次读写到达总线。
 
 ## 常见问题
 
@@ -34,17 +34,18 @@
 
 ### 地址重叠或未映射会怎样？
 
-地址重叠表示两个区域同时认领同一段地址，检查器会在 CPU 仿真前拒绝。本章单元检查故意添加重叠区域，并要求 `validate()` 抛出错误。`0x30000000` 是本次负例挑选的地址空洞；只要地址不属于任何区域，都应出现相同的未映射行为。CPU trap handler 把 `mcause=5`（load access fault）写到测试端点，运行器要求这个故障标志并确认没有正常完成标志。
+地址重叠表示两个区域同时认领同一段地址，检查器会在 CPU 仿真前拒绝。本章单元检查故意添加重叠区域，并要求 `validate()` 抛出错误。`0x30000000` 是本次负例挑选的地址空洞；只要地址不属于任何区域，都应出现相同的未映射行为。load 请求会保持有效但没有 ACK。当前 VexRiscv `minimal` RTL 不会把 Wishbone 无应答转成这里原先假设的 load access trap，因此运行器直接检查总线请求，而不伪造 `mcause` 结果。
 
 ### 怎样分辨到底哪部分出了问题？
 
-不同层次分别留下证据：地图检查在构建前指出重叠；总线地址和选中的区域说明有效请求应该去哪；CPU trap handler 在没有设备回答时记录架构级 load fault。查看波形和运行日志，可以把地址图错误与固件读值不匹配区分开。
+不同层次分别留下证据：地图检查在构建前指出重叠；总线地址和选中的区域说明有效请求应该去哪；没有区域应答时，有限时长的测试监视器记录未得到 ACK 的 Wishbone 请求。minimal 核不会把缺少总线应答转成架构级 load fault。查看波形和运行日志，可以把地址图错误与固件读值不匹配区分开。
 
 ### 声明一张地址表就自动有译码器了吗？
 
 没有。表格或 CSV 只是约定。本章由 LiteX bus region 把 ROM、`wishbone.SRAM` 和寄存器从设备连接到主总线；地图检查器提前验证计划中的字节范围。第 06 章会把这份手工约定与 LiteX Builder 生成的地址图比较。
 
 ## 运行与观察
+正常构建和未映射地址负例的 RTL 分别保存在 [`results/05/rtl`](../../results/05/rtl) 与 [`results/05-unmapped/rtl`](../../results/05-unmapped/rtl)。每个目录都有 SoC 顶层、对应的 Vex CPU、RAM 源文件、ROM 数据，以及记录编译输入的 `rtl_sources.txt`。
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/05-memory-map/run.py
@@ -56,4 +57,4 @@ PYTHONHASHSEED=0 python3 chapters/05-memory-map/run.py
 
 ## PASS 能证明什么？
 
-地图单元测试证明区域满足对齐、不重叠，且边界地址只命中预期区域。正常 CPU 仿真证明访问到达指定目标。未映射负例证明地址空洞会变成 load access fault，而不是返回陈旧数据或误报完成。第 06 章继续检查 LiteX 自动生成的系统地址图。
+地图单元测试证明区域满足对齐、不重叠，且边界地址只命中预期区域。正常 CPU 仿真证明访问到达指定目标。未映射负例证明访问地址空洞得不到应答，也不会误报完成。第 06 章继续检查 LiteX 自动生成的系统地址图。

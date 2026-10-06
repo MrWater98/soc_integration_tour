@@ -1,0 +1,4 @@
+Verilog inputs passed to the simulator compiler:
+VexRiscv_Min.v <- pythondata_cpu_vexriscv/verilog/VexRiscv_Min.v
+sim.v <- results/03/builder/gateware/sim.v
+sim_rom.init <- results/03/builder/gateware/sim_rom.init (memory initialization data)

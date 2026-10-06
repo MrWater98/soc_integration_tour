@@ -1,4 +1,4 @@
-"""A VexiiRiscv SoC with LiteX UART and a pin-level serial loopback."""
+"""A VexRiscv SoC with LiteX UART and a pin-level serial loopback."""
 from migen import Cat, Display, Finish, If, Module, Signal
 from litex.soc.interconnect import wishbone
 from litex.soc.integration.soc import SoCRegion
@@ -65,7 +65,7 @@ class ProjectSoC(SoCCore):
     def __init__(self, platform, *, rom_words, monitor_bit_cycles=BIT_CYCLES,
                  reset_during_tx=False):
         super().__init__(platform,
-            clk_freq=SYS_CLK_HZ, cpu_type="vexiiriscv", cpu_variant="standard",
+            clk_freq=SYS_CLK_HZ, cpu_type="vexriscv", cpu_variant="minimal", bus_arbiter="transaction",
             cpu_reset_address=0, integrated_rom_size=0x1000,
             integrated_rom_init=rom_words, integrated_sram_size=0x1000,
             integrated_main_ram_size=16*1024, with_uart=False, with_timer=False,

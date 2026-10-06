@@ -120,7 +120,7 @@ def main():
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=True)
     cases = ("normal", "wait2", "no_ack", "early_ack", "held_ack", "unmapped") if args.case == "all" else (args.case,)
-    rtl_dir = CHAPTER / "work" / "rtl"
+    rtl_dir = out / "rtl"
     rtl_dir.mkdir(parents=True, exist_ok=True)
     for case in cases:
         fault = case if case in ("no_ack", "early_ack", "held_ack") else None
@@ -147,6 +147,22 @@ def main():
             writer = csv.DictWriter(file, fieldnames=rows[0].keys())
             writer.writeheader()
             writer.writerows(rows)
+    manifest = ["Standalone RTL snapshots for the Wishbone register slave:"]
+    descriptions = {
+        "normal": "RegisterSlave with immediate normal response.",
+        "wait2": "RegisterSlave configured for two wait cycles.",
+        "no_ack": "RegisterSlave configured never to assert ACK.",
+        "early_ack": "RegisterSlave fault mode that asserts ACK while idle.",
+        "held_ack": "RegisterSlave fault mode that keeps ACK asserted after completion.",
+    }
+    for name in ("normal", "wait2", "no_ack", "early_ack", "held_ack"):
+        if (rtl_dir / f"02-{name}.v").is_file():
+            manifest.append(f"02-{name}.v: {descriptions[name]}")
+    manifest.extend([
+        "The unmapped case uses 02-normal.v; verify.py changes the Python master address to an undecoded word.",
+        "The test master and cycle recorder are Python generators in verify.py, not RTL modules.",
+    ])
+    (rtl_dir / "rtl_sources.txt").write_text("\n".join(manifest) + "\n")
     print(f"Output: {out}")
 
 

@@ -1,6 +1,6 @@
 # 第 12 章：三种外部存储器，三种访问方法
 
-前面的小 SoC 用片上 ROM 启动、片上 SRAM 放临时数据。容量变大时，外部存储器不能都当成“再接一块 SRAM”：异步 SRAM 要管片选和读写等待，SDRAM 要初始化与刷新，SPI Flash 则要用串行命令取数据。本章把三种实验放在独立子目录，均由真实 VexiiRiscv 程序发起访问。
+前面的小 SoC 用片上 ROM 启动、片上 SRAM 放临时数据。容量变大时，外部存储器不能都当成“再接一块 SRAM”：异步 SRAM 要管片选和读写等待，SDRAM 要初始化与刷新，SPI Flash 则要用串行命令取数据。本章把三种实验放在独立子目录，均由真实 VexRiscv 程序发起访问。
 
 ## 先分清谁做什么
 
@@ -13,11 +13,11 @@
 | LiteDRAM SDRAM | `0x40000000`，4 MiB；SDRAM 项替代片上 main RAM | **先执行 SDR 初始化序列** | LiteDRAM 控制器与 PHY 模型处理行/列、刷新 | 初始化、边界、数据模式、刷新后读回 |
 | SPI Flash | `0xa0000000`，4 KiB 只读窗口 | `flash_image.hex` 预载模型 | 每个 CPU 读转为 `0x03`＋24 位地址＋32 位数据 | 镜像头、校验和、末字 |
 
-三项实验使用**三个单独构建的 SoC**，地址 `0x40000000` 在 SDRAM 项代表外部 DRAM，在另两项代表片上 main RAM。每项的 `csr.csv` 才是该项实际地址图，不能把三张图混成一张。SRAM 和 Flash 被放在 VexiiRiscv 的 `0x80000000` 以上 IO 窗口，以便直接观察不经缓存的总线交易；它们不作为本章的取指区域。SDRAM 以 `main_ram` 接入，地图标记为 cached/rwx；本章只验证数据访问，没有验证从 SDRAM 执行代码。
+三项实验使用**三个单独构建的 SoC**，地址 `0x40000000` 在 SDRAM 项代表外部 DRAM，在另两项代表片上 main RAM。每项的 `csr.csv` 才是该项实际地址图，不能把三张图混成一张。SRAM 和 Flash 被放在 VexRiscv 的 `0x80000000` 以上 IO 窗口；它们不作为本章的取指区域。当前选用无缓存的 `minimal` 核，访问都会直接到总线。SDRAM 以 `main_ram` 接入，地图标记为 cached/rwx；本章只验证数据访问，没有验证从 SDRAM 执行代码。
 
 ## 为什么三个 SoC 的 `SoCCore` 参数不同？
 
-三套构建都保留同一类 VexiiRiscv、复位地址 `0` 和 4 KiB 启动 ROM。可写内存则按固件需要配置：
+三套构建都保留同一类 VexRiscv、复位地址 `0` 和 4 KiB 启动 ROM。可写内存则按固件需要配置：
 
 | 构建 | `integrated_sram_size` | `integrated_main_ram_size` | LiteX 外部模块与敏感参数 |
 | --- | ---: | ---: | --- |
@@ -25,7 +25,7 @@
 | SDRAM | 4 KiB | 0 | `add_sdram(..., origin=0x40000000, size=4 MiB, l2_cache_size=0)` 自己建立 `main_ram`；SoC 时钟、LiteDRAM model 和 PHY 时钟都设为 50 MHz。 |
 | SPI Flash | 4 KiB | 16 KiB | 只读桥映射到 `0xa0000000`，容量 4 KiB、不可缓存；每次 CPU load 都变成串行读取帧。 |
 
-SDRAM 版本不要再把 4 MiB 填进 `integrated_main_ram_size`：`add_sdram` 已经创建了 `main_ram` 区域；4 KiB 集成 SRAM 则在 DRAM 初始化完成前供启动栈和运行时数据使用。改 SDRAM 几何却不改映射容量，会造成固件地址图与实际模型容量不一致。异步 SRAM 和 Flash 设 `cached=False`，让每次 CPU 读都能到达桥和器件模型；改成可缓存可能让协议检查看不到重复总线访问。修改起始地址或容量时，也要同步修改 linker region，并重新核对该构建生成的 `csr.csv`。
+SDRAM 版本不要再把 4 MiB 填进 `integrated_main_ram_size`：`add_sdram` 已经创建了 `main_ram` 区域；4 KiB 集成 SRAM 则在 DRAM 初始化完成前供启动栈和运行时数据使用。改 SDRAM 几何却不改映射容量，会造成固件地址图与实际模型容量不一致。异步 SRAM 和 Flash 设 `cached=False`，表达设备内存策略；本章使用无缓存的 `minimal` 核，读请求无论此标记如何都会到达桥和器件模型。该标记不会创建或关闭 CPU 缓存。修改起始地址或容量时，也要同步修改 linker region，并重新核对该构建生成的 `csr.csv`。
 
 表格里反复出现的数值是本实验的配置，不是 SoC 的固定规则。例如，每个 4 KiB 区域都来自对应的 `SoCRegion` 和存储模型；ROM、片上 RAM 容量还要与链接脚本的 `MEMORY` 区域和固件镜像相符。SRAM/Flash 固件使用 16 KiB `main_ram`；SDRAM 构建则把 `integrated_main_ram_size` 设为 0，再把外部模型注册为 `main_ram`。只改其中一处，就会让生成的地址图、链接器假设或模型容量彼此不一致。
 
@@ -56,6 +56,8 @@ CPU 读 `0xa0000000` 时，`FlashReadBridge` 向独立的 `spi_flash_model.v` �
 运行器还会把镜像第 8 字节翻转 1 bit，再使用同一份固件和硬件重新仿真。头和长度仍正确，CPU 应在校验和处写出失败码 `0xe3`；记录保存在 `results/12-spi-flash/corrupt-image.log`。运行器随后恢复正常镜像。
 
 ## 运行与证据
+
+三套仿真的完整 RTL 输入分别保存在 [`results/12-async-sram/rtl`](../../results/12-async-sram/rtl)、[`results/12-sdram/rtl`](../../results/12-sdram/rtl) 和 [`results/12-spi-flash/rtl`](../../results/12-spi-flash/rtl)。每个目录都有生成的 `sim.v`、对应的 Vex CPU 与 RAM 支持 RTL、所有 `readmem` 初始化文件和 `rtl_sources.txt` 清单。异步 SRAM 与 SPI Flash 目录还包含本章自定义的引脚模型；SDRAM 控制器和 PHY 模型则已展开进生成的 `sim.v`。
 
 LiteDRAM 是额外的外部库。可以安装它，或者在教程根目录准备固定源码版本并设置：
 

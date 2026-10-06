@@ -4,7 +4,7 @@ _start:
     la sp, __stack_top
     la t0, trap_entry
     csrw mtvec, t0
-    li t0, 0x800             # VexiiRiscv PLIC delivers machine external interrupts.
+    li t0, 0x800             # VexRiscv accepts LiteX IRQ sources as machine external interrupts.
     csrw mie, t0
     la t0, __data_load_start
     la t1, __data_start

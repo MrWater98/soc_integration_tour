@@ -1,4 +1,4 @@
-"""Chapter-local VexiiRiscv SoC: native AXI-Lite CPU and Wishbone project endpoints."""
+"""Chapter-local VexRiscv SoC: native Wishbone CPU and project endpoints."""
 from migen import Display, Finish, If, Module, Signal
 from litex.soc.interconnect import wishbone
 from litex.soc.integration.soc import SoCIORegion, SoCRegion
@@ -38,7 +38,7 @@ class ProjectSoC(SoCCore):
     def __init__(self, platform, *, rom_words, sram_size=0, expected=0x5a,
                  finish_at_first=False):
         super().__init__(platform, clk_freq=1_000_000,
-            cpu_type="vexiiriscv", cpu_variant="standard", cpu_reset_address=0,
+            cpu_type="vexriscv", cpu_variant="minimal", bus_arbiter="transaction", cpu_reset_address=0,
             integrated_rom_size=len(rom_words) * 4, integrated_rom_init=rom_words,
             integrated_sram_size=0, integrated_main_ram_size=0,
             with_uart=False, with_timer=False, with_ctrl=False)

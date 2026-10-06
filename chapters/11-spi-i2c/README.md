@@ -1,6 +1,6 @@
 # 11 — SPI and I²C: Who Drives Each Bit?
 
-UART sends bytes over one timed serial line. SPI and I²C also select a device or send an address. This stage has VexiiRiscv C code bit-bang the pins through CSR reads and writes. Independent responder models decode the serial waveforms and provide the return data; the test does not manufacture a successful read by directly returning the expected C value.
+UART sends bytes over one timed serial line. SPI and I²C also select a device or send an address. This stage has VexRiscv C code bit-bang the pins through CSR reads and writes. Independent responder models decode the serial waveforms and provide the return data; the test does not manufacture a successful read by directly returning the expected C value.
 
 ```text
 SPI: CPU → spi_out CSR → CLK/MOSI/CS_N → SPI device model
@@ -43,6 +43,7 @@ The device's 7-bit address is `0x42`. The wire byte combines it with the read/wr
 The goal here is to make every edge and bit ownership visible. `spi_out` and `i2c_out` are CSRStorage values that drive pins; `spi_input` and `i2c_input` expose pin state through CSRStatus. They are not full SPI/I²C controller IP. This deliberately small design lets us inspect protocol timing before adding controller FIFOs or DMA.
 
 ## Run and inspect
+The [`results/11/rtl`](../../results/11/rtl) snapshot contains every Verilog file passed to the simulator compiler: the LiteX SoC top, generated Vex CPU and RAM support modules, plus the chapter's `i2c_device.v` model. It also includes all referenced memory initialization files and `rtl_sources.txt`.
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/11-spi-i2c/run.py

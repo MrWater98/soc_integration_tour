@@ -1,12 +1,12 @@
 # 03 —— 从汇编到真正启动的 ROM 镜像
 
-第 01 章按地址从一小段内联指令返回数据。本章改为用 RISC-V 工具链编译固件、打包完整的初始化 ROM，并让同一颗 VexiiRiscv 从复位地址 0 启动。
+第 01 章按地址从一小段内联指令返回数据。本章改为用 RISC-V 工具链编译固件、打包完整的初始化 ROM，并让同一颗 VexRiscv 从复位地址 0 启动。
 
 ## 汇编怎样变成 ROM 内容？
 
 ```text
 program.S
-   │ riscv64-unknown-elf-gcc（rv32im、ilp32，链接地址 0）
+   │ riscv64-unknown-elf-gcc（rv32i2p0、ilp32，链接地址 0）
    ▼
 program.elf ── objcopy -O binary ──> program.bin（字节）
                                       │ 每 4 字节按小端序组合
@@ -17,10 +17,10 @@ program.elf ── objcopy -O binary ──> program.bin（字节）
                                  rom_init.hex（完整 1 KiB 镜像）
                                       │ integrated_rom_init
                                       ▼
-                           LiteX ROM → VexiiRiscv 取指
+                           LiteX ROM → VexRiscv 取指
 ```
 
-代码链接到 `0x0`，因为 CPU 复位地址为 `0x0`，ROM 也从这里开始。`rv32im` 选择指令集，`ilp32` 选择 32 位 ABI。这些是软件构建参数，必须和生成的 CPU 支持的指令集匹配；只改编译器 ISA 参数，可能生成 CPU 无法执行的指令。编译器构建的是软件，不是 CPU RTL。
+代码链接到 `0x0`，因为 CPU 复位地址为 `0x0`，ROM 也从这里开始。`rv32i2p0` 选择指令集，`ilp32` 选择 32 位 ABI。这些是软件构建参数，必须和生成的 CPU 支持的指令集匹配；只改编译器 ISA 参数，可能生成 CPU 无法执行的指令。编译器构建的是软件，不是 CPU RTL。
 
 ## LiteX 在这里负责哪一段？
 
@@ -30,7 +30,7 @@ program.elf ── objcopy -O binary ──> program.bin（字节）
 
 ## 从 Python 调用追到生成的 RTL
 
-这些 Python 函数在构建阶段运行。`build_program()` 调工具链生成 ELF 和二进制；`write_rom_init()` 把字节打包为 32 位字并补齐；之后 `ProjectSoC(..., rom_words=words)` 把这些字交给 `SoCCore`。LiteX Builder elaboration 时，`integrated_rom_size=len(words)*4` 建立 ROM 存储体，`integrated_rom_init=words` 成为初始化内容。RTL 快照 [`work/rtl/03-rom-soc.v`](work/rtl/03-rom-soc.v) 中能看到：
+这些 Python 函数在构建阶段运行。`build_program()` 调工具链生成 ELF 和二进制；`write_rom_init()` 把字节打包为 32 位字并补齐；之后 `ProjectSoC(..., rom_words=words)` 把这些字交给 `SoCCore`。LiteX Builder elaboration 时，`integrated_rom_size=len(words)*4` 建立 ROM 存储体，`integrated_rom_init=words` 成为初始化内容。本章完整 RTL 输入集在 [`results/03/rtl`](../../results/03/rtl)，其中 [`sim.v`](../../results/03/rtl/sim.v) 能看到：
 
 ```verilog
 reg [31:0] rom[0:255];
@@ -43,7 +43,7 @@ always @(posedge sys_clk_1)
 
 这就是“固件在 ROM 里”对应的硬件：ROM 有 256 个 32 位存储单元，仿真启动时从初始化文件装入内容；CPU 取指地址经过 Wishbone 地址单位转换后选择 `rom[...]` 索引，数据在时钟沿后返回。板级 FPGA 构建会把同类存储描述映射到芯片内部存储资源；这里的 `$readmemh` 是仿真 RTL 的初始化方式。
 
-完成端点的连接与 01 章相同：`wishbone.Interface` 给出一组信号，`SoCRegion` 描述 CPU 可访问的地址范围，`bus.add_slave` 让 LiteX 把端点接入共享总线。查看 RTL 的 `decoder`、`projectsoc_registerslave_cyc` 和寄存器 ACK 逻辑，就能把 Python 中的 `SoCRegion`、端点 `self.sync` 与 Verilog 对起来。运行 `run.py` 会重新生成这份 RTL 快照。
+完成端点的连接与 01 章相同：`wishbone.Interface` 给出一组信号，`SoCRegion` 描述 CPU 可访问的地址范围，`bus.add_slave` 让 LiteX 把端点接入共享总线。查看 RTL 的 `decoder`、`projectsoc_registerslave_cyc` 和寄存器 ACK 逻辑，就能把 Python 中的 `SoCRegion`、端点 `self.sync` 与 Verilog 对起来。同一目录还包含哈希命名的 Vex CPU 模块、两个通用 RAM 支持文件、ROM 初始化数据，以及用于记录仿真器编译输入的 `rtl_sources.txt`。运行 `run.py` 会刷新整套文件。
 
 ## 常见问题
 
@@ -85,4 +85,4 @@ PYTHONHASHSEED=0 python3 chapters/03-rom/run.py
 
 ## PASS 能证明什么？
 
-通过表示汇编生成的镜像放得进配置的 ROM，复位地址和地址图检查一致，且 VexiiRiscv 执行到了预期完成写入。第 04 章再加入可写 SRAM，并检查字节通道和栈访问。
+通过表示汇编生成的镜像放得进配置的 ROM，复位地址和地址图检查一致，且 VexRiscv 执行到了预期完成写入。第 04 章再加入可写 SRAM，并检查字节通道和栈访问。

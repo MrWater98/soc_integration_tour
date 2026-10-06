@@ -1,10 +1,8 @@
     .section .text
     .globl _start
 _start:
-    la    t5, fault_handler
-    csrw  mtvec, t5
-    lui   sp, 0x11             # 0x11000
-    addi  sp, sp, -256         # Keep the stack top below the final boundary-test word
+    lui   sp, 0x10             # Stack top 0x10100 is inside even the 256-byte SRAM case.
+    addi  sp, sp, 0x100
     jal   ra, work
     lui   t0, 0x20000
     sw    a0, 0(t0)            # Include the SRAM readback value in the completion code
@@ -36,12 +34,3 @@ exercise_sram:
     bne   t2, t4, 2f
     jalr  zero, 0(ra)
 2:  jal   zero, 2b
-
-    .align 2
-fault_handler:
-    csrr  t1, mcause
-    lui   t0, 0x20000
-    sw    t1, 4(t0)            # record exception cause without using the invalid stack
-    li    t1, 0xe1
-    sw    t1, 0(t0)            # terminate the fault case explicitly
-3:  j     3b

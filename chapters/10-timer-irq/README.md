@@ -1,56 +1,38 @@
-# 10 — From Timer Polling to a CPU Interrupt
+# 10 — Timer Events and CPU Interrupts
 
-Stage 09 polled the UART status register: the CPU repeatedly asked whether a byte had arrived. This stage first polls a timer value, then lets the timer raise an interrupt. Firmware checks one one-shot interrupt and three periodic interrupts, clears each request, stops the timer, and verifies that no extra ISR runs.
+This chapter separates three steps that are easy to conflate: the timer reaches zero, LiteX raises an IRQ input, and the CPU accepts a machine external interrupt. The firmware tests polling, one-shot delivery, periodic delivery, and reset during the timer flow.
 
 ```text
-timer counts to zero
-  → event pending is set
-  → event enable raises timer0 IRQ
-  → PLIC source 1 is enabled and CPU interrupt masks allow delivery
-  → VexiiRiscv jumps to mtvec / trap_entry
-  → save registers → claim PLIC source → clear timer pending
-  → complete PLIC claim → restore registers → mret
-  → resume interrupted main code
+ProjectTimer reaches zero
+  → EventManager sets pending while event is enabled
+  → LiteX IRQ handler drives timer0 onto VexRiscv externalInterruptArray[0]
+  → firmware sets VexRiscv's source mask CSR `0xbc0` bit 0
+  → mie.MEIE and mstatus.MIE allow the CPU to trap
+  → mtvec enters trap_entry → isr clears timer pending → mret resumes firmware
 ```
 
-## What LiteX configuration connects the timer to the CPU?
+There is no PLIC in this SoC. LiteX's IRQ handler connects the source directly to the VexRiscv interrupt vector. The interrupt source number is a LiteX allocation shown in the generated map; this configuration gives `timer0` input 0.
 
-The SoC uses a 1 MHz clock, reset-at-zero CPU, 4 KiB ROM, 4 KiB on-chip SRAM, and 16 KiB main RAM. Main RAM holds C data, the stack, and the trap handler's saved registers. The built-in `with_timer` option is disabled because this chapter instantiates its explicitly named `ProjectTimer` instead. `add_module("timer0", ...)` adds the CSR/event logic, and `self.irq.add("timer0", use_loc_if_exists=True)` routes its event through LiteX's IRQ infrastructure; the generated map places it at PLIC source 1 in this build.
+## What the SoC configures
 
-`load` and `reload` are counts of `sys` clock cycles, not microseconds: with a 1 MHz clock, 1200 counts are about 1.2 ms. Changing `clk_freq` changes elapsed time but not the count values; changing `reload` from zero to a positive value changes a one-shot into a periodic event. The test and firmware must agree on both settings.
+`SoCCore` provides a 4 KiB ROM, 4 KiB integrated SRAM, and 16 KiB `main_ram`. The stack and C data live in `main_ram`. The built-in `with_timer` is disabled because this chapter creates `ProjectTimer` with explicit CSR names. `add_module()` includes it in the design; `self.irq.add("timer0")` connects its EventManager IRQ to the CPU vector.
 
-The test's `load=600` polling value, `load=300` one-shot value, and `reload=1200` periodic value are chosen to make the events visible in a short simulation. They are not architectural timer constants. If you change them, update the expected polling range, event timing bounds, and the number of periodic ISR observations together. Firmware also chooses PLIC priority `1` and threshold `0`; any positive priority above the threshold can be used for this single-source test. PLIC source 1 is this build's generated assignment; it may move when other interrupt sources are added.
+The test's `load=600`, one-shot `load=300`, and periodic `reload=1200` are simulation parameters chosen to make transitions visible. They are not fixed Timer values. The same is true of test loop bounds and expected ISR counts.
 
-## Questions and answers
+## Why doesn't the ISR claim a PLIC source?
 
-### What must be enabled before the CPU enters the ISR?
+A PLIC has claim/complete registers and arbitrates interrupt sources in systems that include one. This LiteX VexRiscv design has no PLIC. The CPU sees the LiteX IRQ line as a machine external interrupt. In this VexRiscv RTL, CSR `0xbc0` is an additional per-source mask: bit 0 must be set for `externalInterruptArray[0]` to contribute to `mip.MEIP`. Firmware then enables `mie.MEIE` (bit 11) and global `mstatus.MIE`. All three masks must allow delivery. The ISR clears the timer's own `ev_pending` bit before `mret`. If it leaves that source pending, the IRQ stays high and the CPU can trap again immediately.
 
-The timer event must be enabled, PLIC source 1 must have nonzero priority and be enabled, the CPU machine-external interrupt mask (`mie.MEIE`) must be set, the global machine interrupt enable (`mstatus.MIE`) must be set, and `mtvec` must point to the trap entry. A pending bit records that an event happened; by itself it does not guarantee delivery.
+The CPU records the interrupted PC in `mepc` and updates machine trap state. `trap_entry` saves the general registers that its C handler can modify to the RAM stack, calls `isr`, restores them, then executes `mret`. This is why the startup code must set `sp` to valid RAM before enabling interrupts.
 
-### Why is the timer implemented in this chapter instead of using `Timer()` directly?
+## What the tests observe
 
-With this pinned Python/Migen combination, LiteX's `Timer()` cannot infer stable CSR names and fails during construction. `ProjectTimer` spells out its named CSRs, down-counter, and `EventManager` connection while using LiteX `CSRStorage`, `CSRStatus`, and `EventSourceProcess`. This is actual hardware logic: count reaching zero sets pending and the event path drives the IRQ. It is not Python code pretending to call an ISR.
+The polling phase leaves interrupts disabled and samples the decreasing counter. The one-shot phase expects one ISR. The periodic phase expects three more; the ISR clears each event so the timer can assert a new edge. Simulation logs record IRQ rise/fall, ISR counts, and a final completion write. Reset cases pulse reset while the timer is counting or while an ISR starts, then require the firmware checks to complete again.
 
-### What is the difference between `pending` and `enable`?
-
-`pending` records an event that occurred. `enable` controls whether that event is allowed to raise the IRQ line. The polling phase reads a decreasing count with the interrupt disabled. The one-shot phase uses `reload=0`, so it should interrupt once. The periodic phase reloads 1200 and should interrupt three more times.
-
-### Why must the ISR claim and complete the PLIC request?
-
-The ISR reads the PLIC claim register to identify source 1, clears the timer pending bit, then writes the claim ID back to complete the PLIC transaction. If it returns without clearing the source, the IRQ line remains asserted and the CPU can re-enter immediately, producing an interrupt storm. The test checks for ISR re-entry and puts finite bounds on all waits.
-
-### What do the reset cases verify?
-
-One run resets the SoC while the timer is counting; another resets when the first ISR probe is written. After release, the CPU must restart from ROM and complete polling, all four expected ISR observations, and the final marker again. The reset-injection counter lives in a `por` domain that the system reset does not clear, so the reset pulse occurs once.
-
-## Run and inspect
+`run.py` checks the generated memory and CSR maps before compiling firmware. The first attempt exposed a useful failure: the IRQ line rose, but the CPU did not enter the ISR until firmware set the VexRiscv-specific `0xbc0` source mask as well as the standard RISC-V interrupt bits. It also checks the generated `timer0_interrupt` assignment and saves it in `results/10/irq_map.csv`. The CPU input in this build is index 0; this is a build result, not a universal LiteX interrupt number.
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/10-timer-irq/run.py
 ```
 
-The normal log contains `TIMER_POLL`, four `IRQ_LINE_ASSERT/CLEAR` pairs, `TIMER_ISR` values `(phase,count) = (1,1), (2,2), (2,3), (2,4)`, and `SOC_COMPLETE`. The two reset runs are under `results/10-reset-count/` and `results/10-reset-isr/`. Inspect `builder/csr.csv`, `irq_map.csv`, `firmware/program.map`, `run.log`, and the VCD. Follow timer count, pending, IRQ, the CPU external-interrupt input, ISR probes, then `mret`/return to main.
-
-## What does a PASS prove?
-
-The CSR map proves the timer registers and IRQ source were constructed. The IRQ-line transitions prove hardware requested service. ISR counters and the final completion prove the CPU received, acknowledged, and returned from each interrupt. The reset cases prove the software path can restart cleanly. These checks cover the simulated VexiiRiscv PLIC path, not board-level interrupt wiring.
+A PASS proves the modeled timer event reached the CPU, the handler cleared it, and firmware returned from the trap. It does not prove board-level interrupt wiring or physical timer accuracy.

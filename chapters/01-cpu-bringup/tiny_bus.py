@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A small, executable request/response picture; not VexiiRiscv RTL."""
+"""A small, executable request/response picture; not VexRiscv RTL."""
 
 
 WAIT_CYCLES = 1

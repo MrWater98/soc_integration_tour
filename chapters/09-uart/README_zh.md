@@ -26,13 +26,14 @@ TX 空闲为高电平，拉低表示一帧开始；后面从低位到高位送�
 
 ## 参数和地址
 
-本章保持 1 MHz 系统时钟，设置 100000 bit/s，方便每位约用 10 个时钟观察。UART TX/RX FIFO 各为 4 字节。`SoCCore` 添加真实 LiteX UART；`with_uart=False` 仅关闭默认实例，随后 `add_uart(..., baudrate=BAUD, fifo_depth=4, rx_fifo_rx_we=True)` 显式创建本章 UART。`rx_fifo_rx_we=True` 表示 CPU 读取 `rxtx` 时弹出一个接收字节。参数之间有直接关系：`BIT_CYCLES = SYS_CLK_HZ // BAUD = 10`；若改系统时钟，还要同步修改仿真时钟和监视器的 `decode_cycles`，否则观察器按错误位宽解码。FIFO 深度改为 8 后，连续写 4 字节就不再能证明 `txfull` 会置位。1 MHz、100 kbit/s 和 4 字节 FIFO 是本仿真的选择，不是 UART 的统一要求；保持 `SYS_CLK_HZ`、LiteX `clk_freq`、仿真时钟、整数位周期和监视器采样设置一致即可。这里使用 8N1 帧格式；改变波特率或 FIFO 深度不改变 8N1 的含义。UART 有 IRQ 线并分配为 IRQ 1（IRQ 0 在 VexiiRiscv 中保留），但本章 `ev_enable` 复位为 0，程序只轮询；下一章用 Timer 学习中断。若打开事件使能，固件也必须配置并服务 IRQ。源 1 是本次 SoC 生成地图里的分配，不是 UART 永远固定使用的编号；增加或调整 IRQ 源可能改变它。
+本章保持 1 MHz 系统时钟，设置 100000 bit/s，方便每位约用 10 个时钟观察。UART TX/RX FIFO 各为 4 字节。`SoCCore` 添加真实 LiteX UART；`with_uart=False` 仅关闭默认实例，随后 `add_uart(..., baudrate=BAUD, fifo_depth=4, rx_fifo_rx_we=True)` 显式创建本章 UART。`rx_fifo_rx_we=True` 表示 CPU 读取 `rxtx` 时弹出一个接收字节。参数之间有直接关系：`BIT_CYCLES = SYS_CLK_HZ // BAUD = 10`；若改系统时钟，还要同步修改仿真时钟和监视器的 `decode_cycles`，否则观察器按错误位宽解码。FIFO 深度改为 8 后，连续写 4 字节就不再能证明 `txfull` 会置位。1 MHz、100 kbit/s 和 4 字节 FIFO 是本仿真的选择，不是 UART 的统一要求；保持 `SYS_CLK_HZ`、LiteX `clk_freq`、仿真时钟、整数位周期和监视器采样设置一致即可。这里使用 8N1 帧格式；改变波特率或 FIFO 深度不改变 8N1 的含义。UART 有 IRQ 线并分配为 IRQ 1（IRQ 0 在 VexRiscv 中保留），但本章 `ev_enable` 复位为 0，程序只轮询；下一章用 Timer 学习中断。若打开事件使能，固件也必须配置并服务 IRQ。源 1 是本次 SoC 生成地图里的分配，不是 UART 永远固定使用的编号；增加或调整 IRQ 源可能改变它。
 
 程序通过本章 Builder 生成的 `csr.h` 调用 `uart_txfull_read()`、`uart_rxtx_write()`、`uart_rxempty_read()`、`uart_rxtx_read()`。`run.py` 在编译前核对 `csr.csv`：UART 数据寄存器 `uart_rxtx` 为 `0xf0000800`，`txfull` 为 `0xf0000804`，`rxempty` 为 `0xf0000808`。ROM、SRAM、main RAM、完成端点、CSR 空间的位置也逐项检查。生成头文件和最终运行的 SoC 使用同一组参数。
 
 `main.c` 发送单字符和短字符串时，每发一字节就等接收并比较。发送 `123456` 时先连续写入 4 字节 FIFO，观察一次 `txfull=1`，再依序取出所有接收字节。最后把**刚收到的** `6` 再写入 UART，并检查回环读回。`txfull=1` 只说明发送 FIFO 暂时不能再收字节，线路仍可能正在发送；`rxempty=1` 则表示 CPU 现在无字节可读。两个等待循环都有限次，卡住会写失败码。
 
 ## 运行与读日志
+正常、错误波特率和 TX 复位三套构建分别保存在 [`results/09/rtl`](../../results/09/rtl)、[`results/09-wrong-baud/rtl`](../../results/09-wrong-baud/rtl) 与 [`results/09-reset-tx/rtl`](../../results/09-reset-tx/rtl)。每个目录包含实际编译的全部 Verilog 和存储初始化文件，`rtl_sources.txt` 列出输入。
 
 ```sh
 python3 chapters/09-uart/run.py

@@ -28,7 +28,7 @@
 C 调用 gpio_out_output_write(0xa)
        │ 写 CSR 地址（普通 CPU store）
        ▼
-VexiiRiscv AXI-Lite → LiteX AXILite2Wishbone → 地址译码 → CSR bridge → CSRStorage
+VexRiscv dbus Wishbone → LiteX 地址译码 → CSR bridge → CSRStorage
                                                 │
                                                 └──> gpio_out[3:0] = 1010
 
@@ -94,6 +94,7 @@ CSR 是映射到 CPU 地址空间的一组小型控制/状态寄存器。LiteX B
 `GPIO_INPUT_DRIVE value=0x5` 是仿真环境改变引脚的记录。前后的 `SOC_PROBE data=0x00000000` 和 `SOC_PROBE data=0x00000005` 是 CPU 读完输入后主动写入的观察值。运行器检查事件顺序，并确认输出有 `0→a` 变化。只看最终值无法证明 CPU 先读到 0、后来读到新值。
 
 ## 运行、输出与验证
+构建时使用的 Verilog 输入会复制到 [`results/08/rtl`](../../results/08/rtl)，包括 SoC 顶层、Vex CPU、RAM 支持模块、ROM/RAM 初始化文件和源清单。
 
 ```sh
 python3 chapters/08-gpio/run.py

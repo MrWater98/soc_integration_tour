@@ -55,8 +55,8 @@ class ProjectSoC(SoCCore):
         super().__init__(
             platform,
             clk_freq=1_000_000,
-            cpu_type="vexiiriscv",
-            cpu_variant="standard",
+            cpu_type="vexriscv",
+            cpu_variant="minimal", bus_arbiter="transaction",
             cpu_reset_address=0x00000000,
             integrated_rom_size=0x1000,
             integrated_rom_init=rom_words,

@@ -18,8 +18,6 @@ def check_ram_prefill(output):
 
 def main():
     add_litex_to_path(ROOT)
-    from vexii_config import configure_vexii
-    configure_vexii()
     from soc import ProjectSoC
     chapter = CHAPTER
     # Negative test: sections plus stack reserve cannot fit in 256 bytes.
@@ -49,8 +47,7 @@ def main():
                                          main_ram_init=[0xa5a5a5a5] * 4096),
         regions={"rom": (0, 4096), "sram": (0x10000000, 4096),
                  "main_ram": (0x40000000, 16384),
-                 "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536),
-                 "clint": (0xf0010000, 65536), "plic": (0xf0c00000, 4194304)},
+                 "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536)},
         post_build_check=check_ram_prefill)
     print(f"ELF: {image_dir / 'program.elf'}; ROM image: {len(words) * 4} bytes")
     print("检查物: program.map、sections.txt、disassembly.txt、memory_map.csv、run.log")

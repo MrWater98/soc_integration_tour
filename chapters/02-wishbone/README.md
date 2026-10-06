@@ -24,7 +24,7 @@ self.comb += [bus.dat_r.eq(self.value), bus.err.eq(0)]
 self.sync += If(state == RESP, ...)
 ```
 
-The combinational assignments become continuous RTL connections such as `assign dat_r = value; assign err = 0;`. Synchronous statements become registers and next-state logic inside `always @(posedge sys_clk)`. The exported Verilog is in [`work/rtl/02-normal.v`](work/rtl/02-normal.v); inspect its `ack`, `dat_r`, and `always` blocks. `verify.py`'s Python generator is the test master, so it does not become RTL. It drives the interface while Migen simulates the hardware slave.
+The combinational assignments become continuous RTL connections such as `assign dat_r = value; assign err = 0;`. Synchronous statements become registers and next-state logic inside `always @(posedge sys_clk)`. The exported Verilog is in [`results/02/rtl/02-normal.v`](../../results/02/rtl/02-normal.v); inspect its `ack`, `dat_r`, and `always` blocks. `verify.py`'s Python generator is the test master, so it does not become RTL. It drives the interface while Migen simulates the hardware slave.
 
 There is no `SoC.bus.add_slave` here because this chapter has no SoC address decoder. The test master directly drives the slave interface. `RegisterSlave` compares the incoming word address with `WORD_ADDRESS`; an unmatched address never leaves `IDLE`, so it never receives an ACK. In chapters 01 and 03, LiteX's `add_slave(..., region=SoCRegion(...))` does the address selection at the SoC level before the request reaches a slave.
 
@@ -91,7 +91,7 @@ python3 chapters/02-wishbone/verify.py --case wait2
 
 The default run covers normal read/write/readback, byte enables, zero select, two wait cycles, missing ACK, early ACK, held ACK, and an unmapped address. It writes `results/02/<case>.csv` and `.vcd`. Start with `normal.csv`: find `cyc=stb=1`, follow the same address until `ack=1`, then check that request and ACK return low. The CSV is readable without a waveform viewer; the VCD can be opened with GTKWave.
 
-Each run also exports the slave RTL for that constructor setting to `work/rtl/02-<case>.v`. The `unmapped` case changes only the Python test master's address, so it uses the normal slave RTL. Comparing `02-normal.v`, `02-wait2.v`, and `02-no_ack.v` shows how a Python parameter or fault branch changes the generated state machine.
+Each run also exports the slave RTL for that constructor setting to `results/02/rtl/02-<case>.v`. The `unmapped` case changes only the Python test master's address, so it uses the normal slave RTL. Comparing `02-normal.v`, `02-wait2.v`, and `02-no_ack.v` shows how a Python parameter or fault branch changes the generated state machine.
 
 ## What does a PASS prove?
 

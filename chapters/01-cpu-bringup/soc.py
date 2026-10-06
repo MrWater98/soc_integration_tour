@@ -1,4 +1,4 @@
-"""A minimal native VexiiRiscv SoC with an instruction ROM and write target."""
+"""A minimal native VexRiscv SoC with an instruction ROM and write target."""
 from migen import Display, Finish, If, Module, Signal, Cat, Constant
 from litex.soc.interconnect import wishbone
 from litex.soc.integration.soc import SoCRegion, SoCIORegion
@@ -22,7 +22,7 @@ class WriteTarget(Module):
             self.sync += [bus.ack.eq(0), If(request & ~bus.ack, bus.ack.eq(1))]
             self.sync += If(request & ~bus.ack & bus.we,
                 If((bus.adr == 0x10) & (bus.dat_w == 0x40) & (bus.sel == 0xf),
-                    Display("PASS 01: VexiiRiscv wrote 0x40 to byte address 0x40"),
+                    Display("PASS 01: VexRiscv wrote 0x40 to byte address 0x40"),
                 ).Else(Display("FAIL 01: wrong write")), Finish())
 
 
@@ -30,8 +30,8 @@ class ProjectSoC(SoCCore):
     def __init__(self, platform, *, no_ack=False):
         # addi x1,x0,64; sw x1,0(x1); jal x0,0.
         words = [0x04000093, 0x0010a023, 0x0000006f] + [0x00000013] * 13
-        super().__init__(platform, clk_freq=1_000_000, cpu_type="vexiiriscv",
-            cpu_variant="standard", cpu_reset_address=0,
+        super().__init__(platform, clk_freq=1_000_000, cpu_type="vexriscv",
+            cpu_variant="minimal", bus_arbiter="transaction", cpu_reset_address=0,
             integrated_rom_size=0x40, integrated_rom_init=words,
             integrated_sram_size=0, integrated_main_ram_size=0,
             with_uart=False, with_timer=False, with_ctrl=False)
@@ -39,6 +39,10 @@ class ProjectSoC(SoCCore):
         self.add_module("write_target", WriteTarget(no_ack=no_ack))
         self.bus.add_slave(name="write_target", slave=self.write_target.bus,
             region=SoCRegion(origin=0x40, size=0x40, mode="rw", cached=False))
+        watchdog = Signal(14)
+        self.sync += If(watchdog == 9999,
+            Display("FAIL 01-WATCHDOG: cpu did not complete; fetch_cyc=%d fetch_stb=%d fetch_adr=0x%08x fetch_ack=%d fetch_data=0x%08x data_cyc=%d data_stb=%d data_adr=0x%08x data_ack=%d target_cyc=%d target_stb=%d target_adr=0x%08x target_ack=%d", self.cpu.ibus.cyc, self.cpu.ibus.stb, self.cpu.ibus.adr, self.cpu.ibus.ack, self.cpu.ibus.dat_r, self.cpu.dbus.cyc, self.cpu.dbus.stb, self.cpu.dbus.adr, self.cpu.dbus.ack, self.write_target.bus.cyc, self.write_target.bus.stb, self.write_target.bus.adr, self.write_target.bus.ack), Finish()
+        ).Else(watchdog.eq(watchdog + 1))
         rom_bus = self.rom.bus
         seen_first = Signal()
         rom_byte_address = Signal(32)

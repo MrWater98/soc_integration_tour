@@ -21,8 +21,6 @@ def check_output_transitions(log):
 
 def main():
     add_litex_to_path(ROOT)
-    from vexii_config import configure_vexii
-    configure_vexii()
     import litex
     litex_root = Path(litex.__file__).resolve().parents[1]
     from soc import ProjectSoC
@@ -55,8 +53,7 @@ def main():
         raise RuntimeError("Builder 未生成 generated/csr.h")
     regions = {"rom": (0, 4096), "sram": (0x10000000, 4096),
                "main_ram": (0x40000000, 16384),
-               "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536),
-                 "clint": (0xf0010000, 65536), "plic": (0xf0c00000, 4194304)}
+               "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536)}
     registers = {"gpio_in_input": (0xf0000000, "ro"),
                  "gpio_out_output": (0xf0000800, "rw")}
     check_generated_map(ROOT / "results/08/builder/csr.csv",
@@ -66,10 +63,10 @@ def main():
     # Include the Builder header tree while linking generated CSR accessors.
     image = out
     elf = image / "program.elf"
-    command = [gcc, "-march=rv32im", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
+    command = [gcc, "-march=rv32i2p0", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
         "-fno-builtin", "-nostdlib", "-nostartfiles", "-O1",
         "-I", str(header.parents[1]),
-        "-I", str(litex_root / "litex/soc/cores/cpu/vexiiriscv"),
+        "-I", str(litex_root / "litex/soc/cores/cpu/vexriscv"),
         "-I", str(litex_root / "litex/soc/software/include"),
         f"-Wl,-T,{CHAPTER / 'linker.ld'}",
         "-Wl,--defsym=MAIN_RAM_LENGTH=16384", "-Wl,--build-id=none",

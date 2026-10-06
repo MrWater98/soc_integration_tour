@@ -2,8 +2,6 @@
     .globl _start
 _start:
     lui   t0, 1
-    la    t5, fault_handler
-    csrw  mtvec, t5
     addi  t0, t0, -4           # Final ROM word 0x00000ffc
     lw    t1, 0(t0)
     li    t2, 0x5a6b7c8d      # The initialized ROM boundary word must match.
@@ -43,12 +41,3 @@ _start:
 1:  jal   zero, 1b
 fail:
     jal   zero, fail
-
-    .align 2
-fault_handler:
-    csrr  t1, mcause
-    lui   t0, 0x20000
-    sw    t1, 4(t0)
-    li    t1, 0xe1
-    sw    t1, 0(t0)
-3:  j     3b

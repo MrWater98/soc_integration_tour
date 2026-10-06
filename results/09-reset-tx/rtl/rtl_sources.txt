@@ -1,0 +1,7 @@
+Verilog inputs passed to the simulator compiler:
+VexRiscv_Min.v <- pythondata_cpu_vexriscv/verilog/VexRiscv_Min.v
+sim.v <- results/09-reset-tx/builder/gateware/sim.v
+sim_main_ram.init <- results/09-reset-tx/builder/gateware/sim_main_ram.init (memory initialization data)
+sim_mem.init <- results/09-reset-tx/builder/gateware/sim_mem.init (memory initialization data)
+sim_rom.init <- results/09-reset-tx/builder/gateware/sim_rom.init (memory initialization data)
+sim_sram.init <- results/09-reset-tx/builder/gateware/sim_sram.init (memory initialization data)

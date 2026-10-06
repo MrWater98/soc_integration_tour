@@ -1,6 +1,6 @@
 # 第 07 章：给 SoC 加主 RAM，运行一段裸机 C
 
-本章不依靠 BIOS 或操作系统，直接让 VexiiRiscv 从 ROM 中的启动代码进入 C 的 `main()`。工作 RAM 开始存放 `.data`、`.bss`、栈和测试数据。
+本章不依靠 BIOS 或操作系统，直接让 VexRiscv 从 ROM 中的启动代码进入 C 的 `main()`。工作 RAM 开始存放 `.data`、`.bss`、栈和测试数据。
 
 ## 输入
 
@@ -92,7 +92,7 @@ main() 看到：   00 00 00 00 00 00 ...
 | ROM | 4 KiB，字节地址 0 | CPU 复位后要从这里取 `_start` |
 | main RAM | 16 KiB，字节地址 `0x40000000` | 放数据段、BSS、栈和工作数据 |
 | 栈余量断言 | 至少 256 B | 链接器在 RAM 太小时给出明确失败 |
-| 编译 ISA / ABI | `rv32im` / `ilp32` | 与单核 VexiiRiscv 32 位配置一致 |
+| 编译 ISA / ABI | `rv32i2p0` / `ilp32` | 与 VexRiscv minimal 的指令配置一致 |
 | 优化等级 | `-O1`，函数标记 `noinline` | 保留真实嵌套调用，同时避免不必要的库依赖 |
 | 完成码 | `0x5a` 成功，`0xe1` 失败 | 错误时显示 `SOC_FAIL` 并结束仿真，不能伪造 PASS |
 
@@ -110,7 +110,7 @@ main() 看到：   00 00 00 00 00 00 ...
 | `integrated_main_ram_init` | `[0xa5a5a5a5] * 4096` | 仿真开始时给 16 KiB RAM 每个字填哨兵值，让漏掉 `.bss` 清零时一定能被固件发现。 |
 | `integrated_sram_size` | `0x1000`（4 KiB） | 保留另一块独立 SRAM，当前 map 中位于 `0x10000000`。本章 linker script 不把 C 数据和栈放在那里；保留它是为了区分 LiteX SRAM 与 main RAM。 |
 
-复位地址仍是 `0`，ROM 也仍从 `0` 开始。本章 linker script 用 `ENTRY(_start)` 声明 ELF 入口，并通过 `KEEP(*(.text.init))` 把 `_start` 放在 ROM 最前面。注意 `ENTRY` 只是 ELF 元数据；真正让 CPU 从 0 开始取指的是 VexiiRiscv 的复位向量配置。两者和 ROM 内容对齐后，CPU 才能从复位直接执行 `_start`。
+复位地址仍是 `0`，ROM 也仍从 `0` 开始。本章 linker script 用 `ENTRY(_start)` 声明 ELF 入口，并通过 `KEEP(*(.text.init))` 把 `_start` 放在 ROM 最前面。注意 `ENTRY` 只是 ELF 元数据；真正让 CPU 从 0 开始取指的是 VexRiscv 的复位向量配置。两者和 ROM 内容对齐后，CPU 才能从复位直接执行 `_start`。
 
 本章自己的 `CompletionSlave` 负责测试收尾：CPU 写入 `0x5a`，它打印 `SOC_COMPLETE` 并结束仿真。它不属于 C 运行时，也不负责 `.data` 复制或 `.bss` 清零。
 
@@ -137,6 +137,7 @@ LMA 是初始镜像存放的位置；VMA 是程序运行时访问该段的位置
 `main()` 调 `stack_roundtrip()`，它再调 `use_stack()`。第二层 `jal` 会覆盖 `ra`，所以外层函数要在栈帧里保存并恢复返回地址。运行器从反汇编寻找 `sw ra,...(sp)` 和 `lw ra,...(sp)`；CPU 最后的完成码再证明这些嵌套调用确实返回，C 检查也执行到了。
 
 ## 运行与输出
+本章完整的仿真 RTL 输入集保存在 [`results/07/rtl`](../../results/07/rtl)：生成的 SoC 顶层、对应的 Vex CPU 与 RAM 模块、所有引用的存储器初始化文件，以及 `rtl_sources.txt`。
 
 ```sh
 python3 chapters/07-bare-metal/run.py

@@ -1,4 +1,4 @@
-"""Chapter-local VexiiRiscv SoC: native AXI-Lite CPU and Wishbone project endpoints."""
+"""Chapter-local VexRiscv SoC: native Wishbone CPU and project endpoints."""
 from migen import Display, Finish, If, Module, Signal
 from litex.soc.interconnect import wishbone
 from litex.soc.integration.soc import SoCIORegion, SoCRegion
@@ -21,12 +21,7 @@ class RegisterSlave(Module):
             If(bus.adr == COMPLETE_BASE // 4,
                 self.value.eq(bus.dat_w),
                 Display("REGISTER_WRITE data=0x%08x", bus.dat_w),
-                If(bus.dat_w == 0xe1,
-                    Display("SOC_FAULT code=0xe1"), Finish(),
-                ).Else(*first_finish),
-            ),
-            If(bus.adr == COMPLETE_BASE // 4 + 1,
-                Display("FAULT_CAUSE mcause=0x%08x", bus.dat_w),
+                *first_finish,
             ),
             If(bus.adr == (COMPLETE_BASE + 0xffc) // 4,
                 If(bus.dat_w == expected,
@@ -43,7 +38,7 @@ class ProjectSoC(SoCCore):
     def __init__(self, platform, *, rom_words, sram_size=0, expected=0x5a,
                  finish_at_first=False):
         super().__init__(platform, clk_freq=1_000_000,
-            cpu_type="vexiiriscv", cpu_variant="standard", cpu_reset_address=0,
+            cpu_type="vexriscv", cpu_variant="minimal", bus_arbiter="transaction", cpu_reset_address=0,
             integrated_rom_size=len(rom_words) * 4, integrated_rom_init=rom_words,
             integrated_sram_size=0, integrated_main_ram_size=0,
             with_uart=False, with_timer=False, with_ctrl=False)
@@ -55,6 +50,15 @@ class ProjectSoC(SoCCore):
         self.add_module("registers", RegisterSlave(expected=expected, finish_at_first=finish_at_first))
         self.bus.add_slave(name="registers", slave=self.registers.bus,
             region=SoCRegion(origin=COMPLETE_BASE, size=0x1000, mode="rw", cached=False))
+        if sram_size and sram_size < 4096:
+            oob_wait = Signal(5)
+            oob_request = (self.cpu.dbus.cyc & self.cpu.dbus.stb & self.cpu.dbus.we &
+                           (self.cpu.dbus.adr == 0x10ffc // 4))
+            self.sync += If(oob_request & ~self.cpu.dbus.ack,
+                If(oob_wait == 15,
+                    Display("PASS SRAM_OOB_WAIT byte_address=0x00010ffc data=0x%08x", self.cpu.dbus.dat_w), Finish(),
+                ).Else(oob_wait.eq(oob_wait + 1)),
+            ).Else(oob_wait.eq(0))
         rom_bus = self.rom.bus
         first_fetch = Signal()
         self.sync += If(rom_bus.cyc & rom_bus.stb & rom_bus.ack & ~first_fetch,

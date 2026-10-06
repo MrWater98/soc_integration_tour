@@ -2,11 +2,65 @@
 from contextlib import redirect_stdout, redirect_stderr
 import ctypes.util
 import csv
+import re
 import os
 from pathlib import Path
 import shlex
 import shutil
 import subprocess
+
+def export_work_rtl(root, chapter, gateware):
+    """Copy the exact Verilog and memory-init inputs used by this simulation."""
+    destination = Path(root) / "results" / chapter / "rtl"
+    shutil.rmtree(destination, ignore_errors=True)
+    destination.mkdir(parents=True, exist_ok=True)
+
+    build_script = (gateware / "build_sim.sh").read_text()
+    line = next((item for item in build_script.splitlines() if item.startswith("make -C")), None)
+    match = re.search(r'CC_SRCS="([^"]*)"', line or "")
+    if not match:
+        raise RuntimeError(f"No CC_SRCS list found in {gateware / 'build_sim.sh'}")
+    tokens = shlex.split(match.group(1))
+    manifest = ["Verilog inputs passed to the simulator compiler:"]
+    def source_label(path):
+        try:
+            return str(path.resolve().relative_to(Path(root).resolve()))
+        except ValueError:
+            parts = path.resolve().parts
+            if "pythondata_cpu_vexriscv" in parts:
+                return str(Path(*parts[parts.index("pythondata_cpu_vexriscv"):]))
+            return path.name
+    copied = []
+    for index, token in enumerate(tokens[:-1]):
+        if token != "--cc":
+            continue
+        source = Path(tokens[index + 1])
+        if not source.is_absolute():
+            source = gateware / source
+        if not source.is_file():
+            raise FileNotFoundError(f"Simulator RTL input is missing: {source}")
+        target = destination / source.name
+        if target.exists() and target.read_bytes() != source.read_bytes():
+            raise RuntimeError(f"Two simulator inputs share a filename: {source.name}")
+        shutil.copyfile(source, target)
+        copied.append(target)
+        manifest.append(f"{target.name} <- {source_label(source)}")
+
+    init_names = set()
+    for source in copied:
+        if source.suffix.lower() not in (".v", ".sv"):
+            continue
+        init_names.update(re.findall(r'\$(?:readmemh|readmemb)\s*\(\s*"([^"]+)"',
+                                     source.read_text(errors="replace")))
+    for name in sorted(init_names):
+        source = gateware / name
+        if not source.is_file():
+            raise FileNotFoundError(f"RTL initialization file is missing: {source}")
+        target = destination / Path(name).name
+        shutil.copyfile(source, target)
+        manifest.append(f"{target.name} <- {source_label(source)} (memory initialization data)")
+    (destination / "rtl_sources.txt").write_text("\n".join(manifest) + "\n")
+
 
 
 def check_generated_map(csv_path, *, regions, registers=None):
@@ -51,11 +105,12 @@ def build_and_run(*, root, soc, chapter, expected, regions, registers=None,
     check_generated_map(csv_path, regions=regions, registers=registers)
     generated_csv = csv_path.read_text()
     (result_dir / "memory_map.csv").write_text(generated_csv)
-    if "constant,config_cpu_interrupts,1,," not in generated_csv:
+    if "constant,config_cpu_interrupts,0,," not in generated_csv:
         raise AssertionError("本阶段应关闭 CPU 中断，生成配置却并非 0 个中断")
     (result_dir / "irq_map.csv").write_text("irq_number,source\n")
     if post_build_check is not None:
         post_build_check(output)
+    export_work_rtl(root, chapter, output / "gateware")
     gateware = output / "gateware"
     build_script = (gateware / "build_sim.sh").read_text()
     make_line = next(line for line in build_script.splitlines() if line.startswith("make -C"))

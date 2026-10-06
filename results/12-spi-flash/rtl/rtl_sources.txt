@@ -1,0 +1,9 @@
+Verilog inputs passed to the simulator compiler:
+spi_flash_model.v <- chapters/12-memory/spi-flash/spi_flash_model.v
+VexRiscv_Min.v <- pythondata_cpu_vexriscv/verilog/VexRiscv_Min.v
+sim.v <- results/12-spi-flash/builder/gateware/sim.v
+flash_image.hex <- results/12-spi-flash/builder/gateware/flash_image.hex (memory initialization data)
+sim_main_ram.init <- results/12-spi-flash/builder/gateware/sim_main_ram.init (memory initialization data)
+sim_mem.init <- results/12-spi-flash/builder/gateware/sim_mem.init (memory initialization data)
+sim_rom.init <- results/12-spi-flash/builder/gateware/sim_rom.init (memory initialization data)
+sim_sram.init <- results/12-spi-flash/builder/gateware/sim_sram.init (memory initialization data)

@@ -5,13 +5,6 @@
 #define IRQ_PROBE (*(volatile uint32_t *)0x80000004u)
 #define DONE (*(volatile uint32_t *)0x80000ffcu)
 
-#define PLIC_BASE 0xf0c00000u
-#define PLIC_PRIORITY (*(volatile uint32_t *)(PLIC_BASE + 4u))
-#define PLIC_ENABLED (*(volatile uint32_t *)(PLIC_BASE + 0x2000u))
-#define PLIC_THRESHOLD (*(volatile uint32_t *)(PLIC_BASE + 0x200000u))
-#define PLIC_CLAIM (*(volatile uint32_t *)(PLIC_BASE + 0x200004u))
-#define TIMER_IRQ 1u
-
 static volatile uint32_t irq_count;
 static volatile uint32_t phase;
 static volatile uint32_t inside_isr;
@@ -22,27 +15,25 @@ static void fail(uint32_t code) {
 }
 
 void isr(void) {
-    uint32_t claim = PLIC_CLAIM;
     uint32_t pending = timer0_ev_pending_read();
-    if (inside_isr || claim != TIMER_IRQ || !(pending & 1u)) fail(0xe1);
+    if (inside_isr || !(pending & 1u)) fail(0xe1);
     inside_isr = 1;
-    timer0_ev_pending_write(1);  /* Acknowledge the source before returning with mret. */
-    PLIC_CLAIM = claim;
+    timer0_ev_pending_write(1);  /* Clear the event before returning with mret. */
     irq_count++;
     IRQ_PROBE = (phase << 16) | irq_count;
     inside_isr = 0;
 }
 
 static void irq_enable(void) {
-    PLIC_PRIORITY = 1;
-    PLIC_THRESHOLD = 0;
-    PLIC_ENABLED = 1u << TIMER_IRQ;
-    asm volatile ("csrsi mstatus, 8");         /* Global machine interrupt enable. */
+    uint32_t source_mask = 1u; /* LiteX allocated timer0 to externalInterruptArray[0]. */
+    asm volatile ("csrw 0xbc0, %0" :: "r"(source_mask)); /* VexRiscv per-source IRQ mask. */
+    asm volatile ("csrs mie, %0" :: "r"(1u << 11));      /* RISC-V machine external interrupt. */
+    asm volatile ("csrsi mstatus, 8");                     /* Global machine interrupt enable. */
 }
 
 static void irq_disable(void) {
     asm volatile ("csrci mstatus, 8");
-    PLIC_ENABLED = 0;
+    asm volatile ("csrc mie, %0" :: "r"(1u << 11));
 }
 
 static void wait_count(uint32_t target) {

@@ -15,8 +15,7 @@ def reject_stale_map(output):
     try:
         check_generated_map(output / "csr.csv", regions={
             "rom": (0, 4096), "sram": (0x00010000, 4096),
-            "completion": (0x20000000, 4096), "csr": (0xf0000000, 65536),
-                 "clint": (0xf0010000, 65536), "plic": (0xf0c00000, 4194304)})
+            "completion": (0x20000000, 4096), "csr": (0xf0000000, 65536)})
     except AssertionError:
         detail = ("EXPECTED_FAIL 06-STALE-MAP: previous map uses SRAM=0x00010000, "
                   "completion=0x20000000; Builder maps SRAM=0x10000000, "
@@ -29,8 +28,6 @@ def reject_stale_map(output):
 
 def main():
     add_litex_to_path(ROOT)
-    from vexii_config import configure_vexii
-    configure_vexii()
     from soc import ProjectSoC, COMPLETION_CODE
     out, word_count = build_program(CHAPTER, build_name="06/firmware")
     if word_count * 4 > 0x1000:
@@ -40,8 +37,7 @@ def main():
         expected="SOC_COMPLETE word_address=0x200003ff data=0x0000005a sel=f",
         soc=lambda platform: ProjectSoC(platform, rom_words=words),
         regions={"rom": (0, 4096), "sram": (0x10000000, 4096),
-                 "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536),
-                 "clint": (0xf0010000, 65536), "plic": (0xf0c00000, 4194304)},
+                 "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536)},
         post_build_check=reject_stale_map)
     print(f"Firmware image: {out / 'program.hex'} ({word_count * 4} bytes)")
     print(f"Completion code: 0x{COMPLETION_CODE:02x}")

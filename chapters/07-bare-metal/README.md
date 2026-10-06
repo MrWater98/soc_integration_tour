@@ -36,7 +36,7 @@ This chapter keeps the CPU, reset vector, ROM, and LiteX SRAM setup, then adds w
 | `integrated_main_ram_init` | `[0xa5a5a5a5] * 4096` | Prefills every word of simulated 16 KiB RAM with a sentinel, so firmware detects a missing `.bss` clear. |
 | `integrated_sram_size` | `0x1000` (4 KiB) | Keeps a separate SRAM at `0x10000000` in this map. The linker does not put C data or stack there; retaining it shows LiteX SRAM and main RAM as distinct regions. |
 
-The reset address is still zero, and the ROM still starts there. The linker script declares `ENTRY(_start)` and uses `KEEP(*(.text.init))` to put `_start` first in ROM. `ENTRY` is ELF metadata; the VexiiRiscv reset vector is what makes the CPU fetch from address zero. The reset vector, ROM contents, and `_start` location must agree for the CPU to execute startup code after reset.
+The reset address is still zero, and the ROM still starts there. The linker script declares `ENTRY(_start)` and uses `KEEP(*(.text.init))` to put `_start` first in ROM. `ENTRY` is ELF metadata; the VexRiscv reset vector is what makes the CPU fetch from address zero. The reset vector, ROM contents, and `_start` location must agree for the CPU to execute startup code after reset.
 
 This chapter's `CompletionSlave` handles the test finish: the CPU writes `0x5a`, and the endpoint prints `SOC_COMPLETE` and ends simulation. It is not part of the C runtime and does not copy `.data` or clear `.bss`.
 
@@ -104,6 +104,7 @@ By C rules, the global `zero_initialized` and `scratch` variables must start at 
 The linker script contains an `ASSERT` that sections plus the minimum stack margin fit in RAM. The runner links the same program against 256 bytes and expects that assertion to fail. This proves a build-time capacity check works; it does not claim that the CPU ran with 256 bytes of RAM.
 
 ## Run and inspect
+The complete simulator RTL input set is preserved in [`results/07/rtl`](../../results/07/rtl). It includes the generated SoC top, matching Vex CPU and RAM support modules, all referenced memory initialization files, and `rtl_sources.txt`.
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/07-bare-metal/run.py
@@ -113,4 +114,4 @@ Expected output includes `EXPECTED_FAIL 07-SMALL-RAM`, followed by `SOC_COMPLETE
 
 ## What does a PASS prove?
 
-The negative PASS proves that inadequate RAM is caught by the linker. The normal PASS proves that the real VexiiRiscv ran ROM startup, copied `.data`, cleared `.bss`, used main RAM and the stack, completed nested C calls, and reached the endpoint. ELF metadata alone proves none of that runtime behavior.
+The negative PASS proves that inadequate RAM is caught by the linker. The normal PASS proves that the real VexRiscv ran ROM startup, copied `.data`, cleared `.bss`, used main RAM and the stack, completed nested C calls, and reached the endpoint. ELF metadata alone proves none of that runtime behavior.

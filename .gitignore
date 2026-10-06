@@ -6,6 +6,13 @@ external/
 build/
 out/
 results/
+# Keep exported, reviewable RTL snapshots while ignoring simulation build output.
+!results/
+results/*
+!results/*/
+results/*/*
+!results/*/rtl/
+!results/*/rtl/**
 *.vcd
 *.fst
 *.bit

@@ -24,7 +24,7 @@ self.comb += [bus.dat_r.eq(self.value), bus.err.eq(0)]
 self.sync += If(state == RESP, ...)
 ```
 
-组合赋值会变成连续 RTL 连接，例如 `assign dat_r = value; assign err = 0;`。同步语句会变成 `always @(posedge sys_clk)` 中的寄存器和下一状态逻辑。导出的 Verilog 在 [`work/rtl/02-normal.v`](work/rtl/02-normal.v)，可以查看其中 `ack`、`dat_r` 和 `always` 逻辑。`verify.py` 中的 Python generator 是测试主设备，不会变成 RTL；它在 Migen 仿真中驱动硬件从设备。
+组合赋值会变成连续 RTL 连接，例如 `assign dat_r = value; assign err = 0;`。同步语句会变成 `always @(posedge sys_clk)` 中的寄存器和下一状态逻辑。导出的 Verilog 在 [`results/02/rtl/02-normal.v`](../../results/02/rtl/02-normal.v)，可以查看其中 `ack`、`dat_r` 和 `always` 逻辑。`verify.py` 中的 Python generator 是测试主设备，不会变成 RTL；它在 Migen 仿真中驱动硬件从设备。
 
 本章没有 `SoC.bus.add_slave`，因为这里没有 SoC 地址译码器。测试主设备直接驱动从设备接口。`RegisterSlave` 自己比较输入字地址和 `WORD_ADDRESS`；地址不匹配时状态机不会离开 `IDLE`，所以不会产生 ACK。01/03 章的 LiteX `add_slave(..., region=SoCRegion(...))` 则是在 SoC 总线上先选择从设备，再把请求送进去。
 
@@ -91,7 +91,7 @@ python3 chapters/02-wishbone/verify.py --case wait2
 
 默认运行覆盖正常读写和读回、字节使能、零选择、等待两拍、无 ACK、提前 ACK、ACK 悬挂和未映射地址。输出写到 `results/02/<case>.csv` 和 `.vcd`。先看 `normal.csv`：找到 `cyc=stb=1`，沿着同一地址找到 `ack=1`，然后确认请求与 ACK 都回到低。CSV 不需要波形查看器也能读；VCD 可用 GTKWave 查看。
 
-每次运行还会按构造参数把从设备 RTL 导出到 `work/rtl/02-<case>.v`。`unmapped` 只改变 Python 测试主设备的地址，因此使用正常从设备 RTL。对比 `02-normal.v`、`02-wait2.v` 和 `02-no_ack.v`，可以看到 Python 参数或故障分支怎样改变生成的状态机。
+每次运行还会按构造参数把从设备 RTL 导出到 `results/02/rtl/02-<case>.v`。`unmapped` 只改变 Python 测试主设备的地址，因此使用正常从设备 RTL。对比 `02-normal.v`、`02-wait2.v` 和 `02-no_ack.v`，可以看到 Python 参数或故障分支怎样改变生成的状态机。
 
 ## PASS 能证明什么？
 

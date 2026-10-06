@@ -14,8 +14,7 @@ from litex_builder import build_and_run, check_generated_map
 
 REGIONS = {"rom": (0, 4096), "sram": (0x10000000, 4096),
            "main_ram": (0x40000000, 16384),
-           "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536),
-                 "clint": (0xf0010000, 65536), "plic": (0xf0c00000, 4194304)}
+           "completion": (0x80000000, 4096), "csr": (0xf0000000, 65536)}
 REGISTERS = {
     "timer0_load": (0xf0000800, "rw"), "timer0_reload": (0xf0000804, "rw"),
     "timer0_en": (0xf0000808, "rw"), "timer0_update_value": (0xf000080c, "rw"),
@@ -46,8 +45,6 @@ def check_timer_log(log):
 
 def main():
     add_litex_to_path(ROOT)
-    from vexii_config import configure_vexii
-    configure_vexii()
     import litex
     from litex.build.generic_platform import Pins
     from litex.build.sim import SimPlatform
@@ -70,6 +67,15 @@ def main():
             builder._generate_csr_map()
     header = result / "builder/software/include/generated/csr.h"
     check_generated_map(result / "builder/csr.csv", regions=REGIONS, registers=REGISTERS)
+    generated_csv = (result / "builder/csr.csv").read_text()
+    irq_row = next((line.split(",") for line in generated_csv.splitlines()
+                    if line.startswith("constant,timer0_interrupt,")), None)
+    if irq_row is None:
+        raise AssertionError("LiteX did not allocate a timer0 IRQ input")
+    irq_number = int(irq_row[2])
+    if irq_number != 0:
+        raise AssertionError(f"Expected the single timer source on VexRiscv input 0, got {irq_number}")
+    (result / "irq_map.csv").write_text(f"irq_number,source\n{irq_number},timer0\n")
     (result / "csr-header.txt").write_text(header.read_text())
 
     gcc = shutil.which("riscv64-unknown-elf-gcc")
@@ -78,10 +84,10 @@ def main():
         raise RuntimeError("缺少第 00 章的 RISC-V gcc/objcopy")
     litex_root = Path(litex.__file__).resolve().parents[1]
     elf = image / "program.elf"
-    command = [gcc, "-march=rv32im", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
+    command = [gcc, "-march=rv32i2p0", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
         "-fno-builtin", "-nostdlib", "-nostartfiles", "-O1",
         "-I", str(header.parents[1]),
-        "-I", str(litex_root / "litex/soc/cores/cpu/vexiiriscv"),
+        "-I", str(litex_root / "litex/soc/cores/cpu/vexriscv"),
         "-I", str(litex_root / "litex/soc/software/include"),
         f"-Wl,-T,{CHAPTER / 'linker.ld'}", "-Wl,--build-id=none",
         f"-Wl,-Map={image / 'program.map'}",

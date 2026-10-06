@@ -17,7 +17,7 @@ def compile_image(root, chapter, name, main_ram_size, *, source_names):
                      "sections.txt", "disassembly.txt"):
         (out / filename).unlink(missing_ok=True)
     elf = out / "program.elf"
-    command = [gcc, "-march=rv32im", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
+    command = [gcc, "-march=rv32i2p0", "-mabi=ilp32", "-mno-relax", "-ffreestanding",
         "-fno-builtin", "-nostdlib", "-nostartfiles", "-O1",
         f"-Wl,-T,{chapter / 'linker.ld'}", f"-Wl,--defsym=MAIN_RAM_LENGTH={main_ram_size}",
         "-Wl,--build-id=none", f"-Wl,-Map={out / 'program.map'}", "-Wl,--print-memory-usage",

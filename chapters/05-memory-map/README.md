@@ -18,9 +18,9 @@ The map checker in `memory_map.py` is a software-side consistency check. LiteX's
 
 ## How do LiteX region declarations become real connections?
 
-This stage still uses `SoCCore` for the CPU, main bus, and ROM, but sets the integrated SRAM size to zero and explicitly creates `wishbone.SRAM(4096)`. `bus.add_slave(..., region=SoCRegion(...))` attaches the SRAM and custom register slave to the main bus; LiteX uses each region's `origin` and `size` to select a responder. The register also has a `SoCIORegion` entry and `cached=False`; SRAM is marked `cached=True`. `memory_map.py` is a second, software-side contract and checker; it does not replace these LiteX connections.
+This stage still uses `SoCCore` for the CPU, main bus, and ROM, but sets the integrated SRAM size to zero and explicitly creates `wishbone.SRAM(4096)`. `bus.add_slave(..., region=SoCRegion(...))` attaches the SRAM and custom register slave to the main bus; LiteX uses each region's `origin` and `size` to select a responder. The register also has a `SoCIORegion` entry and `cached=False`; SRAM is marked `cached=True`. These are region attributes, not cache hardware. This project uses VexRiscv `minimal`, which has no cache, so every access reaches the bus; the attributes document how a cache-capable variant should treat each region. `memory_map.py` is a second, software-side contract and checker; it does not replace these LiteX connections.
 
-Keep these values aligned: the SoC declares a 4 KiB ROM, a 4 KiB SRAM at `0x10000`, and a 4 KiB register range at `0x20000000`. `REGIONS`, `memory_map.py`, firmware addresses, and the Builder output should agree. When moving or resizing one region, check for overlap, confirm firmware still accesses the intended target, and regenerate/check the CSV. `cached=False` matters for registers: treating them as ordinary cached memory could let the CPU reuse an old read or delay a write, preventing the simulation endpoint from observing each access as intended.
+Keep these values aligned: the SoC declares a 4 KiB ROM, a 4 KiB SRAM at `0x10000`, and a 4 KiB register range at `0x20000000`. `REGIONS`, `memory_map.py`, firmware addresses, and the Builder output should agree. When moving or resizing one region, check for overlap, confirm firmware still accesses the intended target, and regenerate/check the CSV. `cached=False` records the device-memory policy for a cache-capable CPU. With this chapter's cache-free `minimal` core, reads and writes already reach the bus each time.
 
 ## Questions and answers
 
@@ -34,17 +34,18 @@ No. Decode chooses a responder based on the address. Arbitration decides which m
 
 ### What happens for overlapping or unmapped addresses?
 
-An overlap is rejected before CPU simulation because two regions would claim the same address. The unit test deliberately adds an overlapping region and expects `validate()` to raise an error. `0x30000000` is the chosen hole for this negative test; any address outside all configured regions should have the same unmapped behavior. The CPU trap handler records `mcause=5` (load access fault) at the test endpoint, and the runner requires the fault marker with no normal completion.
+An overlap is rejected before CPU simulation because two regions would claim the same address. The unit test deliberately adds an overlapping region and expects `validate()` to raise an error. `0x30000000` is the chosen hole for this negative test; any address outside all configured regions should have the same unmapped behavior. The load request remains active without an ACK. The VexRiscv `minimal` RTL does not convert this Wishbone no-response case into the load-access trap this test originally assumed, so the runner checks the bus request itself rather than inventing an `mcause` result.
 
 ### How do we know which part failed?
 
-There are separate observations for each boundary: the map checker identifies overlap before building; the bus address and selected region show where a valid request should go; and the CPU trap handler records the architectural load fault if no region responds. The trace and run log let us distinguish a bad map from an ordinary firmware value mismatch.
+There are separate observations for each boundary: the map checker identifies overlap before building; the bus address and selected region show where a valid request should go; and a bounded test monitor records the unanswered Wishbone request when no region responds. The minimal core does not turn this missing response into an architectural load fault. The trace and run log distinguish a bad map from a firmware value mismatch.
 
 ### Does a declared map create the decoder?
 
 No. A table or CSV alone is only a contract. In this chapter, the LiteX SoC regions attach the ROM, `wishbone.SRAM`, and register slave to the main bus. The map checker verifies the intended byte ranges and catches errors early. Later, Stage 06 compares that hand-written contract with LiteX Builder's generated map.
 
 ## Run and inspect
+The RTL snapshots for the normal and unmapped-address builds are in [`results/05/rtl`](../../results/05/rtl) and [`results/05-unmapped/rtl`](../../results/05-unmapped/rtl). Each has the generated SoC top, its matching Vex CPU module, RAM sources, ROM data, and an `rtl_sources.txt` compiler-source manifest.
 
 ```sh
 PYTHONHASHSEED=0 python3 chapters/05-memory-map/run.py
@@ -56,4 +57,4 @@ An endpoint ACK is registered so its response is aligned with the selected trans
 
 ## What does a PASS prove?
 
-The map unit test proves that the declared regions are aligned, non-overlapping, and selected at their boundaries. The normal CPU run proves accesses reached the intended targets. The unmapped test proves a hole becomes a load access fault instead of stale data or a false completion. Stage 06 then asks LiteX to generate the SoC map and checks the firmware contract against it.
+The map unit test proves that the declared regions are aligned, non-overlapping, and selected at their boundaries. The normal CPU run proves accesses reached the intended targets. The unmapped test proves a hole receives no response and cannot produce a false completion. Stage 06 then asks LiteX to generate the SoC map and checks the firmware contract against it.

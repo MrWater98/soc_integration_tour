@@ -1,6 +1,6 @@
 # 12 — Three External Memories, Three Access Paths
 
-This stage builds three separate SoCs around the same VexiiRiscv core. The CPU always boots from on-chip ROM. It then accesses one selected external memory: asynchronous SRAM over parallel pins, SDRAM through LiteDRAM, or SPI Flash through a serial read bridge. These are independent configurations; their maps must not be combined.
+This stage builds three separate SoCs around the same VexRiscv core. The CPU always boots from on-chip ROM. It then accesses one selected external memory: asynchronous SRAM over parallel pins, SDRAM through LiteDRAM, or SPI Flash through a serial read bridge. These are independent configurations; their maps must not be combined.
 
 | Memory | CPU-visible region | What the stage checks |
 | --- | --- | --- |
@@ -12,7 +12,7 @@ The SRAM and Flash tests use separate uncached IO regions so each bus read is vi
 
 ## Why do the three `SoCCore` configurations differ?
 
-All three builds keep the same VexiiRiscv, reset address `0`, and 4 KiB boot ROM. Their writable memories differ to match the job each firmware performs:
+All three builds keep the same VexRiscv, reset address `0`, and 4 KiB boot ROM. Their writable memories differ to match the job each firmware performs:
 
 | Build | `integrated_sram_size` | `integrated_main_ram_size` | External LiteX block and sensitive settings |
 | --- | ---: | ---: | --- |
@@ -20,7 +20,7 @@ All three builds keep the same VexiiRiscv, reset address `0`, and 4 KiB boot ROM
 | SDRAM | 4 KiB | 0 | `add_sdram(..., origin=0x40000000, size=4 MiB, l2_cache_size=0)` provides `main_ram`; the 50 MHz SoC clock, LiteDRAM model, and PHY clock must agree. |
 | SPI Flash | 4 KiB | 16 KiB | A read-only bridge at `0xa0000000`, size 4 KiB, uncached; each CPU load becomes a serial read frame. |
 
-In the SDRAM build, do not add 4 MiB to `integrated_main_ram_size`: `add_sdram` creates the `main_ram` region itself, while the 4 KiB integrated SRAM holds startup stack and runtime data until DRAM initialization finishes. Changing model geometry without changing the mapped size creates a software/hardware capacity mismatch. For the SRAM and Flash builds, `cached=False` keeps each CPU read visible to the bridge and device model; making the region cacheable could hide repeated bus transactions from the protocol checks. Whenever a base or size changes, update the matching linker region and verify that build's generated `csr.csv`.
+In the SDRAM build, do not add 4 MiB to `integrated_main_ram_size`: `add_sdram` creates the `main_ram` region itself, while the 4 KiB integrated SRAM holds startup stack and runtime data until DRAM initialization finishes. Changing model geometry without changing the mapped size creates a software/hardware capacity mismatch. The SRAM and Flash regions are marked `cached=False` to describe device-memory policy. This project uses the cache-free VexRiscv `minimal` variant, so reads reach the bridge/model either way; the attribute does not instantiate or disable a CPU cache. Whenever a base or size changes, update the matching linker region and verify that build's generated `csr.csv`.
 
 The repeated-looking values in these tables are configuration choices, not fixed SOC rules. For example, each 4 KiB region comes from that experiment's `SoCRegion` and memory model; the ROM and on-chip RAM sizes also need to match the firmware linker's `MEMORY` entries and generated image. The 16 KiB `main_ram` is used by the SRAM/Flash firmware, while the SDRAM build deliberately sets `integrated_main_ram_size=0` and maps the external model as `main_ram`. Change one side alone and the generated address map, linker assumptions, or model capacity will disagree.
 
@@ -71,6 +71,8 @@ Each run constructs a different SoC. `0x40000000` refers to the LiteDRAM region 
 The endpoint probes show what the CPU read back. `ASRAM_ACK` and pin-write logs show byte lanes and wait cycles; SDRAM initialization/refresh logs show controller activity; `FLASH_READ` reports each command/address/frame length. A CPU completion marker alone would not show whether the external protocol was correct, so each runner checks both model-level events and firmware readback.
 
 ## Dependencies and run
+
+The complete simulator RTL input sets are preserved separately in [`results/12-async-sram/rtl`](../../results/12-async-sram/rtl), [`results/12-sdram/rtl`](../../results/12-sdram/rtl), and [`results/12-spi-flash/rtl`](../../results/12-spi-flash/rtl). Each directory has its generated `sim.v`, matching Vex CPU and RAM support RTL, all `readmem` initialization files, and an `rtl_sources.txt` manifest. The SRAM and Flash directories also include their chapter-local pin models; the SDRAM controller and PHY model are elaborated into its generated `sim.v`.
 
 LiteDRAM is an additional dependency. From the repository root, check out the pinned source and run the chapter:
 

@@ -1,12 +1,12 @@
 # 03 — From Assembly to a Running ROM Image
 
-Stage 01 returned instructions from a small inline list. This stage builds the firmware with the RISC-V toolchain, packs a complete initialized ROM, checks the memory map, and boots the same native VexiiRiscv CPU from reset address zero.
+Stage 01 returned instructions from a small inline list. This stage builds the firmware with the RISC-V toolchain, packs a complete initialized ROM, checks the memory map, and boots the same native VexRiscv CPU from reset address zero.
 
 ## How does assembly become ROM contents?
 
 ```text
 program.S
-   │ riscv64-unknown-elf-gcc (-march=rv32im -mabi=ilp32, linked at 0)
+   │ riscv64-unknown-elf-gcc (-march=rv32i2p0 -mabi=ilp32, linked at 0)
    ▼
 program.elf ── objcopy -O binary ──> program.bin (bytes)
                                       │ group every 4 bytes, little-endian
@@ -17,10 +17,10 @@ program.elf ── objcopy -O binary ──> program.bin (bytes)
                                  rom_init.hex (complete 1 KiB image)
                                       │ integrated_rom_init
                                       ▼
-                           LiteX ROM → VexiiRiscv instruction fetch
+                           LiteX ROM → VexRiscv instruction fetch
 ```
 
-The code is linked to address `0x0`, because the CPU reset address is `0x0` and the ROM begins there. `rv32im` selects the instruction set and `ilp32` the 32-bit ABI. These are software build settings and must be supported by the generated CPU; changing the ISA flags alone can produce instructions the core cannot execute. The compiler builds software; it does not generate CPU RTL.
+The code is linked to address `0x0`, because the CPU reset address is `0x0` and the ROM begins there. `rv32i2p0` selects the instruction set and `ilp32` the 32-bit ABI. These are software build settings and must be supported by the generated CPU; changing the ISA flags alone can produce instructions the core cannot execute. The compiler builds software; it does not generate CPU RTL.
 
 ## What does LiteX do at this stage?
 
@@ -30,7 +30,7 @@ The completion endpoint is a project-written Wishbone slave. `self.add_module(..
 
 ## Follow the Python calls into generated RTL
 
-These Python functions run during the build. `build_program()` invokes the toolchain to create an ELF and binary; `write_rom_init()` packs bytes into 32-bit words and pads the image. `ProjectSoC(..., rom_words=words)` passes those words to `SoCCore`. During LiteX Builder elaboration, `integrated_rom_size=len(words)*4` creates the ROM storage and `integrated_rom_init=words` supplies its initialization data. The RTL snapshot [`work/rtl/03-rom-soc.v`](work/rtl/03-rom-soc.v) contains logic like this:
+These Python functions run during the build. `build_program()` invokes the toolchain to create an ELF and binary; `write_rom_init()` packs bytes into 32-bit words and pads the image. `ProjectSoC(..., rom_words=words)` passes those words to `SoCCore`. During LiteX Builder elaboration, `integrated_rom_size=len(words)*4` creates the ROM storage and `integrated_rom_init=words` supplies its initialization data. The complete RTL input set is in [`results/03/rtl`](../../results/03/rtl); [`sim.v`](../../results/03/rtl/sim.v) contains logic like this:
 
 ```verilog
 reg [31:0] rom[0:255];
@@ -43,7 +43,7 @@ always @(posedge sys_clk_1)
 
 This is how the firmware resides in ROM hardware: 256 32-bit storage words are initialized from a file for simulation; the CPU's fetch address is converted to a Wishbone word index and selects `rom[...]`; the word is returned on a clock edge. An FPGA build maps the same memory description to the target device's memory resources; `$readmemh` is the simulation RTL initialization mechanism.
 
-The completion endpoint is connected like the one in chapter 01: `wishbone.Interface` provides its signals, `SoCRegion` describes its CPU-visible address range, and `bus.add_slave` asks LiteX to attach it to the shared bus. In the generated RTL, inspect `decoder`, `projectsoc_registerslave_cyc`, and the register's ACK logic to connect Python's region and `self.sync` statements to Verilog. Running `run.py` refreshes this RTL snapshot.
+The completion endpoint is connected like the one in chapter 01: `wishbone.Interface` provides its signals, `SoCRegion` describes its CPU-visible address range, and `bus.add_slave` asks LiteX to attach it to the shared bus. In the generated RTL, inspect `decoder`, `projectsoc_registerslave_cyc`, and the register's ACK logic to connect Python's region and `self.sync` statements to Verilog. This same directory contains the hash-named Vex CPU module, both generic RAM support files, ROM initialization data, and `rtl_sources.txt`, the exact source manifest used for simulator compilation. Running `run.py` refreshes the complete set.
 
 ## Questions and answers
 
@@ -85,4 +85,4 @@ Inspect `results/03/program.elf`, `program.bin`, `program.hex`, `rom_init.hex`, 
 
 ## What does a PASS prove?
 
-The pass proves that this assembled image fits the configured ROM, the reset and map checks agree with the SoC, and VexiiRiscv executes far enough to make the expected completion write. Stage 04 adds writable memory and exercises SRAM byte lanes and stack storage.
+The pass proves that this assembled image fits the configured ROM, the reset and map checks agree with the SoC, and VexRiscv executes far enough to make the expected completion write. Stage 04 adds writable memory and exercises SRAM byte lanes and stack storage.

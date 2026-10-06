@@ -54,6 +54,7 @@ CPU 分别把寄存器 0 写为 `0x5a`、寄存器 1 写为 `0xc3`。读回时�
 注意“释放 SDA”不是主动输出高电平；主机和从机的 release 都为 1 时，上拉才让线为高。开发时曾把从机发送位取反，设备日志仍说“准备发送 0x5a”，CPU 却实际读到 `0xa5`。错误被 CPU 的读回比较抓住，修正为 `release_sda=data_bit` 后通过。这是为什么要把软件比较和引脚协议模型一起检查。
 
 ## 运行与验收
+[`results/11/rtl`](../../results/11/rtl) 包含仿真器实际编译的所有 Verilog：LiteX SoC 顶层、Vex CPU、RAM 支持模块，以及本章的 `i2c_device.v` 模型。它还包含所有存储器初始化文件和 `rtl_sources.txt`。
 
 ```sh
 python3 chapters/11-spi-i2c/run.py

@@ -1,6 +1,6 @@
-# 01 — Can VexiiRiscv Fetch and Store?
+# 01 — Can VexRiscv Fetch and Store?
 
-This is the first CPU-level experiment. It uses LiteX's native VexiiRiscv wrapper, a 64-byte initialized ROM, and a small memory-mapped write endpoint. The test is deliberately short so the log has only a few events to interpret.
+This is the first CPU-level experiment. It uses LiteX's native VexRiscv wrapper, a 64-byte initialized ROM, and a small memory-mapped write endpoint. The test is deliberately short so the log has only a few events to interpret.
 
 ```asm
 addi x1, x0, 64   # x1 = 0x40
@@ -10,15 +10,12 @@ sw   x1, 0(x1)    # store 0x40 at byte address 0x40
 ## What is connected?
 
 ```text
-VexiiRiscv pBus (AXI-Lite, byte address)
-                 │
-                 ▼  LiteX AXILite2Wishbone adapter
-         Wishbone Classic, 32-bit
-          ├── ROM       0x00000000–0x0000003f
-          └── endpoint  0x00000040–0x0000007f
+VexRiscv instruction Wishbone ─┐
+                               ├─ LiteX shared Wishbone ─ ROM (0x00–0x3f)
+VexRiscv data Wishbone ────────┘                       └─ endpoint (0x40–0x7f)
 ```
 
-The CPU's peripheral bus is AXI-Lite. The LiteX main bus in this setup is Wishbone. LiteX inserts the protocol adapter when it registers the CPU bus master; this project does not implement the adapter.
+VexRiscv exposes separate instruction and data Wishbone masters. LiteX connects both to its shared bus; this chapter selects transaction arbitration so a request keeps its grant until the target responds.
 
 ## First use of `SoCCore`: what do these parameters configure?
 
@@ -27,17 +24,17 @@ This chapter's `ProjectSoC` inherits from LiteX `SoCCore`. Calling `super().__in
 | Parameter | Value here | Why it is set this way |
 | --- | --- | --- |
 | `platform` | Simulation `SimPlatform` | Describes the simulated clock/pins, not a physical board. The runner adds a `CRG` for the `sys` clock domain. |
-| `clk_freq` | `1_000_000` | Declares this simulation's system clock. It is a convenient experiment setting, not a VexiiRiscv requirement; keep the LiteX clock declaration and simulator clock consistent if you change it. |
-| `cpu_type` | `"vexiiriscv"` | Selects LiteX's natively registered VexiiRiscv wrapper. |
-| `cpu_variant` | `"standard"` | Selects the VexiiRiscv configuration used by this project. |
-| `cpu_reset_address` | `0` | Sets the CPU reset vector. LiteX passes it to the VexiiRiscv generator, and the generated RTL resets PC to zero. |
+| `clk_freq` | `1_000_000` | Declares this simulation's system clock. It is a convenient experiment setting, not a VexRiscv requirement; keep the LiteX clock declaration and simulator clock consistent if you change it. |
+| `cpu_type` | `"vexriscv"` | Selects LiteX's natively registered VexRiscv wrapper. |
+| `cpu_variant` | `"minimal"` | Selects the pre-generated RV32I core without I/D caches. |
+| `cpu_reset_address` | `0` | Sets the CPU reset vector. LiteX passes it to the VexRiscv generator, and the generated RTL resets PC to zero. |
 | `integrated_rom_size` | `0x40` (64 bytes) | Allocates only enough ROM for this short instruction sequence. SoCCore maps the ROM at the CPU reset address, zero. |
 | `integrated_rom_init` | 16 machine-code words | Loads the `addi`, `sw`, stop loop, and NOP fill into ROM; it does not set the CPU reset location. |
 | `integrated_sram_size` | `0` | No SRAM region is needed for this first CPU experiment. |
 | `integrated_main_ram_size` | `0` | The program has no C runtime, stack, or writable data section, so it does not need main RAM yet. |
 | `with_uart / with_timer / with_ctrl` | All `False` | Disables default UART, Timer, and control modules unused here, keeping the observed path small. |
 
-`bus_standard` is not passed, so LiteX uses its default Wishbone main bus. VexiiRiscv exposes an AXI-Lite peripheral port; LiteX detects the protocol difference when registering the CPU master and inserts `AXILite2Wishbone`. This is why the code uses `SoCCore` but never calls the bridge directly.
+`bus_standard` is not passed, so LiteX uses its default Wishbone main bus. `bus_arbiter="transaction"` keeps the current master selected until ACK/ERR completes its request, which suits the simultaneous instruction and data Wishbone masters.
 
 ### How does this chapter attach a custom block to LiteX?
 
@@ -69,19 +66,19 @@ projectsoc_writetarget_adr = adr;
 projectsoc_writetarget_dat_w = dat_w;
 ```
 
-The Migen statements inside `WriteTarget` become registers and combinational logic: `bus.dat_r.eq(0)` and `bus.err.eq(0)` become constant outputs; the ACK code under `self.sync` becomes clocked logic; Python `If` conditions become hardware comparisons and muxes. The CPU's AXI-Lite request first passes through LiteX's `AXILite2Wishbone`, then the decoder routes `cyc` only to the matching slave. The selected slave's `ack/dat_r` return through the shared bus to the CPU.
+The Migen statements inside `WriteTarget` become registers and combinational logic: `bus.dat_r.eq(0)` and `bus.err.eq(0)` become constant outputs; the ACK code under `self.sync` becomes clocked logic; Python `If` conditions become hardware comparisons and muxes. LiteX arbitrates the two Wishbone masters before address decoding. The decoder routes a matching request to its slave, and `ack/dat_r` return to the granted master over the shared bus.
 
-After `run.py`, this chapter keeps LiteX's generated top-level RTL in [`work/rtl/01-normal.v`](work/rtl/01-normal.v) and [`work/rtl/01-no-ack.v`](work/rtl/01-no-ack.v). The first shows the ACK response path; the second shows the same endpoint configured never to respond. Running the chapter refreshes these snapshots. VexiiRiscv itself is supplied as separately generated CPU RTL; these top-level files show how it connects to the LiteX bus adapter.
+After `run.py`, the complete RTL inputs for the two runs are in [`results/01/rtl`](../../results/01/rtl) and [`results/01-no-ack/rtl`](../../results/01-no-ack/rtl). Each contains the LiteX top-level `sim.v`, its `VexRiscv_Min.v` CPU definition, both generic RAM support modules, ROM initialization data, and an `rtl_sources.txt` manifest copied from the simulator's actual Verilog source list. The first top level shows the ACK response path; the second shows the endpoint configured never to respond. Running the chapter refreshes these files.
 
 Read these settings as a group: the CPU reset vector is `0`, the integrated ROM also starts at `0`, and its initialized words must contain code for that location. The endpoint starts at `0x40`, immediately after the ROM range `0x00–0x3f`, so the regions do not overlap. `integrated_rom_size` is measured in bytes, while each item in `integrated_rom_init` is one 32-bit word; 16 words are exactly 64 bytes here. If the ROM is enlarged without moving the endpoint, the ROM claims address `0x40`; if only the reset address changes, the CPU fetches from a location that the current image was not linked for.
 
 ### Why does PC return to zero on reset?
 
-`cpu_reset_address=0` is a build-time setting; Python does not write PC on every clock. LiteX calls the CPU wrapper's `set_reset_address(0)` and passes `--reset-vector 0` while generating VexiiRiscv RTL. The CPU reset signal makes RTL reset PC to zero; after reset is released, the CPU fetches from address zero. SoCCore also maps the integrated ROM at the reset address, so ROM contents are available at zero.
+`cpu_reset_address=0` is a build-time setting; Python does not write PC on every clock. LiteX calls the CPU wrapper's `set_reset_address(0)` and passes `--reset-vector 0` while generating VexRiscv RTL. The CPU reset signal makes RTL reset PC to zero; after reset is released, the CPU fetches from address zero. SoCCore also maps the integrated ROM at the reset address, so ROM contents are available at zero.
 
 ```text
 SoCCore: cpu_reset_address=0
-       ├── VexiiRiscv RTL: reset PC ← 0
+       ├── VexRiscv RTL: reset PC ← 0
        └── integrated ROM: origin = 0
                                   │
 CPU fetches from 0 after reset ───┘
@@ -91,21 +88,43 @@ The reset vector must match the ROM contents: firmware must be stored where the 
 
 ## Questions and answers
 
+### Can caches be selected? Why are there two CPU buses?
+
+LiteX provides several pre-generated VexRiscv variants. This chapter uses `minimal`, without caches or the M extension, to make memory accesses easy to follow. Instruction fetch and load/store still use two separate Wishbone masters: `ibus` fetches instructions and `dbus` performs data accesses.
+
+```text
+VexRiscv/minimal
+  ibus (instruction) ─┐
+                      ├─ LiteX transaction arbiter ─ decoder ─ ROM / SRAM / devices
+  dbus (data) ────────┘
+```
+
+| `cpu_variant` | Instruction cache | Data cache | Typical use |
+| --- | --- | --- | --- |
+| `minimal` | No | No | RV32I teaching baseline |
+| `lite` | Yes | No | Instruction cache with RV32IM |
+| `standard` | Yes | Yes | General-purpose configuration |
+| `linux` | Yes | Yes | Linux-class configuration |
+
+The variants select LiteX-shipped VexRiscv RTL and matching compiler ISA flags. A variant name does not guarantee a particular area; use synthesis results for that.
+
+Why set `bus_arbiter="transaction"`? `ibus` continuously fetches instructions, and `dbus` can request memory at the same time. A cycle-based grant can change ownership before a request and its response finish. Transaction arbitration holds the grant until ACK/ERR completes the transaction.
+
 ### Why start with only two instructions?
 
 `addi` creates a known value, and `sw` turns it into an observable bus transaction. If the endpoint sees the expected address and data, the CPU left reset, fetched instructions, decoded and executed them, and issued a store. There is no C runtime, stack setup, or unrelated peripheral to obscure the first result.
 
 ### Does the first `FETCH` prove the instruction executed?
 
-It proves that a read request at the ROM reset address completed. VexiiRiscv can prefetch, so a fetch log alone does not prove that a particular instruction retired. The endpoint's `0x40` write is stronger evidence: it can only happen after the program reaches the `sw`.
+It proves that a read request at the ROM reset address completed. VexRiscv can prefetch, so a fetch log alone does not prove that a particular instruction retired. The endpoint's `0x40` write is stronger evidence: it can only happen after the program reaches the `sw`.
 
 ### Why does `0x40` become Wishbone address `0x10`?
 
 The firmware and LiteX memory map use byte addresses. This 32-bit Wishbone endpoint is configured with word addressing, so one bus address step represents four bytes. Thus byte address `0x40` corresponds to Wishbone word address `0x40 / 4 = 0x10`. The stored value stays `0x40`; the conversion changes the address unit, not the data.
 
-### Where is `AXILite2Wishbone` in the Python files?
+### Where is `Wishbone` in the Python files?
 
-The chapter selects VexiiRiscv and LiteX's Wishbone main bus. During CPU master registration LiteX checks the two bus types and adds its built-in `AXILite2Wishbone` adapter. The design log reports `cpu_bus0 Bus adapted from AXI-Lite 32-bit to Wishbone 32-bit`. The class lives in LiteX's `litex/soc/interconnect/axi/axi_lite_to_wishbone.py`; no project Python file needs to call it directly.
+The CPU masters are Wishbone already. `cpu_bus0` and `cpu_bus1` connect the instruction and data ports; LiteX `SoCBusHandler` arbitrates requests, decodes addresses, and routes responses.
 
 ### What exactly does the no-ACK case show?
 
@@ -120,8 +139,8 @@ python3 chapters/01-cpu-bringup/tiny_bus.py
 
 The first command runs the real CPU once with a responding endpoint and once with ACK suppressed. The second command is a small timing exercise for a toy bus endpoint; it is useful for understanding the handshake, but it is not a substitute for CPU simulation.
 
-Look under `results/01/` and `results/01-no-ack/` for build logs, run logs, generated maps, and VCD traces. In a waveform, follow reset, the CPU AXI-Lite request, Wishbone `cyc/stb`, and the endpoint `ack`. A request is active while `cyc` and `stb` are high. It completes only when the selected target responds.
+Look under `results/01/` and `results/01-no-ack/` for build logs, run logs, generated maps, and VCD traces. In a waveform, follow reset, the CPU `ibus` and `dbus`, the shared Wishbone request, and the endpoint `ack`. A request is active while `cyc` and `stb` are high. It completes only when the selected target responds.
 
 ## What does a PASS prove?
 
-The normal PASS proves that VexiiRiscv fetched from reset and caused the endpoint to observe the expected store. `PASS 01-NO-ACK` proves that the test caught a request that never received ACK; it does not mean the store succeeded. Stage 02 isolates the slave response rules so each fault is easier to identify.
+The normal PASS proves that VexRiscv fetched from reset and caused the endpoint to observe the expected store. `PASS 01-NO-ACK` proves that the test caught a request that never received ACK; it does not mean the store succeeded. Stage 02 isolates the slave response rules so each fault is easier to identify.

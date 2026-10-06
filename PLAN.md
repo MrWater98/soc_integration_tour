@@ -1,83 +1,59 @@
 # SoC Integration Project Plan
 
-## Objective
+## Objective and baseline
 
-Build a reproducible single-core RV32 SoC around LiteX and VexiiRiscv, first in simulation and then on a selected FPGA board. Keep the hardware contract, firmware, generated maps, and verification evidence together at each integration step. A stage is complete only when its build and runtime checks pass from a clean output directory.
+Build a reproducible single-core RV32 SoC around LiteX and VexRiscv, first in simulation and later on a selected FPGA. Keep each stage's hardware contract, firmware, maps, RTL inputs, and runtime evidence together.
 
-The baseline CPU is LiteX's native `vexiiriscv` wrapper with the `standard` variant. Its peripheral port is AXI-Lite. The LiteX main bus is Wishbone Classic, so LiteX inserts its native AXI-Lite-to-Wishbone adapter when the CPU master is registered. The initial system is 32-bit, little-endian, single-clock, and single-core.
+The baseline is LiteX's native `vexriscv` CPU with the `minimal` variant: RV32I, no instruction cache, and no data cache. The CPU exposes separate instruction and data Wishbone masters. LiteX connects them to its shared Wishbone interconnect; there is no AXI-Lite-to-Wishbone bridge in this path. CPU RTL comes from the pinned `pythondata-cpu-vexriscv` package, so generating this CPU does not require Scala or SBT.
 
 ## Integration sequence
 
-| Stage | Change to the system | Required evidence / exit gate |
+| Stage | Change | Required evidence |
 | --- | --- | --- |
-| 00 Host and source baseline | Pin LiteX, VexiiRiscv data and RTL source; install Python, Java/sbt, Verilator, C++ and RISC-V toolchain dependencies. | Strict environment report records versions, paths and missing dependencies. LiteX Wishbone baseline test passes. |
-| 01 CPU reset path | Instantiate native VexiiRiscv, a small ROM and a memory-mapped write endpoint. | CPU fetches from reset address 0 and writes the expected value. A no-ACK run records a live request and times out without a false completion. |
-| 02 Wishbone endpoint contract | Verify a 32-bit Wishbone master and register slave independently of the CPU. | Read/write, byte enables, configured waits, no response, early ACK, held ACK and unmapped address scenarios produce expected CSV/VCD and pass/fail markers. |
-| 03 Firmware ROM | Assemble a small RV32 program, create a complete initialized ROM image and boot it. | ELF/bin/hex hashes are recorded; reset vector, image depth and generated map are checked; CPU reaches a completion write. |
-| 04 Writable SRAM | Add Wishbone SRAM for data and stack; exercise full-word and partial-word writes plus nested calls. | First/last locations and byte lanes read back correctly. An undersized SRAM run reports the expected store access fault and no normal completion. |
-| 05 Address decoding | Attach ROM, SRAM and a register endpoint to one shared main bus with explicit byte-address regions. | The map checker rejects overlap; firmware reaches each intended target; an unmapped load produces the expected access fault. |
-| 06 LiteX SoC construction | Re-express the working design with LiteX `SoCCore` and `Builder`; retain a project completion endpoint. | Builder generates the expected memory and CSR maps; firmware is linked for those addresses; simulation reaches the completion endpoint. The generated log records AXI-Lite-to-Wishbone adaptation. |
-| 07 Bare-metal C runtime | Add main RAM, startup code and a linker script; initialize `.data` and `.bss`, then enter C. | ELF, map and disassembly place code/data/stack in declared regions; firmware checks initialized and zeroed data and reports completion. |
-| 08 GPIO | Add input/output GPIO CSRs and deterministic simulation pin stimulus. | Generated CSR addresses match firmware headers; output transitions and input samples match the test sequence. |
-| 09 UART | Add UART with a fixed system clock and baud rate; verify transmit and receive paths. | Captured line-level bytes match the expected stream. Wrong-baud and reset-during-transmit cases are detected. |
-| 10 Timer and interrupts | Add a timer and route one interrupt through the VexiiRiscv PLIC path. | Polling and ISR tests pass; source claim/complete and interrupt counts match; reset cases leave no stale interrupt. |
-| 11 SPI and I2C | Add LiteX controllers and protocol-level slave models. | SPI mode/edge and I2C START/address/ACK/STOP transactions match expected bytes; wrong chip-select and NACK paths fail explicitly. |
-| 12 External memory options | Integrate async SRAM, SDRAM through LiteDRAM, and memory-mapped SPI flash as separate configurations. | Each configuration completes a memory-specific initialization and readback check; capacity, map and initialization logs are saved. |
-| 13 Integrated simulation regression | Combine the selected CPU, memory, GPIO, UART, timer and serial peripherals into one firmware-driven system. | One command runs the full regression with stable per-block markers, maps, tool versions and source hashes. |
-| 14 FPGA target | Bind clocks, reset, pins and external devices to one named board target. | Board constraints are checked against the schematic and device documentation; synthesis and timing reports meet the declared clock target. |
-| 15 FPGA runtime | Program the board and run the same software-visible self-checks. | Preserve the bitstream hash, board/tool versions and raw UART output; mark hardware-only tests SKIP when no board is present. |
+| 00 Environment | Pin LiteX, VexRiscv RTL data and host tools. | Strict environment report and Wishbone baseline test pass. |
+| 01 CPU reset path | Add VexRiscv, a small ROM, and a memory-mapped write target. | Fetch from reset address 0 and expected write; missing ACK remains a live request and does not report completion. |
+| 02 Wishbone endpoint | Verify read/write, byte enables, waits, missing/early/held ACK, and unmapped access. | Each case has an expected protocol result and recorded trace. |
+| 03 Firmware ROM | Assemble RV32I firmware, create an initialized ROM image, and boot it. | Image depth, reset vector, memory map, and completion write agree. |
+| 04 Writable SRAM | Add Wishbone SRAM for data and stack. | First/last locations and byte lanes read back; an undersized SRAM leaves the out-of-range Wishbone request unanswered, which the bounded test monitor captures. |
+| 05 Address decoding | Attach ROM, SRAM, and a register endpoint to explicit address regions. | Overlap is rejected; mapped targets work; the unmapped request remains unacknowledged and is captured by the test monitor. |
+| 06 LiteX SoC | Build the design with LiteX `SoCCore` and `Builder`. | Generated maps match firmware addresses and the CPU reaches the completion endpoint. |
+| 07 Bare-metal C | Add main RAM, startup code, and linker sections. | `.data` copy, `.bss` clearing, stack, and C execution are verified. |
+| 08 GPIO | Add input/output GPIO CSRs and deterministic pin stimulus. | CSR map, output transitions, and sampled inputs match expected values. |
+| 09 UART | Add UART transmit/receive at a fixed clock and baud. | Captured bytes match; wrong-baud and reset cases fail explicitly. |
+| 10 Timer and IRQ | Add a timer event routed to VexRiscv's external interrupt input. | Polling, ISR entry/return, pending-bit clear, and reset cases pass. LiteX IRQ source indices are checked against the generated map. |
+| 11 SPI and I2C | Add LiteX controllers and protocol-level slave models. | SPI edges and I2C START/address/ACK/STOP match; wrong chip select and NACK are detected. |
+| 12 External memory | Build separate async SRAM, LiteDRAM SDRAM, and SPI Flash configurations. | Each configuration passes its own initialization/readback check and saves its actual map and RTL. |
+| 13 Integrated regression | Combine selected CPU, memory, GPIO, UART, timer, and serial peripherals. | One command runs firmware checks with stable markers, maps, tool versions, and source hashes. |
+| 14 FPGA target | Bind clock, reset, pins, and memories to one named board. | Constraints match the board documentation; synthesis and timing meet the declared clock. |
+| 15 FPGA runtime | Run the same software checks on hardware. | Preserve bitstream hash, tool versions, and raw UART output; mark unavailable board checks as not run. |
 
-## System contracts
+## Verification rules
 
-### Processor and bus
-
-- CPU: LiteX `vexiiriscv/standard`, RV32 little-endian, one hart.
-- CPU peripheral interface: AXI-Lite, byte addresses.
-- LiteX main bus: 32-bit Wishbone Classic, word-addressed endpoints where configured.
-- Adapter: native LiteX `AXILite2Wishbone`; do not duplicate the protocol bridge in project logic.
-- A transaction completes only on the target's valid response. Simulation endpoints must register ACKs and must not acknowledge an idle or stale request.
-
-### Memory and firmware
-
-- All software-visible maps and linker addresses are byte addresses.
-- Record any bus-side word-address conversion next to the interface contract.
-- ROM reset address must be aligned and inside the generated ROM region.
-- Firmware images are derived from checked-in assembly/C and linker inputs; save image hashes and map files as generated evidence.
-- Stack and heap reservations must fit inside RAM with explicit bounds. Negative capacity tests must fail before being reported as successful runtime tests.
-
-### Build and verification
-
-- Every stage has a root-relative command and writes outputs under `results/<stage>/`.
-- Stage-local implementation files must not import another stage's implementation.
-- Validate Builder output before starting CPU simulation.
-- Require a unique success marker from firmware or a protocol checker; Python construction success is not a runtime pass.
-- Bound all simulations and external commands with timeouts.
-- Negative tests must check both the expected fault and absence of the normal completion marker.
-- Generated build products and third-party checkouts remain outside version control; pin source revisions in the setup instructions.
+- Compile RV32I firmware with the `minimal` variant's ISA and ABI (`-march=rv32i2p0 -mabi=ilp32`). Do not assume multiply/divide instructions exist.
+- Keep byte addresses distinct from Wishbone word addresses in maps and traces.
+- Give every wait loop a bound. A missing response must be reported as a protocol failure or timeout, never as a pass.
+- Check the generated `csr.csv` and memory regions before running firmware that depends on them.
+- A simulation pass proves the modeled behavior only. It does not prove FPGA timing, physical SRAM behavior, or board wiring.
+- Preserve the complete RTL source list used to build each simulator under `results/<stage>/rtl/`.
 
 ## Repository layout
 
 ```text
 chapters/
-  00-environment/   host dependencies, source pins and environment verifier
-  01-cpu-bringup/   reset, initial ROM fetch and first memory-mapped write
-  02-wishbone/      bus endpoint protocol verification
-  03-rom/           assembled firmware and initialized ROM
-  04-sram/          data memory, byte lanes and stack accesses
-  05-memory-map/    explicit regions, overlap and unmapped behavior
-  06-litex-soc/     SoCCore/Builder realization of the working design
-  07-bare-metal/    C startup, linker sections, data initialization and stack
-  08-gpio/          CSR-backed GPIO input/output and synchronization
-  09-uart/          UART pin loopback, FIFO, baud mismatch and reset checks
-  10-timer-irq/     timer polling, PLIC routing, ISR and reset checks
-  11-spi-i2c/       SPI and I2C pin-level protocol experiments
-  12-memory/        async SRAM, LiteDRAM SDRAM and SPI Flash configurations
-  13-15/            planned integrated regression and FPGA work
-results/            ignored runtime evidence generated by each stage
+  00-environment/   host tools, pinned sources, and verifier
+  01-cpu-bringup/   reset, ROM fetch, and first memory-mapped write
+  02-wishbone/      protocol timing and failure models
+  03-rom/           assembled firmware and ROM initialization
+  04-sram/          data memory, byte lanes, and stack
+  05-memory-map/    explicit regions and decode behavior
+  06-litex-soc/     SoCCore and Builder
+  07-bare-metal/    C startup, linker sections, and stack
+  08-gpio/          CSR-backed input and output
+  09-uart/          serial transmit and receive
+  10-timer-irq/     timer event, external interrupt, and ISR
+  11-spi-i2c/       serial peripheral protocols
+  12-memory/        async SRAM, SDRAM, and SPI Flash experiments
+results/            generated maps, logs, waveforms, and complete simulator RTL
 ```
 
-## Current implementation status
-
-Stages 00–12 have chapter-local implementations and root-relative run commands. The CPU, Wishbone, ROM, SRAM, memory-map and LiteX Builder gates pass in stages 00–06. Stages 07–11 add and verify C startup, GPIO, UART, timer interrupts, SPI and I2C. Stage 12 verifies three independent external-memory configurations; its SDRAM run requires the pinned LiteDRAM source noted in that chapter. These are functional simulations, not FPGA timing closure or physical-chip sign-off.
-
-Stages 13–15 remain planned: one combined regression, a named FPGA target, and board-level runtime checks.
+Chapters 00–12 have runnable implementations. Chapters 13–15 remain planned integrated regression and FPGA work.

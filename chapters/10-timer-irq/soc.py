@@ -1,4 +1,4 @@
-"""Minimal VexiiRiscv SoC with LiteX Timer and a visible external IRQ line."""
+"""Minimal VexRiscv SoC with LiteX Timer and a visible external IRQ line."""
 from migen import Display, Finish, If, Module, Signal
 from litex.soc.interconnect import wishbone
 from litex.soc.integration.soc import SoCRegion
@@ -55,7 +55,7 @@ class ProjectTimer(Module, AutoCSR):
 class ProjectSoC(SoCCore):
     def __init__(self, platform, *, rom_words, reset_mode=None):
         super().__init__(platform,
-            clk_freq=1_000_000, cpu_type="vexiiriscv", cpu_variant="standard",
+            clk_freq=1_000_000, cpu_type="vexriscv", cpu_variant="minimal", bus_arbiter="transaction",
             cpu_reset_address=0, integrated_rom_size=0x1000,
             integrated_rom_init=rom_words, integrated_sram_size=0x1000,
             integrated_main_ram_size=16*1024, with_uart=False, with_timer=False,
@@ -66,10 +66,10 @@ class ProjectSoC(SoCCore):
         self.bus.add_slave(name="completion", slave=self.completion.bus,
             region=SoCRegion(origin=COMPLETION_BASE, size=0x1000, mode="rw", cached=False))
         irq_was_high = Signal()
-        self.sync += [irq_was_high.eq(self.cpu.interrupt[1]),
-            If(self.cpu.interrupt[1] & ~irq_was_high,
+        self.sync += [irq_was_high.eq(self.cpu.interrupt[0]),
+            If(self.cpu.interrupt[0] & ~irq_was_high,
                 Display("IRQ_LINE_ASSERT source=timer0")),
-            If(~self.cpu.interrupt[1] & irq_was_high,
+            If(~self.cpu.interrupt[0] & irq_was_high,
                 Display("IRQ_LINE_CLEAR source=timer0")),
         ]
         self.test_reset = Signal()
