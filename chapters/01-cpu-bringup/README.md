@@ -7,15 +7,105 @@ addi x1, x0, 64   # x1 = 0x40
 sw   x1, 0(x1)    # store 0x40 at byte address 0x40
 ```
 
-## What is connected?
+## Start with the LiteX bus path
+
+This diagram follows the generated [`sim.v`](../../results/01/rtl/sim.v). The CPU requests an access, the arbiter chooses its initiator, the decoder selects a device by address, and the device returns data and a response. All ranges below are **byte addresses**.
 
 ```text
-VexRiscv instruction Wishbone ─┐
-                               ├─ LiteX shared Wishbone ─ ROM (0x00–0x3f)
-VexRiscv data Wishbone ────────┘                       └─ endpoint (0x40–0x7f)
+                         VexRiscv / minimal
+                        ┌────────┴────────┐
+                        │                 │
+                  iBus: fetch        dBus: load/store
+                   interface0         interface1
+                        └────────┬────────┘
+                                 ▼
+                      Arbiter + RoundRobin
+                    select and hold a transaction
+                                 ▼
+                       shared Wishbone signals
+                  adr / dat_w / sel / we / cyc / stb
+                                 ▼
+                              Decoder
+                ┌────────────────┼──────────────────┐
+                ▼                ▼                  ▼
+               ROM           WriteTarget       Wishbone2CSR
+           0x00–0x3f         0x40–0x7f       0xf0000000–0xf000ffff
+           instructions    completion check         │ FSM
+                │                │                  ▼
+                │                │              CSR interface
+                │                │           no CSR banks here
+                └────────────────┼──────────────────┘
+                                 ▼
+                     response: dat_r / ack / err
+                  ACK/ERR gated to the granted master
+                                 ▼
+                                CPU
+
+Timeout watches a shared cyc & stb request waiting without ACK.
+CRG supplies system clock/reset to CPU, interconnect, memory, endpoint, and bridge.
+CPU externalInterruptArray is zero; this chapter has no interrupt source.
 ```
 
-VexRiscv exposes separate instruction and data Wishbone masters. LiteX connects both to its shared bus; this chapter selects transaction arbitration so a request keeps its grant until the target responds.
+The `interface0/1` labels here are suffixes of the **CPU Wishbone signal names**. The CSR bridge uses another set of `interface0/1` names; read the full prefixes when following RTL. The ROM appears as `SRAM` in the hierarchy because LiteX uses its SRAM wrapper in read-only mode. This chapter has no writable SRAM.
+
+### What do the management objects connect?
+
+The tree at the start of `sim.v` is a module hierarchy. `bus`, `csr`, and `irq` are siblings under the SoC; actual signal connectivity is expressed in RTL.
+
+| Name | Build-time task | Runtime hardware in this chapter |
+| --- | --- | --- |
+| `bus / SoCBusHandler` | Register masters, slaves, and address regions | Arbitration, decoding, response selection, and timeout logic. |
+| `csr / SoCCSRHandler` | Allocate CSR pages/regions and register interfaces | A CSR bridge exists, but no GPIO/Timer CSR device is enabled. |
+| `irq / SoCIRQHandler` | Allocate peripheral interrupt source indices | No sources; the CPU's 32-bit external interrupt vector stays zero. |
+| `write_target / WriteTarget` | Add our Wishbone endpoint | Check address/data/byte lanes, generate ACK, and report simulation completion. |
+| `csr_bridge / Wishbone2CSR` | Attach the CSR region to Wishbone | An FSM converts requests into CSR address, read/write enables, and data, then responds. |
+| `csr_bankarray / CSRBankArray` | Collect peripheral CSRs and create banks | Empty here; CSR devices added later create their banks and interconnect. |
+| `crg / CRG` | Establish clock/reset domains | System clock/reset signals. |
+
+The later `registers / RegisterSlave` occupies the same bus position as `write_target`: a direct Wishbone slave. It stores and reads back a value. This chapter's `WriteTarget` checks completion writes and returns constant zero on reads. These endpoints are separate from CPU registers `x0–x31`.
+
+### How does a request return to the CPU?
+
+```text
+Fetch: iBus requests a read at address 0
+       → arbiter grants iBus → decoder selects ROM
+       → ROM returns instruction data and ACK → ACK reaches iBus
+       → CPU executes addi and obtains x1=0x40
+
+Store: CPU executes sw and dBus requests a write
+       byte address=0x40, Wishbone adr=0x10
+       dat_w=0x40, we=1, sel=0xf, cyc=stb=1
+       → arbiter grants dBus → decoder selects WriteTarget
+       → endpoint accepts/checks the write and updates ACK
+       → shared response reaches dBus, completing the access
+```
+
+The normal simulation calls `$display` and `$finish` when the endpoint accepts the expected write. Its log proves that the CPU issued the expected store; the simulation ends at that checkpoint before observing subsequent CPU execution after ACK.
+
+Three concrete RTL anchors show routing:
+
+```verilog
+// Word address 0x10 corresponds to byte address 0x40.
+decoder0[1] = (adr[29:4] == 1'd1);
+// Shared payload/control, with CYC gated to the selected device.
+assign projectsoc_writetarget_cyc = (cyc & decoder0[1]);
+// Return ACK only to the granted CPU master.
+assign projectsoc_vexriscv_interface1_ack =
+    (ack & (roundrobin1 == 1'd1));
+```
+
+Selected read data is combined into shared `dat_r` and reaches both CPU interfaces. Only the granted interface receives ACK and accepts its transaction result. Arbitration chooses **who uses the bus**, decoding chooses **which device**, and the endpoint determines **when it completes**.
+
+The timeout counter starts at `1_000_000`. At zero, this RTL forces `ack=1`, `dat_r=0xffffffff`, and an internal timeout flag; it does not assert `err` there. ACK alone therefore cannot prove a correct device response. The no-ACK experiment ends after 600 cycles, before bus timeout, and checks the outstanding request.
+
+Later, a timer adds a separate interrupt path:
+
+```text
+CPU → Wishbone → CSR bridge → Timer registers: configure and clear pending
+Timer → IRQ signal → CPU: request ISR entry
+```
+
+The IRQ handler allocates source indices at build time. Hardware signals notify the CPU at runtime; the ISR uses bus accesses to handle the event.
 
 ## First use of `SoCCore`: what do these parameters configure?
 
@@ -27,7 +117,7 @@ This chapter's `ProjectSoC` inherits from LiteX `SoCCore`. Calling `super().__in
 | `clk_freq` | `1_000_000` | Declares this simulation's system clock. It is a convenient experiment setting, not a VexRiscv requirement; keep the LiteX clock declaration and simulator clock consistent if you change it. |
 | `cpu_type` | `"vexriscv"` | Selects LiteX's natively registered VexRiscv wrapper. |
 | `cpu_variant` | `"minimal"` | Selects the pre-generated RV32I core without I/D caches. |
-| `cpu_reset_address` | `0` | Sets the CPU reset vector. LiteX passes it to the VexRiscv generator, and the generated RTL resets PC to zero. |
+| `cpu_reset_address` | `0` | Sets the CPU reset vector. LiteX connects it to the pre-generated CPU’s `externalResetVector` input; CPU RTL uses that vector on reset. |
 | `integrated_rom_size` | `0x40` (64 bytes) | Allocates only enough ROM for this short instruction sequence. SoCCore maps the ROM at the CPU reset address, zero. |
 | `integrated_rom_init` | 16 machine-code words | Loads the `addi`, `sw`, stop loop, and NOP fill into ROM; it does not set the CPU reset location. |
 | `integrated_sram_size` | `0` | No SRAM region is needed for this first CPU experiment. |
@@ -68,13 +158,13 @@ projectsoc_writetarget_dat_w = dat_w;
 
 The Migen statements inside `WriteTarget` become registers and combinational logic: `bus.dat_r.eq(0)` and `bus.err.eq(0)` become constant outputs; the ACK code under `self.sync` becomes clocked logic; Python `If` conditions become hardware comparisons and muxes. LiteX arbitrates the two Wishbone masters before address decoding. The decoder routes a matching request to its slave, and `ack/dat_r` return to the granted master over the shared bus.
 
-After `run.py`, the complete RTL inputs for the two runs are in [`results/01/rtl`](../../results/01/rtl) and [`results/01-no-ack/rtl`](../../results/01-no-ack/rtl). Each contains the LiteX top-level `sim.v`, its `VexRiscv_Min.v` CPU definition, both generic RAM support modules, ROM initialization data, and an `rtl_sources.txt` manifest copied from the simulator's actual Verilog source list. The first top level shows the ACK response path; the second shows the endpoint configured never to respond. Running the chapter refreshes these files.
+After `run.py`, the complete RTL inputs for the two runs are in [`results/01/rtl`](../../results/01/rtl) and [`results/01-no-ack/rtl`](../../results/01-no-ack/rtl). Each contains the LiteX top-level `sim.v`, its `VexRiscv_Min.v` CPU definition, ROM initialization data, and an `rtl_sources.txt` manifest copied from the simulator's actual Verilog source list. The first top level shows the ACK response path; the second shows the endpoint configured never to respond. Running the chapter refreshes these files.
 
 Read these settings as a group: the CPU reset vector is `0`, the integrated ROM also starts at `0`, and its initialized words must contain code for that location. The endpoint starts at `0x40`, immediately after the ROM range `0x00–0x3f`, so the regions do not overlap. `integrated_rom_size` is measured in bytes, while each item in `integrated_rom_init` is one 32-bit word; 16 words are exactly 64 bytes here. If the ROM is enlarged without moving the endpoint, the ROM claims address `0x40`; if only the reset address changes, the CPU fetches from a location that the current image was not linked for.
 
 ### Why does PC return to zero on reset?
 
-`cpu_reset_address=0` is a build-time setting; Python does not write PC on every clock. LiteX calls the CPU wrapper's `set_reset_address(0)` and passes `--reset-vector 0` while generating VexRiscv RTL. The CPU reset signal makes RTL reset PC to zero; after reset is released, the CPU fetches from address zero. SoCCore also maps the integrated ROM at the reset address, so ROM contents are available at zero.
+`cpu_reset_address=0` is a build-time setting; Python does not write PC on every clock. LiteX calls the CPU wrapper's `set_reset_address(0)` and connects constant zero to the pre-generated core’s `externalResetVector` input. The CPU reset signal makes RTL reset PC to zero; after reset is released, the CPU fetches from address zero. SoCCore also maps the integrated ROM at the reset address, so ROM contents are available at zero.
 
 ```text
 SoCCore: cpu_reset_address=0

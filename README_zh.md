@@ -38,4 +38,4 @@ LiteX + Migen ─ Builder ─ RTL 和地址图
 Verilator + C++ ─ 周期级仿真
 ```
 
-00–12 章有独立实验；13–15 章仍是集成回归和 FPGA 计划。完整阶段约定见 [PLAN.md](PLAN.md)。
+00–12 章有独立实验；13–26 章规划整机回归、FPGA、ASIC、流片交付和硅后验证，并包含 JTAG/TAP、扫描与 RAM 测试，以及可选 SMP 扩展。完整阶段约定见[中文计划](PLAN_zh.md)或[英文计划](PLAN.md)。

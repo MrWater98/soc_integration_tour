@@ -7,15 +7,112 @@ addi x1, x0, 64   # x1 = 0x40
 sw   x1, 0(x1)    # 向字节地址 0x40 写入 0x40
 ```
 
-## 连接关系
+## 先沿着总线看懂 LiteX
+
+下面按本章生成的 [`sim.v`](../../results/01/rtl/sim.v) 画实际连接。先抓住一条主线：CPU 提出读写请求，仲裁器选择发起者，译码器按地址选择设备，设备返回数据和应答。所有地址范围均为**字节地址**。
 
 ```text
-VexRiscv 取指 Wishbone ─┐
-                        ├─ LiteX 共享 Wishbone ─ ROM（0x00–0x3f）
-VexRiscv 数据 Wishbone ─┘                  └─ 写入端点（0x40–0x7f）
+                       VexRiscv / minimal
+                      ┌────────┴────────┐
+                      │                 │
+                 iBus：取指        dBus：load/store
+                 interface0        interface1
+                      │                 │
+                      └────────┬────────┘
+                               ▼
+                    Arbiter + RoundRobin
+                  选择一个 master，保持当前事务
+                               │
+                               ▼
+                       共享 Wishbone
+                adr / dat_w / sel / we / cyc / stb
+                               │
+                               ▼
+                         Decoder
+                        按地址选设备
+            ┌──────────────────┼──────────────────┐
+            ▼                  ▼                  ▼
+           ROM             WriteTarget       Wishbone2CSR
+       0x00–0x3f           0x40–0x7f       0xf0000000–0xf000ffff
+       返回机器码          检查完成写入           │ FSM
+            │                  │                  ▼
+            │                  │               CSR 接口
+            │                  │            本章没有 CSR 寄存器组
+            └──────────────────┼──────────────────┘
+                               ▼
+                  返回选择：dat_r / ack / err
+                               │
+                 ACK/ERR 只送给当前获准的 master
+                               ▼
+                              CPU
+
+Timeout 并行观察共享总线：cyc & stb 有效却一直没有 ACK
+CRG 提供 sys 时钟与复位，供 CPU、互连、ROM、端点和桥使用
+本章 CPU externalInterruptArray = 0，没有外设中断源
 ```
 
-VexRiscv 的取指和数据端口都是 Wishbone master。LiteX 将两个 master 接入共享总线；本章显式选择事务仲裁，让一次请求保持到目标返回 ACK。
+图中的 `interface0/1` 是 **CPU Wishbone 信号名的尾部编号**；CSR 桥附近也有名为 `interface0/1` 的另一组信号，读 RTL 时要带上完整前缀。本章 ROM 在树里显示为 `SRAM`，因为 LiteX 用同一个存储器包装类构造只读 ROM；本章没有可写 SRAM。
+
+### 管理对象怎样变成这些连接？
+
+`sim.v` 开头的树是模块层次图。`bus`、`csr`、`irq` 是 SoC 下的同级对象；缩进表达归属，信号连线由生成的 RTL 决定。
+
+| 名字 | 构建时负责什么 | 本章运行时对应什么 |
+| --- | --- | --- |
+| `bus / SoCBusHandler` | 登记 CPU master、设备 slave 和地址区域 | 生成仲裁、地址译码、响应选择与超时逻辑。 |
+| `csr / SoCCSRHandler` | 分配 CSR 页和寄存器区域，登记 CSR 接口 | 本章保留 CSR 桥，但没有 GPIO、Timer 等 CSR 设备。 |
+| `irq / SoCIRQHandler` | 分配外设中断源编号 | 本章无中断源，CPU 的 32 位外部中断输入保持为 0。 |
+| `write_target / WriteTarget` | 加入我们定义的 Wishbone 从设备 | 检查地址、写入值和 `sel`，产生 ACK，并打印仿真完成标记。 |
+| `csr_bridge / Wishbone2CSR` | 把 CSR 区域接到 Wishbone | FSM 将 Wishbone 访问变成 CSR 的地址、读写使能和数据，再返回应答。 |
+| `csr_bankarray / CSRBankArray` | 收集外设 CSR，生成寄存器组 | 本章集合为空；加入 CSR 外设后再生成对应寄存器组及互连。 |
+| `crg / CRG` | 建立时钟和复位域 | 驱动硬件的时钟与复位信号。 |
+
+后面章节里的 `registers / RegisterSlave` 与本章 `write_target` 位于同一种位置：它们直接接 Wishbone。`RegisterSlave` 保存写入值并支持读回；本章 `WriteTarget` 只观察完成写入，读数据固定为 0。这些都是外设端点，不是 CPU 的 `x0–x31` 寄存器。
+
+### 一次请求发出去，又怎样回来？
+
+```text
+取指：iBus 发出地址 0 的读请求
+      → 仲裁选中 iBus → 译码选中 ROM
+      → ROM 返回机器码和 ACK → ACK 送回 iBus
+      → CPU 执行 addi，得到 x1=0x40
+
+写入：CPU 执行 sw，dBus 发出请求
+      字节地址=0x40，Wishbone adr=0x10
+      dat_w=0x40，we=1，sel=0xf，cyc=stb=1
+      → 仲裁选中 dBus → 译码选中 WriteTarget
+      → 端点接收并检查写入，更新 ACK
+      → 共享响应送回 dBus，CPU 的这笔访问完成
+```
+
+在正常实验中，端点接收正确写入时执行 `$display` 和 `$finish`，所以日志证明 CPU 发出了预期 store；仿真会在这个检查点结束，不继续观察 CPU 收到 ACK 后的后续指令。
+
+可以在 RTL 中对照三个位置：
+
+```verilog
+// 1. 按字地址译码：0x10 个 32 位字，就是字节地址 0x40。
+decoder0[1] = (adr[29:4] == 1'd1);
+
+// 2. 地址、数据等共享；仅命中的设备收到有效 CYC。
+assign projectsoc_writetarget_cyc = (cyc & decoder0[1]);
+
+// 3. 汇总 ACK 后，仅返给当前获准的 CPU 接口。
+assign projectsoc_vexriscv_interface1_ack =
+    (ack & (roundrobin1 == 1'd1));
+```
+
+读数据先按所选设备组合到共享 `dat_r`，再送到两个 CPU 接口；只有被授予接口的 ACK 有效，CPU 才接收对应事务的结果。总线承载地址、读写控制和数据；仲裁决定**谁使用**，译码决定**访问谁**，端点决定**何时完成**。
+
+`Timeout` 观察未完成请求。本次 RTL 的等待计数从 `1_000_000` 开始，到零后返回 `ack=1`、`dat_r=0xffffffff` 并置内部超时标记，没有在此处拉高 `err`。因此 ACK 本身不能证明目标设备正确响应。no-ACK 实验在 600 周期结束，早于总线超时，只检查端点缺少 ACK 时请求仍在等待。
+
+以后加入 Timer 时，会出现独立的中断信号路径：
+
+```text
+CPU → Wishbone → CSR 桥 → Timer 寄存器：设置计数、使能、清 pending
+Timer → IRQ 信号 → CPU：事件发生，请求进入 ISR
+```
+
+`irq` 管理器在构建时安排源编号，运行时由硬件信号通知 CPU；ISR 再通过总线访问寄存器处理事件。
 
 ## 第一次用 `SoCCore`：这些参数在配置什么？
 
@@ -27,7 +124,7 @@ VexRiscv 的取指和数据端口都是 Wishbone master。LiteX 将两个 master
 | `clk_freq` | `1_000_000` | 声明本次仿真的系统时钟，是方便观察的实验设置，不是 VexRiscv 的固定要求。修改时要让 LiteX 声明与仿真时钟保持一致。 |
 | `cpu_type` | `"vexriscv"` | 选择 LiteX 原生注册的 VexRiscv CPU 封装。 |
 | `cpu_variant` | `"minimal"` | 选择 RV32I、无 I/D cache 的预生成核心。 |
-| `cpu_reset_address` | `0` | 设置 CPU 复位向量。LiteX 将它交给 VexRiscv 生成器，生成的 RTL 在复位时把 PC 设为 0。 |
+| `cpu_reset_address` | `0` | 设置 CPU 复位向量。LiteX 将值接到预生成 CPU 的 `externalResetVector` 输入，CPU RTL 在复位时使用这个向量。 |
 | `integrated_rom_size` | `0x40`（64 字节） | 只给本实验的短指令序列分配最小 ROM。SoCCore 把 ROM 映射到 CPU 的复位地址，也就是 0。 |
 | `integrated_rom_init` | 16 个机器码字 | 把 `addi`、`sw`、停机跳转和填充 NOP 放进 ROM；不是告诉 CPU 从哪里复位。 |
 | `integrated_sram_size` | `0` | 本章不验证 SRAM，先不创建 SRAM 区域。 |
@@ -68,13 +165,13 @@ projectsoc_writetarget_dat_w = dat_w;
 
 `WriteTarget` 中的 Migen 语句会变成寄存器和组合逻辑：`bus.dat_r.eq(0)`、`bus.err.eq(0)` 对应常量输出；`self.sync` 中的 ACK 逻辑对应时钟沿触发的寄存器更新；Python `If` 条件对应硬件比较器和选择器。CPU 的两个 Wishbone master 由 LiteX 仲裁后进入地址译码器；译码器只把匹配区域的请求送给 slave，slave 的 `ack/dat_r` 沿共享总线返回被授予的 master。
 
-运行 `run.py` 后，两种构建使用的完整 RTL 文件分别保存在 [`results/01/rtl`](../../results/01/rtl) 和 [`results/01-no-ack/rtl`](../../results/01-no-ack/rtl)。每个目录都有 LiteX 顶层 `sim.v`、`VexRiscv_Min.v` CPU 定义、两个通用 RAM 支持模块、ROM 初始化数据，以及从仿真器实际 Verilog 源清单复制而来的 `rtl_sources.txt`。前者展示正常 ACK 路径，后者展示端点永不应答时的逻辑。重新运行会刷新文件。
+运行 `run.py` 后，两种构建使用的完整 RTL 文件分别保存在 [`results/01/rtl`](../../results/01/rtl) 和 [`results/01-no-ack/rtl`](../../results/01-no-ack/rtl)。每个目录都有 LiteX 顶层 `sim.v`、`VexRiscv_Min.v` CPU 定义、ROM 初始化数据，以及从仿真器实际 Verilog 源清单复制而来的 `rtl_sources.txt`。前者展示正常 ACK 路径，后者展示端点永不应答时的逻辑。重新运行会刷新文件。
 
 这些参数要一起看：CPU 复位向量是 `0`，集成 ROM 也从 `0` 开始，ROM 初始化内容必须对应这个起点；端点从 `0x40` 开始，不能与 ROM 的 `0x00–0x3f` 重叠。`integrated_rom_size` 的单位是字节，而 `integrated_rom_init` 每项是一个 32 位字，本章 16 字正好是 64 字节。若只扩大 ROM 却不移动端点，`0x40` 会被 ROM 占用；若只改 reset address 而不重链或重排 ROM 镜像，CPU 会从错误位置取指。
 
 ### 复位时 PC 为什么回到 0？
 
-`cpu_reset_address=0` 是构建配置，不是 Python 在每个时钟周期写 PC。LiteX 调用 CPU 封装的 `set_reset_address(0)`，生成 VexRiscv RTL 时传入 `--reset-vector 0`。复位信号作用于 CPU 后，RTL 把 PC 复位为 0；复位释放后，CPU 从地址 0 取指。SoCCore 同时把集成 ROM 映射在 reset address 上，因此地址 0 正好有 ROM 内容。
+`cpu_reset_address=0` 是构建配置，不是 Python 在每个时钟周期写 PC。LiteX 调用 CPU 封装的 `set_reset_address(0)`，将常量 0 接到预生成核心的 `externalResetVector` 输入。复位信号作用于 CPU 后，RTL 把 PC 复位为 0；复位释放后，CPU 从地址 0 取指。SoCCore 同时把集成 ROM 映射在 reset address 上，因此地址 0 正好有 ROM 内容。
 
 ```text
 SoCCore: cpu_reset_address=0

@@ -38,4 +38,4 @@ LiteX + Migen ─ Builder ─ generated RTL and address maps
 Verilator + C++ ─ cycle simulation
 ```
 
-Chapters 00–12 contain runnable experiments. Chapters 13–15 remain planned integrated regression and FPGA work. See [PLAN.md](PLAN.md) for the stage contracts and [the Chinese guide](README_zh.md) for the student-oriented walkthrough.
+Chapters 00–12 contain runnable experiments. Stages 13–26 cover planned integrated regression, FPGA, ASIC, tapeout delivery, and post-silicon validation, with TAP/testability experiments and optional SMP extensions. See [PLAN.md](PLAN.md) for the stage contracts and [the Chinese guide](README_zh.md) for the student-oriented walkthrough.
