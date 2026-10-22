@@ -1,0 +1,8 @@
+UART_BYTE value=4f
+UART_BYTE value=4b
+PASS19 cycles=4338 UART=2 GPIO=9 reset_injected=0
+UART_BYTE value=4f
+UART_BYTE value=4b
+PASS19 cycles=8675 UART=2 GPIO=9 reset_injected=0
+PASS20 boots=2 cycles=8675
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/tb.sv:62: $finish called at 86770000 (1ps)

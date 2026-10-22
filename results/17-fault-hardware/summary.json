@@ -1,0 +1,26 @@
+{
+  "status": "PASS: injected RAM error captured",
+  "parameters": {
+    "input": "results/17-fault",
+    "output": "results/17-fault-hardware",
+    "serial": "/dev/serial/by-id/usb-SIPEED_JTAG_Debugger_FactoryAIOT_Pro-if01-port0",
+    "seconds": 60,
+    "warm_resets": 0,
+    "min_rounds": 100,
+    "min_irqs": 10,
+    "load": true,
+    "expect_fault": true
+  },
+  "board": "Tang Primer 20K Dock",
+  "clock_hz": 54000000,
+  "warm_resets": 0,
+  "echoes": 0,
+  "max_rounds": 0,
+  "max_irqs": 0,
+  "boots": 1,
+  "cold_boot": "NOT_RUN: requires physical power cycling",
+  "temperature_voltage": "NOT_MEASURED",
+  "fault_caught": true,
+  "bitstream_sha256": "63233a0110c082b218218ab65d347d44dee6262b00fed298715f5df3b2e59147",
+  "elapsed_seconds": 0.005123285984154791
+}

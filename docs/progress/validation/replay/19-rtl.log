@@ -1,0 +1,3 @@
+UART_BYTE value=4f
+UART_BYTE value=4b
+PASS19 cycles=4338 UART=2 GPIO=9 reset_injected=0

@@ -1,0 +1,22 @@
+COVER_BIN id=0 hits=501
+COVER_BIN id=1 hits=491
+COVER_BIN id=2 hits=527
+COVER_BIN id=3 hits=507
+COVER_BIN id=4 hits=494
+COVER_BIN id=5 hits=496
+COVER_BIN id=6 hits=484
+COVER_BIN id=7 hits=500
+COVER_BIN id=8 hits=484
+COVER_BIN id=9 hits=454
+COVER_BIN id=10 hits=479
+COVER_BIN id=11 hits=513
+COVER_BIN id=12 hits=513
+COVER_BIN id=13 hits=488
+COVER_BIN id=14 hits=512
+COVER_BIN id=15 hits=513
+COVER_BIN id=16 hits=468
+COVER_BIN id=17 hits=473
+COVER_BIN id=18 hits=485
+COVER_BIN id=19 hits=529
+PASS_STRESS seed=19 requests=10000 reset_aborts=89 coverage_hits=20/20
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/stress_tb.sv:78: $finish called at 560490000 (1ps)

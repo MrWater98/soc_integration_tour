@@ -1,0 +1,26 @@
+{
+  "status": "PASS: bounded hardware campaign",
+  "parameters": {
+    "input": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/17",
+    "output": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/17-hardware",
+    "serial": "/dev/serial/by-id/usb-SIPEED_JTAG_Debugger_FactoryAIOT_Pro-if01-port0",
+    "seconds": 180.0,
+    "warm_resets": 3,
+    "min_rounds": 100,
+    "min_irqs": 10,
+    "load": true,
+    "expect_fault": false
+  },
+  "board": "Tang Primer 20K Dock",
+  "clock_hz": 54000000,
+  "warm_resets": 3,
+  "echoes": 356,
+  "max_rounds": 29600,
+  "max_irqs": 44947,
+  "boots": 4,
+  "cold_boot": "NOT_RUN: requires physical power cycling",
+  "temperature_voltage": "NOT_MEASURED",
+  "fault_caught": false,
+  "bitstream_sha256": "abadb2224bb1e32bf56eb84129d5fb0f2698166375b4cddfb8804f9b866b0dbc",
+  "elapsed_seconds": 180.02748142799828
+}

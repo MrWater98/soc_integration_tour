@@ -1,0 +1,7 @@
+cycle,accepted_cmd,accepted_rsp,cmd_valid_before,cmd_ready_before,rsp_valid_before,rsp_ready_before,function_id,input0,input1,result_before,result_after
+0,0,0,0,x,x,0,xxx,xxxxxxxx,xxxxxxxx,xxxxxxxx,00000000
+1,1,0,1,1,0,0,008,00000000,00000000,00000000,00000000
+2,0,0,0,0,1,0,008,00000000,00000000,00000000,00000000
+3,0,0,0,0,1,0,008,00000000,00000000,00000000,00000000
+4,0,1,0,0,1,1,008,00000000,00000000,00000000,00000000
+5,1,0,1,1,0,0,000,84838281,0103ff02,00000000,fffffd8d

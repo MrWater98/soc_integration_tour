@@ -1,0 +1,2 @@
+FATAL: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/tb.sv:56: FIRMWARE_FAIL result=000000e5 stage=  3
+       Time: 25010000  Scope: tb

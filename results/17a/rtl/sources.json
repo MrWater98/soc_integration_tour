@@ -1,0 +1,34 @@
+[
+  {
+    "file": "Ram_1w_1rs_Generic.v",
+    "sha256": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d"
+  },
+  {
+    "file": "VexRiscvLitexSmpCluster_Cc1_Iw32Is4096Iy1_Dw32Ds4096Dy1_ITs4DTs4_Ood_Wm.v",
+    "sha256": "9ab070658056f1ffb34c8d46e488782805fde47fdfb376469e850e27a7436db5"
+  },
+  {
+    "file": "sim.v",
+    "sha256": "e30afc5978cc27e70eb39535376b96eb1950c1e2acde080cf0025bd8aab8fc78"
+  },
+  {
+    "file": "sim_main_ram.init",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "file": "sim_mem.init",
+    "sha256": "d1a1380bc510940206da18aad7f35bf3bf4a185dbff7637b428ed7590c5e3a24"
+  },
+  {
+    "file": "sim_rom.init",
+    "sha256": "ddbd1a6932616f360f29c1e8cb195241f86229b61a5c4d6cc53344e9e822b47b"
+  },
+  {
+    "file": "sim_sram.init",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "file": "tb.sv",
+    "sha256": "7b6ced2b1371450945808aaf5ae9d59940e7b8cfdb92c182c517d5012c62d70e"
+  }
+]

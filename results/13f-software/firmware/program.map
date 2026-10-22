@@ -1,0 +1,78 @@
+
+Discarded input sections
+
+ .comment       0x0000000000000000        0xf /tmp/ccq4hUYm.o
+ .comment       0x0000000000000000        0xf /tmp/ccD6robl.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x0000000000000000 0x0000000000001000 xr
+sram             0x0000000010000000 0x0000000000001000 rw
+main_ram         0x0000000040000000 0x0000000000004000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+
+.text           0x0000000000000000      0x680
+ *(.text.init)
+ .text.init     0x0000000000000000       0x68 /tmp/ccu2eFso.o
+                0x0000000000000000                _start
+ *(.text .text.*)
+ .text          0x0000000000000068        0x0 /tmp/ccu2eFso.o
+ .text          0x0000000000000068      0x588 /tmp/ccq4hUYm.o
+                0x0000000000000238                main
+ .text          0x00000000000005f0       0x80 /tmp/ccD6robl.o
+                0x00000000000005f0                software_cfu
+ *(.rodata .rodata.*)
+ .rodata        0x0000000000000670       0x10 /tmp/ccq4hUYm.o
+
+.srodata        0x0000000000000680        0x8
+ .srodata       0x0000000000000680        0x8 /tmp/ccq4hUYm.o
+
+.rela.dyn       0x0000000000000688        0x0
+ .rela.text.init
+                0x0000000000000688        0x0 /tmp/ccu2eFso.o
+
+.data           0x0000000040000000        0x4 load address 0x0000000000000688
+                0x0000000040000000                __data_start = .
+ *(.data .data.* .sdata .sdata.*)
+ .data          0x0000000040000000        0x0 /tmp/ccu2eFso.o
+ .data          0x0000000040000000        0x0 /tmp/ccq4hUYm.o
+ .sdata         0x0000000040000000        0x4 /tmp/ccq4hUYm.o
+ .data          0x0000000040000004        0x0 /tmp/ccD6robl.o
+                0x0000000040000004                __data_end = .
+                0x0000000000000688                __data_load_start = LOADADDR (.data)
+
+.bss            0x0000000040000004        0x8 load address 0x000000000000068c
+                0x0000000040000004                __bss_start = .
+ *(.bss .bss.* .sbss .sbss.* COMMON)
+ .bss           0x0000000040000004        0x0 /tmp/ccu2eFso.o
+ .bss           0x0000000040000004        0x0 /tmp/ccq4hUYm.o
+ .sbss          0x0000000040000004        0x4 /tmp/ccq4hUYm.o
+ .bss           0x0000000040000008        0x0 /tmp/ccD6robl.o
+ .sbss          0x0000000040000008        0x4 /tmp/ccD6robl.o
+                0x000000004000000c                __bss_end = .
+                0x0000000040004000                __stack_top = (ORIGIN (main_ram) + LENGTH (main_ram))
+                0x000000004000000c                __heap_start = __bss_end
+                0x0000000040003f00                __heap_end = (__stack_top - 0x100)
+                0x0000000000000001                ASSERT (((__bss_end + 0x100) <= __stack_top), main RAM has no room for sections and 256-byte stack margin)
+
+/DISCARD/
+ *(.comment)
+ *(.eh_frame*)
+                0x0000000000004000                MAIN_RAM_LENGTH = 0x4000
+LOAD /tmp/ccu2eFso.o
+LOAD /tmp/ccq4hUYm.o
+LOAD /tmp/ccD6robl.o
+OUTPUT(/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/13f-software/firmware/program.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x0000000000000000       0x21
+ .riscv.attributes
+                0x0000000000000000       0x1f /tmp/ccu2eFso.o
+ .riscv.attributes
+                0x000000000000001f       0x21 /tmp/ccq4hUYm.o
+ .riscv.attributes
+                0x0000000000000040       0x21 /tmp/ccD6robl.o

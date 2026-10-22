@@ -1,0 +1,5 @@
+read_verilog -formal -sv /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/peripheral.v /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv
+prep -top properties -flatten
+async2sync
+chformal -lower
+sat -seq 12 -prove-asserts -set-assumes -verify

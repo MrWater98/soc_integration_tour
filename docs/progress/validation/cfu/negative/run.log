@@ -1,0 +1,3 @@
+VCD info: dumpfile cfu.vcd opened for output.
+FATAL: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tour/chapters/13f-cfu-ml/tb_mac.sv:35: MAC_MISMATCH vector=1 actual=fffffd8d expected=0000000d
+       Time: 60000 Scope: tb

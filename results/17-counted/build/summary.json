@@ -1,0 +1,1766 @@
+{
+  "placement_routing": "PASS",
+  "timing": "PASS: nextpnr accepted requested clock target",
+  "bitstream": "PASS",
+  "onboard": "SKIP: hardware test not run",
+  "device": "GW2A-LV18PG256C8/I7",
+  "family": "GW2A-18C",
+  "seed": 1,
+  "target_mhz": 54.0,
+  "nextpnr_version": "\"nextpnr-himbaechel\" -- Next Generation Place and Route (Version nextpnr-0.11.1-54-g861c57be)",
+  "bitstream_bytes": 7261470,
+  "bitstream_sha256": "d7eb36830468a1c8171cb5a672e06005477e55d816fd7ab0a545b8d3df11a460",
+  "report": {
+    "critical_paths": [
+      {
+        "from": "posedge VexRiscv.clk",
+        "path": [
+          {
+            "delay": 0.23100000619888306,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.io_cpu_decode_data_DFFE_Q_28",
+              "loc": [
+                24,
+                11
+              ],
+              "port": "Q"
+            },
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.io_cpu_decode_data_DFFE_Q_28",
+              "loc": [
+                24,
+                11
+              ],
+              "port": "Q"
+            },
+            "type": "clk-to-q"
+          },
+          {
+            "delay": 0.6700000166893005,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.io_cpu_decode_data_DFFE_Q_28",
+              "loc": [
+                24,
+                11
+              ],
+              "port": "Q"
+            },
+            "net": "VexRiscv._zz_execute_SRC2_CTRL_DFFE_Q_1_D[0]",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F_I3_LUT4_F",
+              "loc": [
+                24,
+                16
+              ],
+              "port": "I1"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.5690000057220459,
+            "from": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F_I3_LUT4_F",
+              "loc": [
+                24,
+                16
+              ],
+              "port": "I1"
+            },
+            "to": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F_I3_LUT4_F",
+              "loc": [
+                24,
+                16
+              ],
+              "port": "F"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0.4740000069141388,
+            "from": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F_I3_LUT4_F",
+              "loc": [
+                24,
+                16
+              ],
+              "port": "F"
+            },
+            "net": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F_I3[3]",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F",
+              "loc": [
+                24,
+                12
+              ],
+              "port": "I3"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.3700000047683716,
+            "from": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F",
+              "loc": [
+                24,
+                12
+              ],
+              "port": "I3"
+            },
+            "to": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F",
+              "loc": [
+                24,
+                12
+              ],
+              "port": "F"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0.6449999809265137,
+            "from": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3_LUT4_F",
+              "loc": [
+                24,
+                12
+              ],
+              "port": "F"
+            },
+            "net": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F_I3[3]",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "I3"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.3700000047683716,
+            "from": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "I3"
+            },
+            "to": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "F"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0.7400000095367432,
+            "from": {
+              "cell": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F_LUT4_F",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "F"
+            },
+            "net": "VexRiscv.decode_to_execute_BYPASSABLE_EXECUTE_STAGE_LUT2_I0_F[4]",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "VexRiscv.decode_to_execute_IS_CSR_LUT3_I0_F_LUT4_I3_F_LUT3_I1_F_MUX2_LUT5_O",
+              "loc": [
+                18,
+                8
+              ],
+              "port": "S0"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.10400000214576721,
+            "from": {
+              "cell": "VexRiscv.decode_to_execute_IS_CSR_LUT3_I0_F_LUT4_I3_F_LUT3_I1_F_MUX2_LUT5_O",
+              "loc": [
+                18,
+                8
+              ],
+              "port": "S0"
+            },
+            "to": {
+              "cell": "VexRiscv.decode_to_execute_IS_CSR_LUT3_I0_F_LUT4_I3_F_LUT3_I1_F_MUX2_LUT5_O",
+              "loc": [
+                18,
+                8
+              ],
+              "port": "O"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0.6700000166893005,
+            "from": {
+              "cell": "VexRiscv.decode_to_execute_IS_CSR_LUT3_I0_F_LUT4_I3_F_LUT3_I1_F_MUX2_LUT5_O",
+              "loc": [
+                18,
+                8
+              ],
+              "port": "O"
+            },
+            "net": "VexRiscv.decode_to_execute_IS_CSR_LUT3_I0_F_LUT4_I3_F_LUT3_I1_F[2]",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1_I0_LUT4_F",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "I2"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.4620000123977661,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1_I0_LUT4_F",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "I2"
+            },
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1_I0_LUT4_F",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "F"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1_I0_LUT4_F",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "F"
+            },
+            "net": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1_I0",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:151.9-151.11"
+            ],
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "I0"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.2680000066757202,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "I0"
+            },
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "O"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0.3790000081062317,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_cache.decodeStage_hit_error_LUT2_I0_F_MUX2_LUT5_O_1",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "O"
+            },
+            "net": "VexRiscv.CsrPlugin_exceptionPortCtrl_exceptionValidsRegs_execute_DFFR_Q_D_MUX2_LUT5_O_I0_LUT3_F_I1[3]",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "S0"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.10400000214576721,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "S0"
+            },
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "O"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0_MUX2_LUT5_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "O"
+            },
+            "net": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O_I0",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:170.42-170.67",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:164.41-164.66",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:157.9-157.11"
+            ],
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "I0"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.2680000066757202,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "I0"
+            },
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "O"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0_MUX2_LUT6_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "O"
+            },
+            "net": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O_I0",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:170.42-170.67",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:163.9-163.11"
+            ],
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "I0"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.2680000066757202,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "I0"
+            },
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "O"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0_MUX2_LUT7_O",
+              "loc": [
+                25,
+                8
+              ],
+              "port": "O"
+            },
+            "net": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O_I0",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:169.9-169.11"
+            ],
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O",
+              "loc": [
+                24,
+                8
+              ],
+              "port": "I0"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.2680000066757202,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O",
+              "loc": [
+                24,
+                8
+              ],
+              "port": "I0"
+            },
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O",
+              "loc": [
+                24,
+                8
+              ],
+              "port": "O"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0.7110000252723694,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET_MUX2_LUT8_O",
+              "loc": [
+                24,
+                8
+              ],
+              "port": "O"
+            },
+            "net": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q_RESET",
+            "sources": [],
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "RESET"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "RESET"
+            },
+            "to": {
+              "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q",
+              "loc": [
+                23,
+                8
+              ],
+              "port": "RESET"
+            },
+            "type": "setup"
+          }
+        ],
+        "to": "posedge VexRiscv.clk"
+      },
+      {
+        "from": "posedge boardsoc_crg_gw2apll2",
+        "path": [
+          {
+            "delay": 0.23100000619888306,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_15",
+              "loc": [
+                32,
+                20
+              ],
+              "port": "Q"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_15",
+              "loc": [
+                32,
+                20
+              ],
+              "port": "Q"
+            },
+            "type": "clk-to-q"
+          },
+          {
+            "delay": 0.16699999570846558,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_15",
+              "loc": [
+                32,
+                20
+              ],
+              "port": "Q"
+            },
+            "net": "boardsoc_crg1[0]",
+            "sources": [
+              "tutorial17.v:372.15-372.28"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM_CIN_ALU_COUT",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "I0"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.5490000247955322,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM_CIN_ALU_COUT",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "I0"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM_CIN_ALU_COUT",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM_CIN_ALU_COUT",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM_CIN",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_14_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_13_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_13_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_13_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_13_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_13_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_12_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_12_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_12_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_12_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_12_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_11_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_11_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_11_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_11_D_ALU_SUM",
+              "loc": [
+                32,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_11_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_10_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_10_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_10_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_10_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_10_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_9_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_9_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_9_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_9_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_9_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_8_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_8_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_8_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_8_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_8_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_7_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_7_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_7_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_7_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_7_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_6_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_6_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_6_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_6_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_6_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_5_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_5_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_5_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_5_D_ALU_SUM",
+              "loc": [
+                33,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_5_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_4_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_4_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_4_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_4_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_4_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_3_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_3_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_3_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_3_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_3_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_2_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_2_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_2_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_2_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_2_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_1_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_1_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_1_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_1_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_1_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "COUT"
+            },
+            "net": "boardsoc_crg1_DFFRE_Q_D_ALU_SUM_COUT",
+            "sources": [
+              "tutorial17.v:1358.31-1358.51",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5",
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29"
+            ],
+            "to": {
+              "cell": "boardsoc_crg1_DFFSE_Q_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.4690000116825104,
+            "from": {
+              "cell": "boardsoc_crg1_DFFSE_Q_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "CIN"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFSE_Q_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "SUM"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0,
+            "from": {
+              "cell": "boardsoc_crg1_DFFSE_Q_D_ALU_SUM",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "SUM"
+            },
+            "net": "boardsoc_crg1_DFFSE_Q_D",
+            "sources": [],
+            "to": {
+              "cell": "boardsoc_crg1_DFFSE_Q",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "D"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "boardsoc_crg1_DFFSE_Q",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "D"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFSE_Q",
+              "loc": [
+                34,
+                21
+              ],
+              "port": "D"
+            },
+            "type": "setup"
+          }
+        ],
+        "to": "posedge boardsoc_crg_gw2apll2"
+      },
+      {
+        "from": "posedge boardsoc_crg_gw2apll2",
+        "path": [
+          {
+            "delay": 0.23100000619888306,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_7",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "Q"
+            },
+            "to": {
+              "cell": "boardsoc_crg1_DFFRE_Q_7",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "Q"
+            },
+            "type": "clk-to-q"
+          },
+          {
+            "delay": 0.16699999570846558,
+            "from": {
+              "cell": "boardsoc_crg1_DFFRE_Q_7",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "Q"
+            },
+            "net": "boardsoc_crg1[8]",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "boardsoc_crg_gw2apll1_LUT3_I2_F_LUT4_F",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "I0"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.5490000247955322,
+            "from": {
+              "cell": "boardsoc_crg_gw2apll1_LUT3_I2_F_LUT4_F",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "I0"
+            },
+            "to": {
+              "cell": "boardsoc_crg_gw2apll1_LUT3_I2_F_LUT4_F",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "F"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0.16699999570846558,
+            "from": {
+              "cell": "boardsoc_crg_gw2apll1_LUT3_I2_F_LUT4_F",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "F"
+            },
+            "net": "boardsoc_crg_gw2apll1_LUT3_I2_F[3]",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "DFFP_PRESET_LUT4_F",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "I3"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.3700000047683716,
+            "from": {
+              "cell": "DFFP_PRESET_LUT4_F",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "I3"
+            },
+            "to": {
+              "cell": "DFFP_PRESET_LUT4_F",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "F"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 1.4390000104904175,
+            "from": {
+              "cell": "DFFP_PRESET_LUT4_F",
+              "loc": [
+                33,
+                20
+              ],
+              "port": "F"
+            },
+            "net": "DFFP_PRESET",
+            "sources": [],
+            "to": {
+              "cell": "DFFP_1",
+              "loc": [
+                28,
+                7
+              ],
+              "port": "PRESET"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 1.1480000019073486,
+            "from": {
+              "cell": "DFFP_1",
+              "loc": [
+                28,
+                7
+              ],
+              "port": "PRESET"
+            },
+            "to": {
+              "cell": "DFFP_1",
+              "loc": [
+                28,
+                7
+              ],
+              "port": "Q"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 1.4140000343322754,
+            "from": {
+              "cell": "DFFP_1",
+              "loc": [
+                28,
+                7
+              ],
+              "port": "Q"
+            },
+            "net": "DFFP_1_Q",
+            "sources": [
+              "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21"
+            ],
+            "to": {
+              "cell": "VexRiscv.memory_DivPlugin_div_done_DFFRE_Q_CE_LUT4_F_I3_LUT4_I1",
+              "loc": [
+                41,
+                12
+              ],
+              "port": "I3"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.3700000047683716,
+            "from": {
+              "cell": "VexRiscv.memory_DivPlugin_div_done_DFFRE_Q_CE_LUT4_F_I3_LUT4_I1",
+              "loc": [
+                41,
+                12
+              ],
+              "port": "I3"
+            },
+            "to": {
+              "cell": "VexRiscv.memory_DivPlugin_div_done_DFFRE_Q_CE_LUT4_F_I3_LUT4_I1",
+              "loc": [
+                41,
+                12
+              ],
+              "port": "F"
+            },
+            "type": "logic"
+          },
+          {
+            "delay": 0.3790000081062317,
+            "from": {
+              "cell": "VexRiscv.memory_DivPlugin_div_done_DFFRE_Q_CE_LUT4_F_I3_LUT4_I1",
+              "loc": [
+                41,
+                12
+              ],
+              "port": "F"
+            },
+            "net": "VexRiscv.memory_DivPlugin_div_done_DFFRE_Q_CE_LUT4_F_I3_LUT4_I1_F",
+            "sources": [],
+            "to": {
+              "cell": "VexRiscv.memory_DivPlugin_div_counter_value_DFFR_Q",
+              "loc": [
+                42,
+                12
+              ],
+              "port": "RESET"
+            },
+            "type": "routing"
+          },
+          {
+            "delay": 0.03500000014901161,
+            "from": {
+              "cell": "VexRiscv.memory_DivPlugin_div_counter_value_DFFR_Q",
+              "loc": [
+                42,
+                12
+              ],
+              "port": "RESET"
+            },
+            "to": {
+              "cell": "VexRiscv.memory_DivPlugin_div_counter_value_DFFR_Q",
+              "loc": [
+                42,
+                12
+              ],
+              "port": "RESET"
+            },
+            "type": "setup"
+          }
+        ],
+        "to": "posedge VexRiscv.clk"
+      }
+    ],
+    "fmax": {
+      "VexRiscv.clk": {
+        "achieved": 131.47515869140625,
+        "constraint": 54
+      },
+      "boardsoc_crg_gw2apll2": {
+        "achieved": 506.0728759765625,
+        "constraint": 54
+      }
+    },
+    "utilization": {
+      "ALU": {
+        "available": 15552,
+        "used": 698
+      },
+      "ALU54D": {
+        "available": 24,
+        "used": 0
+      },
+      "BSRAM": {
+        "available": 46,
+        "used": 24
+      },
+      "BUFG": {
+        "available": 24,
+        "used": 0
+      },
+      "CLKDIV": {
+        "available": 8,
+        "used": 0
+      },
+      "CLKDIV2": {
+        "available": 16,
+        "used": 0
+      },
+      "DCS": {
+        "available": 8,
+        "used": 0
+      },
+      "DFF": {
+        "available": 15552,
+        "used": 1953
+      },
+      "DHCEN": {
+        "available": 24,
+        "used": 0
+      },
+      "DQCE": {
+        "available": 24,
+        "used": 0
+      },
+      "DUMMY_CELL": {
+        "available": 0,
+        "used": 16
+      },
+      "GND": {
+        "available": 1,
+        "used": 1
+      },
+      "GSR": {
+        "available": 1,
+        "used": 1
+      },
+      "GW_JTAG": {
+        "available": 1,
+        "used": 0
+      },
+      "IOB": {
+        "available": 384,
+        "used": 7
+      },
+      "IOLOGICI": {
+        "available": 384,
+        "used": 0
+      },
+      "IOLOGICO": {
+        "available": 384,
+        "used": 0
+      },
+      "LUT4": {
+        "available": 20736,
+        "used": 4746
+      },
+      "MULT18X18": {
+        "available": 48,
+        "used": 4
+      },
+      "MULT36X36": {
+        "available": 12,
+        "used": 0
+      },
+      "MULT9X9": {
+        "available": 96,
+        "used": 0
+      },
+      "MULTADDALU18X18": {
+        "available": 24,
+        "used": 0
+      },
+      "MULTALU18X18": {
+        "available": 24,
+        "used": 0
+      },
+      "MULTALU36X18": {
+        "available": 24,
+        "used": 0
+      },
+      "MUX2_LUT5": {
+        "available": 10368,
+        "used": 780
+      },
+      "MUX2_LUT6": {
+        "available": 5184,
+        "used": 103
+      },
+      "MUX2_LUT7": {
+        "available": 2592,
+        "used": 37
+      },
+      "MUX2_LUT8": {
+        "available": 2592,
+        "used": 9
+      },
+      "OSC": {
+        "available": 1,
+        "used": 0
+      },
+      "PADD18": {
+        "available": 48,
+        "used": 0
+      },
+      "PADD9": {
+        "available": 96,
+        "used": 0
+      },
+      "RAM16SDP4": {
+        "available": 648,
+        "used": 4
+      },
+      "VCC": {
+        "available": 1,
+        "used": 1
+      },
+      "rPLL": {
+        "available": 2,
+        "used": 1
+      }
+    }
+  }
+}

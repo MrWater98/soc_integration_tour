@@ -1,0 +1,17 @@
+{
+  "mode": "software emulator",
+  "custom_opcodes": 0,
+  "accepted_cfu_commands": 0,
+  "accepted_cfu_responses": 0,
+  "cycles_64_iterations": {
+    "CFU_CPU_REFERENCE_CYCLES": 10991,
+    "CFU_ACCEL_CYCLES": 40817,
+    "CFU_PREPACKED_CYCLES": 16513
+  },
+  "dot": 13,
+  "dense_relu": [
+    28,
+    0
+  ],
+  "random_dot_checks": 64
+}

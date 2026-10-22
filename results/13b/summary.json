@@ -1,0 +1,167 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "case": "sample-functional",
+      "observed": 170,
+      "status": "PASS"
+    },
+    {
+      "case": "preload-then-extest",
+      "observed": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "healthy",
+      "drive": 1,
+      "captured": 1,
+      "normal_expected": 1,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "healthy",
+      "drive": 2,
+      "captured": 2,
+      "normal_expected": 2,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "healthy",
+      "drive": 4,
+      "captured": 4,
+      "normal_expected": 4,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "healthy",
+      "drive": 8,
+      "captured": 8,
+      "normal_expected": 8,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "healthy",
+      "drive": 15,
+      "captured": 15,
+      "normal_expected": 15,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "healthy",
+      "drive": 0,
+      "captured": 0,
+      "normal_expected": 0,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "stuck-low-bit1",
+      "drive": 1,
+      "captured": 1,
+      "normal_expected": 1,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "stuck-low-bit1",
+      "drive": 2,
+      "captured": 0,
+      "normal_expected": 2,
+      "mismatch_mask": 2,
+      "status": "PASS"
+    },
+    {
+      "case": "stuck-low-bit1",
+      "drive": 4,
+      "captured": 4,
+      "normal_expected": 4,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "stuck-low-bit1",
+      "drive": 8,
+      "captured": 8,
+      "normal_expected": 8,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "stuck-low-bit1",
+      "drive": 15,
+      "captured": 13,
+      "normal_expected": 15,
+      "mismatch_mask": 2,
+      "status": "PASS"
+    },
+    {
+      "case": "stuck-low-bit1",
+      "drive": 0,
+      "captured": 0,
+      "normal_expected": 0,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "wired-or-short-bits01",
+      "drive": 1,
+      "captured": 3,
+      "normal_expected": 1,
+      "mismatch_mask": 2,
+      "status": "PASS"
+    },
+    {
+      "case": "wired-or-short-bits01",
+      "drive": 2,
+      "captured": 3,
+      "normal_expected": 2,
+      "mismatch_mask": 1,
+      "status": "PASS"
+    },
+    {
+      "case": "wired-or-short-bits01",
+      "drive": 4,
+      "captured": 4,
+      "normal_expected": 4,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "wired-or-short-bits01",
+      "drive": 8,
+      "captured": 8,
+      "normal_expected": 8,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "wired-or-short-bits01",
+      "drive": 15,
+      "captured": 15,
+      "normal_expected": 15,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "wired-or-short-bits01",
+      "drive": 0,
+      "captured": 0,
+      "normal_expected": 0,
+      "mismatch_mask": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "release-functional",
+      "observed": 10,
+      "status": "PASS"
+    }
+  ],
+  "pins": 4,
+  "boundary_bits": 8,
+  "fault_model": "digital stuck-low / wired-OR; not analog electrical simulation"
+}

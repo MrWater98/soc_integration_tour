@@ -1,0 +1,37 @@
+[
+  {
+    "file": "VexRiscv.v",
+    "role": "design",
+    "snapshot_sha256": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b"
+  },
+  {
+    "file": "tutorial17.v",
+    "role": "design",
+    "snapshot_sha256": "effda07b2f585cc37315be34a1eb6bb0bde3de2ba2bb882fa63ced863c483faa"
+  },
+  {
+    "file": "tutorial17_mem.init",
+    "role": "design",
+    "snapshot_sha256": "491f187970c0cc549d30439b458e23faa1a019c7ea1beaa6decd50cfa00fb071"
+  },
+  {
+    "file": "tutorial17_main_ram.init",
+    "role": "design",
+    "snapshot_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  {
+    "file": "tutorial17_sram.init",
+    "role": "design",
+    "snapshot_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  {
+    "file": "tutorial17_rom.init",
+    "role": "design",
+    "snapshot_sha256": "5b3d83b4ad9bcf795bf633cb9ddca3973663f9c80fcbba66b5d9e23ec13e9dd4"
+  },
+  {
+    "file": "gowin_primitives.v",
+    "role": "primitive_library",
+    "snapshot_sha256": "eac982447be0b616cf6ddc48488e7d1f5d4535cc114688eb1bf16194fbd13fc3"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "output": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/13-campaign",
+  "seed": 1301,
+  "cases": 16,
+  "max_cases": 32,
+  "iterations": 256,
+  "long_iterations": 4096,
+  "min_cycles": 2000000,
+  "max_cycles": 100000000,
+  "timeout": 600,
+  "trace": false,
+  "reuse_build": false,
+  "replay": null,
+  "gpio_width": null,
+  "rom_size": null,
+  "sram_size": null,
+  "main_ram_size": null,
+  "stack_size": null,
+  "uart_fifo_depth": null,
+  "sys_clk_hz": null,
+  "baud": null
+}

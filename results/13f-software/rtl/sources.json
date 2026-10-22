@@ -1,0 +1,33 @@
+{
+  "top": "sim",
+  "files": [
+    {
+      "file": "VexRiscv_FullCfu.v",
+      "sha256": "3938fdf798030f04bccdf1aadaace5886ff4e2f6e98e6621d3e8ea483d6fc597"
+    },
+    {
+      "file": "cfu_mac.v",
+      "sha256": "a4e4b294c3fcc40500c947d745ce63b865054831cf597896da657cc31abcdd01"
+    },
+    {
+      "file": "sim.v",
+      "sha256": "ad8c84b1543ddf4cea19014986b100c4068fc1e4a3d3e87e9d98bf5ada597d7d"
+    },
+    {
+      "file": "sim_main_ram.init",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "sim_mem.init",
+      "sha256": "d1005da7d08e9b0efaf179530277c39fc9d7a615556520c9e2552717a4c23db8"
+    },
+    {
+      "file": "sim_rom.init",
+      "sha256": "fb86eeb9138e03ff50899a4f06814abb0a8d4eb39ba392cd4f087382a29b884e"
+    },
+    {
+      "file": "sim_sram.init",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

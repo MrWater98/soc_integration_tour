@@ -1,0 +1,12 @@
+[
+  {
+    "file": "sound.v",
+    "sha256": "5903edcfa346eeecadb97520b679381e571ae725aad568a980067943ff8d061c",
+    "upstream": "twied/TangPrimer-20K-example@7f26660abc25e1b79f6709bd00ca9cead8706494"
+  },
+  {
+    "file": "sound_rom.v",
+    "sha256": "8111b2720f413115c293369f0f65db884b36c060a8e5e8b08fcd13bb5b3e93f2",
+    "upstream": "twied/TangPrimer-20K-example@7f26660abc25e1b79f6709bd00ca9cead8706494"
+  }
+]

@@ -1,0 +1,2 @@
+PASS_RESET assertions=9 releases=9
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/reset_tb.sv:26: $finish called at 266000 (1ps)

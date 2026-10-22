@@ -1,0 +1,31 @@
+{
+  "profiles": {
+    "heap-weight30": [
+      "--timingweight",
+      "30"
+    ],
+    "heap-weight40": [
+      "--timingweight",
+      "40"
+    ],
+    "heap-weight20-beta80": [
+      "--timingweight",
+      "20",
+      "--beta",
+      "0.8"
+    ],
+    "heap-weight20-crit3": [
+      "--timingweight",
+      "20",
+      "--critexp",
+      "3"
+    ]
+  },
+  "seeds": "2,5,8",
+  "target_mhz": 150,
+  "parallel_profiles": 2,
+  "jobs_per_profile": 2,
+  "per_case_timeout_seconds": 600,
+  "hardware": "NOT_RUN",
+  "input_reference": "results/15-tang20k-150mhz/netlist.json"
+}

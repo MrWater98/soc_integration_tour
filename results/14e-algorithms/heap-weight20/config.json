@@ -1,0 +1,32 @@
+{
+  "target_mhz": 150,
+  "seeds": [
+    2,
+    5,
+    8
+  ],
+  "jobs": 2,
+  "timeout_seconds": 600.0,
+  "tool_version": "\"nextpnr-himbaechel\" -- Next Generation Place and Route (Version nextpnr-0.11.1-54-g861c57be)",
+  "device": "GW2A-LV18PG256C8/I7",
+  "family": "GW2A-18C",
+  "netlist_sha256": "caa9d91e8cd40312de1017e28dae1f6de053b345e1b854a5fc9d0dae01a667c5",
+  "constraints_sha256": "108fa280f05d634f3d295cb9d21fe313d71e21e9df4c316b2bd0802e8a337dd3",
+  "timing_allow_fail": false,
+  "hardware": "NOT_RUN",
+  "only_varied_parameter": "seed",
+  "algorithm_args": [
+    "--placer",
+    "heap",
+    "--router",
+    "default",
+    "--placer-heap-timingweight",
+    "20",
+    "--placer-heap-critexp",
+    "2",
+    "--placer-heap-beta",
+    "0.9"
+  ],
+  "placer": "heap",
+  "router": "default"
+}

@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/linux-on-litex-vexriscv/make.py", line 437, in <module>
+    main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/linux-on-litex-vexriscv/make.py", line 322, in main
+    soc = SoCLinux(board.soc_cls, **soc_kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/linux-on-litex-vexriscv/soc_linux.py", line 133, in SoCLinux
+    return _SoCLinux(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/linux-on-litex-vexriscv/soc_linux.py", line 37, in __init__
+    soc_cls.__init__(self, cpu_type="vexriscv_smp", cpu_variant="linux", **kwargs)
+  File "/home/ziyue/miniconda3/lib/python3.11/site-packages/litex_boards/targets/sipeed_tang_primer_20k.py", line 119, in __init__
+    self.crg = _CRG(platform, sys_clk_freq, with_video_pll=with_video_terminal)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ziyue/miniconda3/lib/python3.11/site-packages/litex_boards/targets/sipeed_tang_primer_20k.py", line 36, in __init__
+    self.cd_sys     = ClockDomain()
+                      ^^^^^^^^^^^^^
+  File "/home/ziyue/miniconda3/lib/python3.11/site-packages/migen/fhdl/structure.py", line 710, in __init__
+    raise ValueError("Cannot extract clock domain name from code, need to specify.")
+ValueError: Cannot extract clock domain name from code, need to specify.

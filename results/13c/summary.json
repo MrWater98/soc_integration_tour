@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "transport": "real OpenOCD remote_bitbang to RTL",
+  "counts": {
+    "write": 1794,
+    "read": 806,
+    "reset": 1
+  },
+  "expected_id": "0x12345679",
+  "cpu_debug": "NOT_IMPLEMENTED"
+}

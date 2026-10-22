@@ -1,0 +1,52 @@
+[
+  {
+    "file": "VexRiscv.v",
+    "sha256": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+    "role": "design"
+  },
+  {
+    "file": "tutorial14.v",
+    "sha256": "bf2d09a235b2ee9e70b920ca5a029c14635df6e6017d85bccf46e841d7c5e49e",
+    "role": "design"
+  },
+  {
+    "file": "tutorial14_sram.init",
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "role": "design"
+  },
+  {
+    "file": "tutorial14_main_ram.init",
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "role": "design"
+  },
+  {
+    "file": "tutorial14_rom.init",
+    "sha256": "68fa613a46257f839b59caea6ff66bb613526b8d83c77660b7fdb175dbe544f0",
+    "role": "design"
+  },
+  {
+    "file": "tutorial14_mem.init",
+    "sha256": "c7c999687ef2df3956f30c1fc262d25101b18decf92a2f937a91dba4dd1f3b5e",
+    "role": "design"
+  },
+  {
+    "file": "gowin_primitives.v",
+    "sha256": "eac982447be0b616cf6ddc48488e7d1f5d4535cc114688eb1bf16194fbd13fc3",
+    "role": "primitive_library"
+  },
+  {
+    "file": "gowin_sim_primitives.v",
+    "sha256": "73a4cb173a435475cb2f1935eeedb983f53f0faef459ff3657279e1077f54b18",
+    "role": "simulation_source"
+  },
+  {
+    "file": "tang_tb.sv",
+    "sha256": "b964de2ff519a1207a4b575634ef72a7cf8f785465f61debe97c3b9e9b4c8c56",
+    "role": "simulation_source"
+  },
+  {
+    "file": "YOSYS_COPYING",
+    "sha256": "6998b5724d4cb3f459d1c12b6bd0cdbfa9c949ef14d0fb6d7d97d97404e5b5f3",
+    "role": "license"
+  }
+]

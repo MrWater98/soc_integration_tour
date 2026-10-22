@@ -1,0 +1,141 @@
+{
+  "status": "PASS implemented checks; production freeze OPEN",
+  "cases": [
+    {
+      "name": "cold",
+      "status": "PASS",
+      "arguments": [],
+      "expected": "PASS20"
+    },
+    {
+      "name": "repeated-reset",
+      "status": "PASS",
+      "arguments": [
+        "+BOOTS=8"
+      ],
+      "expected": "PASS20"
+    },
+    {
+      "name": "reset-during-ram",
+      "status": "PASS",
+      "arguments": [
+        "+RESET_STAGE=2"
+      ],
+      "expected": "PASS20"
+    },
+    {
+      "name": "reset-before-timer",
+      "status": "PASS",
+      "arguments": [
+        "+RESET_STAGE=5"
+      ],
+      "expected": "PASS20"
+    },
+    {
+      "name": "fault-ram-data",
+      "status": "PASS expected failure detected",
+      "arguments": [
+        "+FAULT=1"
+      ],
+      "expected": "FIRMWARE_FAIL result=000000e1"
+    },
+    {
+      "name": "fault-no-ack",
+      "status": "PASS expected failure detected",
+      "arguments": [
+        "+FAULT=2"
+      ],
+      "expected": "WATCHDOG"
+    },
+    {
+      "name": "fault-irq-masked",
+      "status": "PASS expected failure detected",
+      "arguments": [
+        "+FAULT=3"
+      ],
+      "expected": "WATCHDOG"
+    },
+    {
+      "name": "fault-gpio",
+      "status": "PASS expected failure detected",
+      "arguments": [
+        "+FAULT=4"
+      ],
+      "expected": "FIRMWARE_FAIL result=000000e5"
+    },
+    {
+      "name": "generic-cold-and-warm",
+      "status": "PASS"
+    },
+    {
+      "name": "mapped-cold-and-warm",
+      "status": "PASS"
+    },
+    {
+      "name": "peripheral-random-1",
+      "status": "PASS",
+      "requests": 10000,
+      "reset_aborts": 89,
+      "completed": 9911,
+      "functional_bins": "20/20"
+    },
+    {
+      "name": "peripheral-random-7",
+      "status": "PASS",
+      "requests": 10000,
+      "reset_aborts": 89,
+      "completed": 9911,
+      "functional_bins": "20/20"
+    },
+    {
+      "name": "peripheral-random-19",
+      "status": "PASS",
+      "requests": 10000,
+      "reset_aborts": 89,
+      "completed": 9911,
+      "functional_bins": "20/20"
+    }
+  ],
+  "repeated_boots": 8,
+  "lint_warning_counts": {
+    "WIDTHEXPAND": 17,
+    "WIDTHTRUNC": 4,
+    "CASEINCOMPLETE": 1
+  },
+  "formal": "PASS 12-step bounded safety checks; ACK mutation rejected",
+  "reset": "PASS async assertion/two-edge release at nine phase trials",
+  "cdc": "structural review + simulation only; no dedicated CDC/RDC signoff",
+  "coverage": {
+    "mode": "Verilator --coverage-line; annotate minimum 1",
+    "lines_hit": 1854,
+    "lines_total": 2073,
+    "percent": 89.4356005788712,
+    "scope": "instrumented source lines in one firmware run, includes CPU; no toggle counters",
+    "all_points_hit_lines": 1770,
+    "annotation_lines": 2073,
+    "all_points_hit_percent": 85.383502170767
+  },
+  "equivalence": "NOT_RUN full sequential equivalence; RTL/generic/ICS55 directed regressions passed",
+  "remaining": [
+    "uncovered CPU instructions/branches",
+    "full CDC/RDC tool review",
+    "multi-corner gate timing",
+    "long-duration stress signoff",
+    "pad-ring/physical verification"
+  ],
+  "clock_connectivity": {
+    "status": "PASS all sampled storage clocks connect to top clk",
+    "sequential_cells": 20515,
+    "clock_pin_bits": [
+      2
+    ],
+    "groups": {
+      "2": 20515
+    },
+    "cell_types": {
+      "$dff": 20513,
+      "$adff": 2
+    },
+    "cdc_signoff": "NOT_RUN: this is connectivity, not metastability or RDC analysis"
+  }
+}

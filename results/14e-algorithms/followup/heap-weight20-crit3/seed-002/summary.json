@@ -1,0 +1,44 @@
+{
+  "seed": 2,
+  "elapsed_seconds": 80.18093257793225,
+  "exit_code": 1,
+  "status": "TIMING_FAIL",
+  "system_fmax_mhz": 145.18002319335938,
+  "limiting_fmax_mhz": 145.18002319335938,
+  "clocks": {
+    "VexRiscv.clk": {
+      "achieved": 145.18002319335938,
+      "constraint": 150
+    },
+    "boardsoc_crg_gw2apll2": {
+      "achieved": 332.2259216308594,
+      "constraint": 150
+    }
+  },
+  "routed_sha256": "43555815876da92f9c289f4b1ad8eb6390e4246d43c4c4bcd1a73697bebd8189",
+  "critical_path": {
+    "start": {
+      "cell": "VexRiscv.IBusCachedPlugin_cache.io_cpu_decode_data_DFFE_Q_11",
+      "loc": [
+        4,
+        4
+      ],
+      "port": "Q"
+    },
+    "end": {
+      "cell": "VexRiscv.IBusCachedPlugin_fetchPc_inc_DFFRE_Q",
+      "loc": [
+        8,
+        12
+      ],
+      "port": "RESET"
+    },
+    "delay_ns_by_type": {
+      "clk-to-q": 0.23100000619888306,
+      "routing": 3.394000068306923,
+      "logic": 3.2280000746250153,
+      "setup": 0.03500000014901161
+    },
+    "total_delay_ns": 6.888000149279833
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "board": "Tang Primer 20K Dock",
+  "loader": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/openFPGALoader",
+  "load_command": [
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/openFPGALoader",
+    "-b",
+    "tangprimer20k",
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/15-tang20k-build-54mhz/tutorial14.fs"
+  ],
+  "jtag": "PASS: detection command completed; verify device identity in detect.log",
+  "sram_configuration": "PASS: loader completed; user logic tested separately",
+  "uart": "PASS: real firmware marker captured",
+  "bitstream_sha256": "66bbcdf9138af19ef6c681f7162a37bc4cc7492132521bca2c05b61dc2c85e79",
+  "manual_checks": {
+    "heartbeat": "PENDING",
+    "button_press_release": "PENDING",
+    "reset_restart": "PENDING",
+    "cold_boot": "PENDING"
+  }
+}

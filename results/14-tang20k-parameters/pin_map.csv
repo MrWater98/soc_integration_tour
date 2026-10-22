@@ -1,0 +1,8 @@
+port,package_pin,iostandard
+clk27,H11,LVCMOS33
+serial_rx,T13,LVCMOS33
+serial_tx,M11,LVCMOS33
+btn_n0,T10,LVCMOS33
+btn_n1,T3,LVCMOS15
+led4,A13,LVCMOS33
+led5,C13,LVCMOS33

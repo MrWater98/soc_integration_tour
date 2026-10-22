@@ -1,0 +1,17 @@
+[
+  "/home/ziyue/miniconda3/bin/python",
+  "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/14e-seed-sweep/run.py",
+  "--output",
+  "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-algorithms/heap-router2-alt",
+  "--seeds",
+  "2,5,8",
+  "--timeout",
+  "600",
+  "--jobs",
+  "2",
+  "--router",
+  "router2",
+  "--router2-alt-weights",
+  "--analyze-existing",
+  "--replay"
+]

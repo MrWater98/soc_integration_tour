@@ -1,0 +1,15 @@
+{
+  "status": "PASS all sampled storage clocks connect to top clk",
+  "sequential_cells": 20515,
+  "clock_pin_bits": [
+    2
+  ],
+  "groups": {
+    "2": 20515
+  },
+  "cell_types": {
+    "$dff": 20513,
+    "$adff": 2
+  },
+  "cdc_signoff": "NOT_RUN: this is connectivity, not metastability or RDC analysis"
+}

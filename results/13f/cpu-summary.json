@@ -1,0 +1,17 @@
+{
+  "mode": "real CPU+CFU RTL",
+  "custom_opcodes": 5,
+  "accepted_cfu_commands": 619,
+  "accepted_cfu_responses": 619,
+  "cycles_64_iterations": {
+    "CFU_CPU_REFERENCE_CYCLES": 10971,
+    "CFU_ACCEL_CYCLES": 24859,
+    "CFU_PREPACKED_CYCLES": 727
+  },
+  "dot": 13,
+  "dense_relu": [
+    28,
+    0
+  ],
+  "random_dot_checks": 64
+}

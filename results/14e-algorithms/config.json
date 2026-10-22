@@ -1,0 +1,50 @@
+{
+  "profiles": {
+    "heap-default": [],
+    "heap-router1": [
+      "--router",
+      "router1"
+    ],
+    "heap-router2": [
+      "--router",
+      "router2"
+    ],
+    "heap-weight20": [
+      "--timingweight",
+      "20"
+    ],
+    "heap-crit3": [
+      "--critexp",
+      "3"
+    ],
+    "heap-router2-ripup": [
+      "--router",
+      "router2",
+      "--tmg-ripup"
+    ],
+    "heap-router2-alt": [
+      "--router",
+      "router2",
+      "--router2-alt-weights"
+    ],
+    "static-router2": [
+      "--placer",
+      "static",
+      "--router",
+      "router2"
+    ],
+    "sa-router2": [
+      "--placer",
+      "sa",
+      "--router",
+      "router2"
+    ]
+  },
+  "seeds": "2,5,8",
+  "target_mhz": 150,
+  "parallel_profiles": 2,
+  "jobs_per_profile": 2,
+  "per_case_timeout_seconds": 600,
+  "hardware": "NOT_RUN",
+  "input_reference": "results/15-tang20k-150mhz/netlist.json"
+}

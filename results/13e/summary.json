@@ -1,0 +1,98 @@
+{
+  "input": "/hpc/home/connect.zzheng989/researchlib/soc_integration_tutorial/results/13/rtl",
+  "source_sha256": {
+    "bus_monitor.v": "9f9b0bed8322984777790b3b56aceb1b09236c57364d278c861d1fb26a96bf97",
+    "i2c_device.v": "0fc3e86e12d0b3a98e4939c01857ccc8ec645543d7ca98ce067d6fe4d6a4dd4e",
+    "sim_control.v": "84dbc81f19be55051e87424907b73c9703383c5ef5df60b9302fbda42e4b8cd6",
+    "VexRiscv.v": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+    "sim.v": "af07dc4b83470aede8f2b0bfd68d654f2f81f83f1e94caddf445abcac85e5357",
+    "sim_main_ram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "sim_sram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "sim_rom.init": "a5618bd5c979c7b325be60c5065291c7b8ea31e7552b2b349b5ac9e41a3512f6",
+    "sim_mem.init": "283e043c88fb4d8cff4eff046ca199bca8ac7c054d8a34760810904012c5d931",
+    "bench13e.sv": "bb53dbc029b341678539f3a94087f2d1dc3bef431973233b11b88c9a0588e033"
+  },
+  "runs": 3,
+  "host": "vm_yangdilyu",
+  "results": {
+    "verilator": {
+      "status": "PASS",
+      "version": [
+        "Verilator 5.029 devel rev v5.028-36-g201e34379",
+        "perl: warning: Setting locale failed.",
+        "perl: warning: Please check that your locale settings:"
+      ],
+      "compile_command": [
+        "/hpc/home/connect.zzheng989/researchlib/oss-cad-suite-2024/bin/verilator",
+        "--binary",
+        "--timing",
+        "-j",
+        "4",
+        "-O2",
+        "-Wno-fatal",
+        "--top-module",
+        "bench13e",
+        "--Mdir",
+        "/hpc/home/connect.zzheng989/researchlib/soc_integration_tutorial/results/13e/verilator/obj_dir",
+        "bench13e.sv",
+        "bus_monitor.v",
+        "i2c_device.v",
+        "sim_control.v",
+        "VexRiscv.v",
+        "sim.v"
+      ],
+      "compile_exit": 0,
+      "compile_seconds": 6.128423560410738,
+      "run_seconds": [
+        0.216148279607296,
+        0.166534636169672,
+        0.16619042493402958
+      ],
+      "median_run_seconds": 0.166534636169672,
+      "simulated_cycles": [
+        145997,
+        145997,
+        145997
+      ]
+    },
+    "vcs": {
+      "status": "PASS",
+      "version": [
+        "vcs script version : V-2023.12",
+        "machine name = vm_yangdilyu ",
+        "machine type = linux "
+      ],
+      "compile_command": [
+        "/hpc2ssd/Edatools/synopsys/vcs/V-2023.12-SP2-2/amd64/bin/vcs",
+        "-full64",
+        "-sverilog",
+        "-timescale=1ns/1ps",
+        "-q",
+        "-top",
+        "bench13e",
+        "-o",
+        "/hpc/home/connect.zzheng989/researchlib/soc_integration_tutorial/results/13e/vcs/simv",
+        "bench13e.sv",
+        "bus_monitor.v",
+        "i2c_device.v",
+        "sim_control.v",
+        "VexRiscv.v",
+        "sim.v"
+      ],
+      "compile_exit": 0,
+      "compile_seconds": 2.720626914873719,
+      "run_seconds": [
+        1.5182078965008259,
+        1.418037699535489,
+        1.3676805347204208
+      ],
+      "median_run_seconds": 1.418037699535489,
+      "simulated_cycles": [
+        145996,
+        145996,
+        145996
+      ]
+    }
+  },
+  "cycle_mismatch": true
+}

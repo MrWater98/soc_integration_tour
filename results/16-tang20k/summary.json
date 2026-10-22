@@ -1,0 +1,21 @@
+{
+  "board": "Tang Primer 20K Dock",
+  "loader": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/openFPGALoader",
+  "load_command": [
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/openFPGALoader",
+    "-b",
+    "tangprimer20k",
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/15-tang20k-build/tutorial14.fs"
+  ],
+  "jtag": "PASS: detection command completed; verify device identity in detect.log",
+  "sram_configuration": "PASS: loader completed; user logic tested separately",
+  "uart": "PASS: real firmware marker captured",
+  "bitstream_sha256": "135f6ec11b34c6f38c3f3adcea5dc3717ad092266e1ab689bb092753b421410b",
+  "manual_checks": {
+    "heartbeat": "PASS: user observed flashing heartbeat",
+    "button_press_release": "PASS: user confirmed S1 press/release UART values and LED behavior",
+    "reset_restart": "PASS: user confirmed S0 reset followed by HELLO and ALIVE",
+    "cold_boot": "PENDING: power-cycle and reload not yet checked"
+  },
+  "status": "PASS: basic onboard CPU/UART/GPIO/reset smoke checks"
+}

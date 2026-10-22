@@ -1,0 +1,61 @@
+{
+  "top": "asic_soc",
+  "source_files": [
+    "asic_soc.v",
+    "VexRiscv_Min.v",
+    "reset_sync.v",
+    "peripheral.v"
+  ],
+  "files": [
+    {
+      "file": "VexRiscv_Min.v",
+      "sha256": "758874a989724fe2b92a5413b43265c9a5129638fee9d7358fcd6724992b598f"
+    },
+    {
+      "file": "asic_soc.v",
+      "sha256": "cf5e26d8e6fe5c8150b3f93dbece1b1832c7743ac92beead8c6fce83d615dec4"
+    },
+    {
+      "file": "asic_soc_main_ram.init",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "asic_soc_rom.init",
+      "sha256": "939ca0c46101aa945fecb7211f25e01150b8ad6e32a8414b37715d6811e6c7b6"
+    },
+    {
+      "file": "asic_soc_sram_1.init",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "elaborated.v",
+      "sha256": "17a23061e7fc929b73c2c19890d3ac47ddf6e5b865851b4e0fd234334e029e12"
+    },
+    {
+      "file": "generic.v",
+      "sha256": "38be735c2f6e01768ddaff2539217f69a30c92ea328ddcb3410c3cd9d7502d6f"
+    },
+    {
+      "file": "icsIOA_N55_3P3.v",
+      "sha256": "21bc29120ed990e9439f838402ce152e5c7134a4b68c4c88ac67d0022ca6dfb1"
+    },
+    {
+      "file": "peripheral.v",
+      "sha256": "41f359246bde362ee1630616632e83631df69b5e6781c94976af1da3fa370cab"
+    },
+    {
+      "file": "reset_sync.v",
+      "sha256": "9c4dea26d2384934522b8da60f6aa01ec5af985d004930a827be31905b76b7a7"
+    }
+  ],
+  "simulation_inputs": {
+    "rtl": [
+      "elaborated.v"
+    ],
+    "generic": [
+      "generic.v"
+    ],
+    "mapped": []
+  },
+  "working_directory": "this rtl directory for .init lookup"
+}

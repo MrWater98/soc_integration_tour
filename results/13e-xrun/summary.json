@@ -1,0 +1,99 @@
+{
+  "input": "/hpc/home/connect.zzheng989/researchlib/soc_integration_tutorial/results/13/rtl",
+  "source_sha256": {
+    "bus_monitor.v": "9f9b0bed8322984777790b3b56aceb1b09236c57364d278c861d1fb26a96bf97",
+    "i2c_device.v": "0fc3e86e12d0b3a98e4939c01857ccc8ec645543d7ca98ce067d6fe4d6a4dd4e",
+    "sim_control.v": "84dbc81f19be55051e87424907b73c9703383c5ef5df60b9302fbda42e4b8cd6",
+    "VexRiscv.v": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+    "sim.v": "af07dc4b83470aede8f2b0bfd68d654f2f81f83f1e94caddf445abcac85e5357",
+    "sim_main_ram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "sim_sram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "sim_rom.init": "a5618bd5c979c7b325be60c5065291c7b8ea31e7552b2b349b5ac9e41a3512f6",
+    "sim_mem.init": "283e043c88fb4d8cff4eff046ca199bca8ac7c054d8a34760810904012c5d931",
+    "bench13e.sv": "bb53dbc029b341678539f3a94087f2d1dc3bef431973233b11b88c9a0588e033"
+  },
+  "runs": 3,
+  "host": "vm_yangdilyu",
+  "results": {
+    "verilator": {
+      "status": "PASS",
+      "version": [
+        "Verilator 5.029 devel rev v5.028-36-g201e34379",
+        "perl: warning: Setting locale failed.",
+        "perl: warning: Please check that your locale settings:"
+      ],
+      "compile_command": [
+        "/hpc/home/connect.zzheng989/researchlib/oss-cad-suite-2024/bin/verilator",
+        "--binary",
+        "--timing",
+        "-j",
+        "4",
+        "-O2",
+        "-Wno-fatal",
+        "--top-module",
+        "bench13e",
+        "--Mdir",
+        "/hpc/home/connect.zzheng989/researchlib/soc_integration_tutorial/results/13e-xrun/verilator/obj_dir",
+        "bench13e.sv",
+        "bus_monitor.v",
+        "i2c_device.v",
+        "sim_control.v",
+        "VexRiscv.v",
+        "sim.v"
+      ],
+      "compile_exit": 0,
+      "compile_seconds": 6.529032217338681,
+      "run_seconds": [
+        0.165619645267725,
+        0.16446183063089848,
+        0.16517877392470837
+      ],
+      "median_run_seconds": 0.16517877392470837,
+      "simulated_cycles": [
+        145997,
+        145997,
+        145997
+      ]
+    },
+    "xrun": {
+      "status": "PASS",
+      "version": [
+        "TOOL:\txrun(64)\t23.09-s004",
+        "sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)",
+        "sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)"
+      ],
+      "compile_command": [
+        "/hpc2ssd/Edatools/cadence/XCELIUM2309/tools/bin/64bit/xrun",
+        "-64bit",
+        "-sv",
+        "-timescale",
+        "1ns/1ps",
+        "-top",
+        "bench13e",
+        "-xmlibdirname",
+        "/hpc/home/connect.zzheng989/researchlib/soc_integration_tutorial/results/13e-xrun/xrun/xcelium.d",
+        "-elaborate",
+        "bench13e.sv",
+        "bus_monitor.v",
+        "i2c_device.v",
+        "sim_control.v",
+        "VexRiscv.v",
+        "sim.v"
+      ],
+      "compile_exit": 0,
+      "compile_seconds": 1.468898519873619,
+      "run_seconds": [
+        3.021351758390665,
+        1.8205546606332064,
+        1.7698141057044268
+      ],
+      "median_run_seconds": 1.8205546606332064,
+      "simulated_cycles": [
+        145996,
+        145996,
+        145996
+      ]
+    }
+  },
+  "cycle_mismatch": true
+}

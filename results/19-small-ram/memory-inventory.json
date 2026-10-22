@@ -1,0 +1,50 @@
+[
+  {
+    "module": "VexRiscv",
+    "name": "RegFilePlugin_regFile",
+    "width": 32,
+    "depth": 32,
+    "read_ports": 2,
+    "write_ports": 1,
+    "read_clocked": "00",
+    "write_clocked": "1",
+    "init_defined_bits": 0,
+    "implementation": "flip-flops + multiplexers"
+  },
+  {
+    "module": "asic_soc",
+    "name": "main_ram",
+    "width": 32,
+    "depth": 256,
+    "read_ports": 1,
+    "write_ports": 4,
+    "read_clocked": "0",
+    "write_clocked": "1111",
+    "init_defined_bits": 0,
+    "implementation": "flip-flops + multiplexers"
+  },
+  {
+    "module": "asic_soc",
+    "name": "rom",
+    "width": 32,
+    "depth": 1024,
+    "read_ports": 1,
+    "write_ports": 0,
+    "read_clocked": "0",
+    "write_clocked": "0",
+    "init_defined_bits": 9664,
+    "implementation": "constant logic"
+  },
+  {
+    "module": "asic_soc",
+    "name": "sram_1",
+    "width": 32,
+    "depth": 64,
+    "read_ports": 1,
+    "write_ports": 4,
+    "read_clocked": "0",
+    "write_clocked": "1111",
+    "init_defined_bits": 0,
+    "implementation": "flip-flops + multiplexers"
+  }
+]

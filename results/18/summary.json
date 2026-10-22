@@ -1,0 +1,26 @@
+{
+  "status": "PASS: standard-cell pilot",
+  "pdk_commit": "ebc3f7e5d22a67f9423e0d980cd056291a58f307",
+  "corner": "ics55_LLSC_H7CR_typ_tt_1p2_25_nldm.lib",
+  "liberty_sha256": "15af0dceceeeb02e174174e7123c7d551551369bf5ad1e8417d3ce8dcbc24fcd",
+  "cells": [
+    "AND2X0P5H7R",
+    "AND3X0P5H7R",
+    "AND4X0P5H7R",
+    "AOA211X0P5H7R",
+    "AOAI211X0P5H7R",
+    "AOI21X0P5H7R",
+    "AOI31X0P5H7R",
+    "DFFQX1H7R",
+    "INVX0P5H7R",
+    "NOR2X0P5H7R",
+    "NOR3X0P5H7R",
+    "OAI21X0P5H7R"
+  ],
+  "period_ns": 20,
+  "simulation_cycles": 70000,
+  "sta": "ideal clock, no extracted wire RC",
+  "physical_design": "NOT_RUN",
+  "drc_lvs": "NOT_RUN",
+  "spec_freeze": "PENDING macro, IO, package and manufacturing decisions"
+}

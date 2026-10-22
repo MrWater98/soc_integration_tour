@@ -1,0 +1,10 @@
+[
+  {
+    "file": "tap.sv",
+    "sha256": "57eb22461c1ecb59da33bcc7284b73265b7ae1ce11ce02dc1ccd83df82bfdc7e"
+  },
+  {
+    "file": "pin_bridge.sv",
+    "sha256": "172ff2acc0df7f701a01bb9897e92ebaba73c961bacbd16cb777cdc9a320d3cb"
+  }
+]

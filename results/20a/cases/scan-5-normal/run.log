@@ -1,0 +1,3 @@
+VCD info: dumpfile scan.vcd opened for output.
+SCAN_RESULT fault=5 mode=0 mismatches=0 recovery=PASS
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20a/rtl/tb_scan.sv:64: $finish called at 260000 (1ps)

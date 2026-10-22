@@ -1,0 +1,51 @@
+{
+  "status": "PASS: bounded hardware campaign",
+  "parameters": {
+    "input": "results/17-counted",
+    "output": "results/17-counted-hardware",
+    "serial": "/dev/serial/by-id/usb-SIPEED_JTAG_Debugger_FactoryAIOT_Pro-if01-port0",
+    "seconds": 600.0,
+    "warm_resets": 0,
+    "min_rounds": 100,
+    "min_irqs": 10,
+    "load": true,
+    "expect_fault": false,
+    "board_id": "Tang Primer 20K Dock; serial not recorded",
+    "ambient_c": null,
+    "supply_v": null,
+    "measurement_note": "No external thermometer/voltmeter connected"
+  },
+  "board": "Tang Primer 20K Dock",
+  "clock_hz": 54000000,
+  "warm_resets": 0,
+  "echoes": 1165,
+  "max_rounds": 388200,
+  "max_irqs": 599956,
+  "boots": 1,
+  "cold_boot": "NOT_RUN: requires physical power cycling",
+  "temperature_voltage": "NOT_MEASURED",
+  "fault_caught": false,
+  "epochs": [
+    {
+      "boot": 1,
+      "start_seconds": 0.0027181640034541488,
+      "rounds": 388200,
+      "irqs": 599956,
+      "ram_reads": 143384,
+      "ram_writes": 1006736447
+    }
+  ],
+  "ambient_c": null,
+  "supply_v": null,
+  "measurement_note": "No external thermometer/voltmeter connected",
+  "board_id": "Tang Primer 20K Dock; serial not recorded",
+  "ram_counter_scope": "completed main_ram Wishbone transfers, 32-bit modulo counters",
+  "total_rounds_lower_bound": 388200,
+  "total_irqs_lower_bound": 599956,
+  "total_ram_reads_lower_bound": 143384,
+  "total_ram_writes_lower_bound": 1006736447,
+  "bitstream_sha256": "d7eb36830468a1c8171cb5a672e06005477e55d816fd7ab0a545b8d3df11a460",
+  "elapsed_seconds": 600.0364795170026,
+  "pending_echoes_at_end": 0,
+  "longest_observed_epoch_seconds": 600.0337613529991
+}

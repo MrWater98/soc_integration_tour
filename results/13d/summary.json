@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "backend": "native host process via OS; no JTAG or OpenOCD",
+  "entered": [
+    3,
+    2,
+    1
+  ],
+  "returned": [
+    2,
+    3
+  ],
+  "result": 6,
+  "stack_pointers": [
+    "0x7fffffffd430",
+    "0x7fffffffd400",
+    "0x7fffffffd3d0",
+    "0x7fffffffd400",
+    "0x7fffffffd430"
+  ],
+  "sp_offsets_from_fact3": [
+    0,
+    -48,
+    -96,
+    -48,
+    0
+  ]
+}

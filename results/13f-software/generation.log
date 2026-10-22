@@ -1,0 +1,1267 @@
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1395, in __init__
+    self.logger.info(colorer("        __   _ __      _  __  ", color="bright"))
+Message: '\x1b[1m        __   _ __      _  __  \x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1396, in __init__
+    self.logger.info(colorer("       / /  (_) /____ | |/_/  ", color="bright"))
+Message: '\x1b[1m       / /  (_) /____ | |/_/  \x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1397, in __init__
+    self.logger.info(colorer("      / /__/ / __/ -_)>  <    ", color="bright"))
+Message: '\x1b[1m      / /__/ / __/ -_)>  <    \x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1398, in __init__
+    self.logger.info(colorer("     /____/_/\\__/\\__/_/|_|  ", color="bright"))
+Message: '\x1b[1m     /____/_/\\__/\\__/_/|_|  \x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1399, in __init__
+    self.logger.info(colorer("  Build your hardware, easily!", color="bright"))
+Message: '\x1b[1m  Build your hardware, easily!\x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1401, in __init__
+    self.logger.info(colorer("-"*80, color="bright"))
+Message: '\x1b[1m--------------------------------------------------------------------------------\x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1402, in __init__
+    self.logger.info(colorer("Creating SoC... ({})".format(build_time())))
+Message: '\x1b[1mCreating SoC... (2026-10-16 09:46:28)\x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1403, in __init__
+    self.logger.info(colorer("-"*80, color="bright"))
+Message: '\x1b[1m--------------------------------------------------------------------------------\x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1404, in __init__
+    self.logger.info("FPGA device : {}.".format(platform.device))
+Message: 'FPGA device : LITEX_TUTORIAL.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1405, in __init__
+    self.logger.info("System clock: {:3.3f}MHz.".format(sys_clk_freq/1e6))
+Message: 'System clock: 1.000MHz.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1420, in __init__
+    self.bus = SoCBusHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 203, in __init__
+    self.logger.info("Creating Bus Handler...")
+Message: 'Creating Bus Handler...'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1420, in __init__
+    self.bus = SoCBusHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 287, in __init__
+    self.logger.info("{}-bit {} Bus, {}GiB Address Space.".format(
+Message: '\x1b[1m32\x1b[0m-bit \x1b[1mwishbone\x1b[0m Bus, \x1b[1m4.0\x1b[0mGiB Address Space.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1420, in __init__
+    self.bus = SoCBusHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 291, in __init__
+    self.logger.info("Adding {} Bus Regions...".format(colorer("reserved", color="cyan")))
+Message: 'Adding \x1b[36mreserved\x1b[0m Bus Regions...'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1420, in __init__
+    self.bus = SoCBusHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 297, in __init__
+    self.logger.info("Bus Handler {}.".format(colorer("created", color="green")))
+Message: 'Bus Handler \x1b[32mcreated\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1434, in __init__
+    self.csr = SoCCSRHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1131, in __init__
+    self.logger.info("Creating CSR Handler...")
+Message: 'Creating CSR Handler...'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1434, in __init__
+    self.csr = SoCCSRHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1189, in __init__
+    self.logger.info("{}-bit CSR Bus, {}-bit Aligned, {}KiB Address Space, {}B Paging, {} Ordering (Up to {} Locations).".format(
+Message: '\x1b[1m32\x1b[0m-bit CSR Bus, \x1b[1m32\x1b[0m-bit Aligned, \x1b[1m16.0\x1b[0mKiB Address Space, \x1b[1m2048\x1b[0mB Paging, \x1b[1mbig\x1b[0m Ordering (Up to \x1b[1m32\x1b[0m Locations).'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1434, in __init__
+    self.csr = SoCCSRHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1198, in __init__
+    self.logger.info("Adding {} CSRs...".format(colorer("reserved", color="cyan")))
+Message: 'Adding \x1b[36mreserved\x1b[0m CSRs...'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1434, in __init__
+    self.csr = SoCCSRHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1202, in __init__
+    self.logger.info("CSR Handler {}.".format(colorer("created", color="green")))
+Message: 'CSR Handler \x1b[32mcreated\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1444, in __init__
+    self.irq = SoCIRQHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1287, in __init__
+    self.logger.info("Creating IRQ Handler...")
+Message: 'Creating IRQ Handler...'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1444, in __init__
+    self.irq = SoCIRQHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1300, in __init__
+    self.logger.info("IRQ Handler (up to {} Locations).".format(colorer(n_irqs)))
+Message: 'IRQ Handler (up to \x1b[1m32\x1b[0m Locations).'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1444, in __init__
+    self.irq = SoCIRQHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1303, in __init__
+    self.logger.info("Adding {} IRQs...".format(colorer("reserved", color="cyan")))
+Message: 'Adding \x1b[36mreserved\x1b[0m IRQs...'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1444, in __init__
+    self.irq = SoCIRQHandler(
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1307, in __init__
+    self.logger.info("IRQ Handler {}.".format(colorer("created", color="green")))
+Message: 'IRQ Handler \x1b[32mcreated\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1449, in __init__
+    self.logger.info(colorer("-"*80, color="bright"))
+Message: '\x1b[1m--------------------------------------------------------------------------------\x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1450, in __init__
+    self.logger.info(colorer("Initial SoC:"))
+Message: '\x1b[1mInitial SoC:\x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1451, in __init__
+    self.logger.info(colorer("-"*80, color="bright"))
+Message: '\x1b[1m--------------------------------------------------------------------------------\x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1452, in __init__
+    self.logger.info(self.bus)
+Message: <litex.soc.integration.soc.SoCBusHandler object at 0x7fe87eb36750>
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1453, in __init__
+    self.logger.info(self.csr)
+Message: <litex.soc.integration.soc.SoCCSRHandler object at 0x7fe87eb0df90>
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1454, in __init__
+    self.logger.info(self.irq)
+Message: <litex.soc.integration.soc.SoCIRQHandler object at 0x7fe87eb36190>
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3838, in __init__
+    LiteXSoC.__init__(self, platform, clk_freq,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1455, in __init__
+    self.logger.info(colorer("-"*80, color="bright"))
+Message: '\x1b[1m--------------------------------------------------------------------------------\x1b[0m'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1770, in add_cpu
+    self.logger.info("CPU {} {}.".format(
+Message: 'CPU \x1b[4mvexriscv\x1b[0m \x1b[32madded\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1801, in add_cpu
+    self.logger.info("CPU {} {} IO Region {} at {} (Size: {}).".format(
+Message: 'CPU \x1b[4mvexriscv\x1b[0m \x1b[36madding\x1b[0m IO Region \x1b[1m0\x1b[0m at \x1b[1m0x80000000\x1b[0m (Size: \x1b[1m0x80000000\x1b[0m).'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1807, in add_cpu
+    self.bus.add_region("io{}".format(n), SoCIORegion(origin=origin, size=size, cached=False))
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 348, in add_region
+    self.logger.info("{} Region {} at {}.".format(
+Message: '\x1b[4mio0\x1b[0m Region \x1b[32madded\x1b[0m at Origin: \x1b[1m0x80000000\x1b[0m, Size: \x1b[1m0x80000000\x1b[0m, Mode:  \x1b[1mRW\x1b[0m, Cached: \x1b[1mFalse\x1b[0m, Linker: \x1b[1mFalse\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1824, in add_cpu
+    log("CPU {} {} {} mapping from {} to {}.".format(
+Message: 'CPU \x1b[4mvexriscv\x1b[0m \x1b[36moverriding\x1b[0m \x1b[1msram\x1b[0m mapping from \x1b[1m0x01000000\x1b[0m to \x1b[1m0x10000000\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1837, in add_cpu
+    self.logger.info("CPU {} {} reset address to {}.".format(
+Message: 'CPU \x1b[4mvexriscv\x1b[0m \x1b[36msetting\x1b[0m reset address to \x1b[1m0x00000000\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1848, in add_cpu
+    self.logger.info("CPU {} {} Bus Master(s).".format(
+Message: 'CPU \x1b[4mvexriscv\x1b[0m \x1b[36madding\x1b[0m Bus Master(s).'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1852, in add_cpu
+    self.bus.add_master(name="cpu_bus{}".format(n), master=cpu_bus)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 836, in add_master
+    self.logger.info("{} {} as Bus Master.".format(
+Message: '\x1b[4mcpu_bus0\x1b[0m \x1b[32madded\x1b[0m as Bus Master.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1852, in add_cpu
+    self.bus.add_master(name="cpu_bus{}".format(n), master=cpu_bus)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 836, in add_master
+    self.logger.info("{} {} as Bus Master.".format(
+Message: '\x1b[4mcpu_bus1\x1b[0m \x1b[32madded\x1b[0m as Bus Master.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1856, in add_cpu
+    self.logger.info("CPU {} {} Interrupt(s).".format(
+Message: 'CPU \x1b[4mvexriscv\x1b[0m \x1b[36madding\x1b[0m Interrupt(s).'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3920, in __init__
+    self.add_cpu(name=cpu_type,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1918, in add_cpu
+    self.logger.info("CPU {} {} SoC components.".format(
+Message: 'CPU \x1b[4mvexriscv\x1b[0m \x1b[36madding\x1b[0m SoC components.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3932, in __init__
+    self.add_rom(name="rom",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1597, in add_rom
+    self.add_ram(name, origin, size, contents, mode=mode)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1545, in add_ram
+    self.bus.add_slave(name=name, slave=ram.bus, region=SoCRegion(origin=origin, size=size, mode=mode))
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 871, in add_slave
+    self.add_region(name, region)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 402, in add_region
+    self.logger.info("{} Region {} at {}.".format(
+Message: '\x1b[4mrom\x1b[0m Region \x1b[32madded\x1b[0m at Origin: \x1b[1m0x00000000\x1b[0m, Size: \x1b[1m0x00001000\x1b[0m, Mode:  \x1b[1mRX\x1b[0m, Cached:  \x1b[1mTrue\x1b[0m, Linker: \x1b[1mFalse\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3932, in __init__
+    self.add_rom(name="rom",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1597, in add_rom
+    self.add_ram(name, origin, size, contents, mode=mode)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1545, in add_ram
+    self.bus.add_slave(name=name, slave=ram.bus, region=SoCRegion(origin=origin, size=size, mode=mode))
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 940, in add_slave
+    self.logger.info("{} {} as Bus Slave.".format(
+Message: '\x1b[4mrom\x1b[0m \x1b[32madded\x1b[0m as Bus Slave.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3932, in __init__
+    self.add_rom(name="rom",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1597, in add_rom
+    self.add_ram(name, origin, size, contents, mode=mode)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1546, in add_ram
+    self.logger.info("RAM {} {} {}.".format(
+Message: 'RAM \x1b[1mrom\x1b[0m \x1b[32madded\x1b[0m Origin: \x1b[1m0x00000000\x1b[0m, Size: \x1b[1m0x00001000\x1b[0m, Mode:  \x1b[1mRX\x1b[0m, Cached:  \x1b[1mTrue\x1b[0m, Linker: \x1b[1mFalse\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3941, in __init__
+    self.add_ram(name="sram",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1545, in add_ram
+    self.bus.add_slave(name=name, slave=ram.bus, region=SoCRegion(origin=origin, size=size, mode=mode))
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 871, in add_slave
+    self.add_region(name, region)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 402, in add_region
+    self.logger.info("{} Region {} at {}.".format(
+Message: '\x1b[4msram\x1b[0m Region \x1b[32madded\x1b[0m at Origin: \x1b[1m0x10000000\x1b[0m, Size: \x1b[1m0x00001000\x1b[0m, Mode: \x1b[1mRWX\x1b[0m, Cached:  \x1b[1mTrue\x1b[0m, Linker: \x1b[1mFalse\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3941, in __init__
+    self.add_ram(name="sram",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1545, in add_ram
+    self.bus.add_slave(name=name, slave=ram.bus, region=SoCRegion(origin=origin, size=size, mode=mode))
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 940, in add_slave
+    self.logger.info("{} {} as Bus Slave.".format(
+Message: '\x1b[4msram\x1b[0m \x1b[32madded\x1b[0m as Bus Slave.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3941, in __init__
+    self.add_ram(name="sram",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1546, in add_ram
+    self.logger.info("RAM {} {} {}.".format(
+Message: 'RAM \x1b[1msram\x1b[0m \x1b[32madded\x1b[0m Origin: \x1b[1m0x10000000\x1b[0m, Size: \x1b[1m0x00001000\x1b[0m, Mode: \x1b[1mRWX\x1b[0m, Cached:  \x1b[1mTrue\x1b[0m, Linker: \x1b[1mFalse\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3949, in __init__
+    self.add_ram(name="main_ram",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1545, in add_ram
+    self.bus.add_slave(name=name, slave=ram.bus, region=SoCRegion(origin=origin, size=size, mode=mode))
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 871, in add_slave
+    self.add_region(name, region)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 402, in add_region
+    self.logger.info("{} Region {} at {}.".format(
+Message: '\x1b[4mmain_ram\x1b[0m Region \x1b[32madded\x1b[0m at Origin: \x1b[1m0x40000000\x1b[0m, Size: \x1b[1m0x00004000\x1b[0m, Mode: \x1b[1mRWX\x1b[0m, Cached:  \x1b[1mTrue\x1b[0m, Linker: \x1b[1mFalse\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3949, in __init__
+    self.add_ram(name="main_ram",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1545, in add_ram
+    self.bus.add_slave(name=name, slave=ram.bus, region=SoCRegion(origin=origin, size=size, mode=mode))
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 940, in add_slave
+    self.logger.info("{} {} as Bus Slave.".format(
+Message: '\x1b[4mmain_ram\x1b[0m \x1b[32madded\x1b[0m as Bus Slave.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 32, in __init__
+    super().__init__(platform,clk_freq=1_000_000,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 3949, in __init__
+    self.add_ram(name="main_ram",
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 1546, in add_ram
+    self.logger.info("RAM {} {} {}.".format(
+Message: 'RAM \x1b[1mmain_ram\x1b[0m \x1b[32madded\x1b[0m Origin: \x1b[1m0x40000000\x1b[0m, Size: \x1b[1m0x00004000\x1b[0m, Mode: \x1b[1mRWX\x1b[0m, Cached:  \x1b[1mTrue\x1b[0m, Linker: \x1b[1mFalse\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 44, in __init__
+    self.bus.add_slave("trace",self.trace.bus,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 871, in add_slave
+    self.add_region(name, region)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 402, in add_region
+    self.logger.info("{} Region {} at {}.".format(
+Message: '\x1b[4mtrace\x1b[0m Region \x1b[32madded\x1b[0m at Origin: \x1b[1m0x80000000\x1b[0m, Size: \x1b[1m0x00000040\x1b[0m, Mode:  \x1b[1mRW\x1b[0m, Cached: \x1b[1mFalse\x1b[0m, Linker: \x1b[1mFalse\x1b[0m.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/ziyue/miniconda3/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 181, in <module>
+    if __name__=='__main__':main()
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 171, in main
+    cpu=[] if a.direct_only else [cpu_test('13f',False),cpu_test('13f-software',True)]
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 135, in cpu_test
+    build_and_run(root=ROOT,chapter=name,expected='CFU_COMPLETE code=0x0000005a',
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/litex_builder.py", line 40, in build_and_run
+    design = soc(platform)
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/run.py", line 136, in <lambda>
+    soc=lambda platform:TutorialSoC(platform,rom_words=words),
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/soc.py", line 44, in __init__
+    self.bus.add_slave("trace",self.trace.bus,
+  File "/home/ziyue/researchlib/Micro_Eletronic/litex/litex/soc/integration/soc.py", line 940, in add_slave
+    self.logger.info("{} {} as Bus Slave.".format(
+Message: '\x1b[4mtrace\x1b[0m \x1b[32madded\x1b[0m as Bus Slave.'
+Arguments: ()
+[clocker] loaded
+MDEBUG: Save time: -1, load_time: 0
+[clocker] sys_clk: freq_hz=1000000, phase_deg=0
+CFU_DOT result=13
+CFU_DENSE_0 result=28
+CFU_DENSE_1 result=0
+CFU_RANDOM_CHECKS count=64
+CFU_CPU_REFERENCE_CYCLES value=10991
+CFU_ACCEL_CYCLES value=40817
+CFU_PREPACKED_CYCLES value=16513
+CFU_COMPLETE code=0x0000005a commands=0 responses=0
+- /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/13f-software/builder/gateware/sim.v:569: Verilog $finish
+
+[sim] sys_clk=1.000MHz, simulated=163.002ms, elapsed=70.918ms, performance=2.298x realtime
+PASS 13f-software: CPU 运行成功；LiteX 生成文件位于 /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/13f-software/builder

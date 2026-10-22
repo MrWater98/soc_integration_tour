@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "checks": [
+    "CPU boot and UART",
+    "button 0->1->0 and LED",
+    "reset and second HELLO"
+  ],
+  "pll": "ideal reference-clock substitute; analog behavior NOT_TESTED"
+}

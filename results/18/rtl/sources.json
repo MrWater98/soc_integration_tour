@@ -1,0 +1,18 @@
+{
+  "top": "counter",
+  "files": [
+    {
+      "file": "counter.v",
+      "sha256": "240ba50600d424dc3166f78cbce35c57b0ccff7d4e4d9a93f6db7ef3a60e1556"
+    },
+    {
+      "file": "ics55_LLSC_H7CR.v",
+      "sha256": "c06a1da785f3856c013e8c0c31c8bceb21b98b6b656eea99533c0e6db07f8307"
+    },
+    {
+      "file": "mapped.v",
+      "sha256": "3b12567308cedb5f49fac89c7739d485ab6622f33d737a43b1970535fccac7d0"
+    }
+  ],
+  "simulation_define": "functional"
+}

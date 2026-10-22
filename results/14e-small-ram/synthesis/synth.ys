@@ -1,0 +1,8 @@
+read_verilog -sv "VexRiscv.v" "tutorial14.v"
+synth_gowin -family gw2a -top tutorial14 -json ../netlist.json
+delete t:$scopeinfo
+check -assert -noinit
+tee -o ../stat.json stat -json
+write_json ../netlist.json
+write_edif ../netlist.edif
+write_verilog -noattr ../netlist.v

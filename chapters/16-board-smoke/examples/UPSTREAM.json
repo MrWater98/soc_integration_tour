@@ -1,0 +1,17 @@
+{
+  "url": "https://github.com/twied/TangPrimer-20K-example",
+  "commit": "7f26660abc25e1b79f6709bd00ca9cead8706494",
+  "copied": [
+    "ext_board/leds/leds.v",
+    "ext_board/leds/constraints.cst",
+    "ext_board/clock/clock.v",
+    "ext_board/clock/constraints.cst",
+    "ext_board/rgb_led/rgb_led.v",
+    "ext_board/rgb_led/constraints.cst",
+    "ext_board/sound/sound.v",
+    "ext_board/sound/sound_rom.v",
+    "ext_board/sound/constraints.cst"
+  ],
+  "license": "WTFPL",
+  "changes": "leds.v output changed from 010011 to 101100; other copied RTL/constraints unchanged. Local build uses GW2A-18C, 27MHz target and READY/DONE as GPIO; upstream run.sh not executed; rgb_led.v color changed to GRB 0x001000 (red=16).; sound.v PCM attenuated by signed right shift 5 (1/32) and serial outputs initialized to zero. Audio data attribution retained under CC0."
+}

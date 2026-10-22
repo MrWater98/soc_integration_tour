@@ -1,0 +1,38 @@
+{
+  "rtl": {
+    "VexRiscv.v": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+    "gowin_primitives.v": "eac982447be0b616cf6ddc48488e7d1f5d4535cc114688eb1bf16194fbd13fc3",
+    "tutorial17.v": "23b749bdf9184c727367bfa0ffeee70f6cab67ca16270d76aba674aff7aed791",
+    "tutorial17_main_ram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "tutorial17_mem.init": "491f187970c0cc549d30439b458e23faa1a019c7ea1beaa6decd50cfa00fb071",
+    "tutorial17_rom.init": "f670bcb286eee17b229f749055193848b32e8e1690ec3ae7103a24defe1c35a5",
+    "tutorial17_sram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "bitstream_sha256": "d7eb36830468a1c8171cb5a672e06005477e55d816fd7ab0a545b8d3df11a460",
+  "fmax": {
+    "VexRiscv.clk": {
+      "achieved": 131.47515869140625,
+      "constraint": 54
+    },
+    "boardsoc_crg_gw2apll2": {
+      "achieved": 506.0728759765625,
+      "constraint": 54
+    }
+  },
+  "config": {
+    "reference_clk_hz": 27000000,
+    "sys_clk_hz": 54000000,
+    "baud": 115200,
+    "led_count": 1,
+    "button_count": 1,
+    "blink_hz": 1,
+    "rom_size": 8192,
+    "sram_size": 4096,
+    "main_ram_size": 16384,
+    "stack_size": 1024,
+    "por_cycles": 65536,
+    "stress_words": 512,
+    "seed": 1,
+    "inject_fault": false
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "baseline_main_ram_bytes": 16384,
+  "experiment_main_ram_bytes": 4096,
+  "rom_bytes": 8192,
+  "sram_bytes": 4096,
+  "stack_bytes": 1024,
+  "target_mhz": 150,
+  "baseline_best_mhz": 147.21035766601562,
+  "experiment_best_mhz": 142.3487548828125,
+  "best_difference_mhz": -4.861602783203125,
+  "baseline_block_ram_primitives": 24,
+  "experiment_block_ram_primitives": 18,
+  "functional_27mhz": "PASS",
+  "hardware": "NOT_RUN",
+  "target_passes": 0,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ]
+}

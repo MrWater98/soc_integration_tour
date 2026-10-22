@@ -1,0 +1,22 @@
+Open On-Chip Debugger 0.10.0
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Warn : Adapter driver 'remote_bitbang' did not declare which transports it allows; assuming legacy JTAG-only
+Info : only one transport option; autoselect 'jtag'
+Warn : Transport "jtag" was already selected
+trst_only separate trst_push_pull
+Info : Initializing remote_bitbang driver
+Info : Connecting to 127.0.0.1:57607
+Info : remote_bitbang driver initialized
+Info : This adapter doesn't support configurable speed
+Info : JTAG tap: tutorial.tap tap/device found: 0x12345679 (mfg: 0x33c (Gingle Technology Co. Ltd.), part: 0x2345, ver: 0x1)
+Info : gdb server disabled
+   TapName             Enabled  IdCode     Expected   IrLen IrCap IrMask
+-- ------------------- -------- ---------- ---------- ----- ----- ------
+ 0 tutorial.tap           Y     0x12345679 0x12345679     4 0x01  0x03
+USER_OLD=CAFEF00D
+USER_NEW=2468ACE1
+WRONG_IR_DETECTED_AND_RECOVERED
+shutdown command invoked
+Info : remote_bitbang interface quit

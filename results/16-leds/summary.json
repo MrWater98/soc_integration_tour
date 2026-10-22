@@ -1,0 +1,157 @@
+{
+  "build": "PASS",
+  "onboard": "PENDING: user observation of inverted pattern",
+  "example": "leds",
+  "device": "GW2A-LV18PG256C8/I7",
+  "family": "GW2A-18C",
+  "bitstream_bytes": 4618782,
+  "sha256": "d8a486e2396a4cffd867bc45b498d440a042e86ae1c08edb97100322e825b3f9",
+  "clock_target_mhz": null,
+  "resources": {
+    "ALU": {
+      "available": 15552,
+      "used": 0
+    },
+    "ALU54D": {
+      "available": 24,
+      "used": 0
+    },
+    "BSRAM": {
+      "available": 46,
+      "used": 0
+    },
+    "BUFG": {
+      "available": 24,
+      "used": 0
+    },
+    "CLKDIV": {
+      "available": 8,
+      "used": 0
+    },
+    "CLKDIV2": {
+      "available": 16,
+      "used": 0
+    },
+    "DCS": {
+      "available": 8,
+      "used": 0
+    },
+    "DFF": {
+      "available": 15552,
+      "used": 0
+    },
+    "DHCEN": {
+      "available": 24,
+      "used": 0
+    },
+    "DQCE": {
+      "available": 24,
+      "used": 0
+    },
+    "GND": {
+      "available": 1,
+      "used": 1
+    },
+    "GSR": {
+      "available": 1,
+      "used": 1
+    },
+    "GW_JTAG": {
+      "available": 1,
+      "used": 0
+    },
+    "IOB": {
+      "available": 384,
+      "used": 6
+    },
+    "IOLOGICI": {
+      "available": 384,
+      "used": 0
+    },
+    "IOLOGICO": {
+      "available": 384,
+      "used": 0
+    },
+    "LUT4": {
+      "available": 20736,
+      "used": 0
+    },
+    "MULT18X18": {
+      "available": 48,
+      "used": 0
+    },
+    "MULT36X36": {
+      "available": 12,
+      "used": 0
+    },
+    "MULT9X9": {
+      "available": 96,
+      "used": 0
+    },
+    "MULTADDALU18X18": {
+      "available": 24,
+      "used": 0
+    },
+    "MULTALU18X18": {
+      "available": 24,
+      "used": 0
+    },
+    "MULTALU36X18": {
+      "available": 24,
+      "used": 0
+    },
+    "MUX2_LUT5": {
+      "available": 10368,
+      "used": 0
+    },
+    "MUX2_LUT6": {
+      "available": 5184,
+      "used": 0
+    },
+    "MUX2_LUT7": {
+      "available": 2592,
+      "used": 0
+    },
+    "MUX2_LUT8": {
+      "available": 2592,
+      "used": 0
+    },
+    "OSC": {
+      "available": 1,
+      "used": 0
+    },
+    "PADD18": {
+      "available": 48,
+      "used": 0
+    },
+    "PADD9": {
+      "available": 96,
+      "used": 0
+    },
+    "RAM16SDP4": {
+      "available": 648,
+      "used": 0
+    },
+    "VCC": {
+      "available": 1,
+      "used": 1
+    },
+    "rPLL": {
+      "available": 2,
+      "used": 0
+    }
+  },
+  "seed": 1,
+  "jtag_detection": "PASS: Gowin GW2A(R)-18(C), ID 0x81b",
+  "sram_download": "PASS: loader completed",
+  "pattern": "101100",
+  "expected_led5_to_led0": [
+    "off",
+    "on",
+    "off",
+    "off",
+    "on",
+    "on"
+  ],
+  "bitstream_loaded_sha256": "d8a486e2396a4cffd867bc45b498d440a042e86ae1c08edb97100322e825b3f9"
+}

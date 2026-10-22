@@ -1,0 +1,8 @@
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/asic_soc.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/VexRiscv_Min.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/reset_sync.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/peripheral.v
+hierarchy -check -top asic_soc
+proc
+opt
+write_verilog -noattr /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/elaborated.v

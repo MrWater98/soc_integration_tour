@@ -1,0 +1,165 @@
+{
+  "status": "PASS teaching DFT simulations",
+  "depth": 8,
+  "width": 8,
+  "scan": {
+    "listed_faults": 8,
+    "normal_detected": 2,
+    "scan_detected": 8,
+    "matrix": [
+      {
+        "fault": "q[0] stuck-0",
+        "normal_detected": true,
+        "scan_detected": true
+      },
+      {
+        "fault": "q[0] stuck-1",
+        "normal_detected": true,
+        "scan_detected": true
+      },
+      {
+        "fault": "q[1] stuck-0",
+        "normal_detected": false,
+        "scan_detected": true
+      },
+      {
+        "fault": "q[1] stuck-1",
+        "normal_detected": false,
+        "scan_detected": true
+      },
+      {
+        "fault": "q[2] stuck-0",
+        "normal_detected": false,
+        "scan_detected": true
+      },
+      {
+        "fault": "q[2] stuck-1",
+        "normal_detected": false,
+        "scan_detected": true
+      },
+      {
+        "fault": "q[3] stuck-0",
+        "normal_detected": false,
+        "scan_detected": true
+      },
+      {
+        "fault": "q[3] stuck-1",
+        "normal_detected": false,
+        "scan_detected": true
+      }
+    ]
+  },
+  "ram": {
+    "listed_faults": 19,
+    "detected": 19,
+    "matrix": [
+      {
+        "fault": "data[0] stuck-0",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "data[0] stuck-1",
+        "detected": true,
+        "mismatches": 24
+      },
+      {
+        "fault": "data[1] stuck-0",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "data[1] stuck-1",
+        "detected": true,
+        "mismatches": 24
+      },
+      {
+        "fault": "data[2] stuck-0",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "data[2] stuck-1",
+        "detected": true,
+        "mismatches": 24
+      },
+      {
+        "fault": "data[3] stuck-0",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "data[3] stuck-1",
+        "detected": true,
+        "mismatches": 24
+      },
+      {
+        "fault": "data[4] stuck-0",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "data[4] stuck-1",
+        "detected": true,
+        "mismatches": 24
+      },
+      {
+        "fault": "data[5] stuck-0",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "data[5] stuck-1",
+        "detected": true,
+        "mismatches": 24
+      },
+      {
+        "fault": "data[6] stuck-0",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "data[6] stuck-1",
+        "detected": true,
+        "mismatches": 24
+      },
+      {
+        "fault": "data[7] stuck-0",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "data[7] stuck-1",
+        "detected": true,
+        "mismatches": 24
+      },
+      {
+        "fault": "address[0] forced-0 alias",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "address[1] forced-0 alias",
+        "detected": true,
+        "mismatches": 16
+      },
+      {
+        "fault": "address[2] forced-0 alias",
+        "detected": true,
+        "mismatches": 16
+      }
+    ],
+    "operations_per_case": 80
+  },
+  "recovery": "PASS scan exit + reset + eight functional cycles in every scan case",
+  "excluded_faults": [
+    "transition/delay",
+    "bridging",
+    "analog retention",
+    "coupling",
+    "scan clock/reset defects",
+    "all full-SoC gates"
+  ],
+  "production_atpg": "NOT_RUN",
+  "mbist_macro_qualification": "NOT_RUN"
+}

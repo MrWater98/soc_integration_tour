@@ -1,0 +1,33 @@
+[
+  [
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/nextpnr-himbaechel",
+    "--json",
+    "netlist.json",
+    "--write",
+    "routed.json",
+    "--report",
+    "pnr-report.json",
+    "--top",
+    "tutorial14",
+    "--device",
+    "GW2A-LV18PG256C8/I7",
+    "--vopt",
+    "family=GW2A-18C",
+    "--vopt",
+    "cst=tutorial14.cst",
+    "--freq",
+    "150.0",
+    "--seed",
+    "1"
+  ],
+  [
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/gowin_pack",
+    "-d",
+    "GW2A-18C",
+    "-o",
+    "tutorial14.fs",
+    "--ready_as_gpio",
+    "--done_as_gpio",
+    "routed.json"
+  ]
+]

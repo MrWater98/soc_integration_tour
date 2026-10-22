@@ -1,0 +1,4 @@
+UART_BYTE value=4f
+UART_BYTE value=4b
+PASS19 cycles=4338 UART=2 GPIO=9 reset_injected=0
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/19-asic-rtl/tb.sv:51: $finish called at 43380000 (1ps)

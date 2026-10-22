@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "rtl_generation": "PASS",
+  "pin_audit": "PASS",
+  "rtl_elaboration": "PASS",
+  "clock_target": "PASS",
+  "memory_map": "PASS",
+  "negative_checks": {
+    "duplicate-pin": "duplicate package pin",
+    "wrong-voltage": "serial_rx: expected T13/LVCMOS33, actual T13/LVCMOS18"
+  },
+  "logic": {
+    "heartbeat_transition_samples": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "half_period": 4,
+    "button_samples": [
+      0,
+      0,
+      0,
+      3,
+      3
+    ]
+  },
+  "onboard": "NOT_RUN: this generator does not access hardware"
+}

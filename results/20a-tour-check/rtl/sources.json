@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "file": "ram_model.sv",
+      "sha256": "0417f40c22447d7de06ecbc2ab2b37b7b528767578f351b3111dceda1b4650cd"
+    },
+    {
+      "file": "scan_counter.sv",
+      "sha256": "7f4b2006cb05c3e82c50b918650aaca217d8eec0f66c160fed603af695e44726"
+    },
+    {
+      "file": "tb_ram.sv",
+      "sha256": "5fa9087c3ed8cfe922adbcbe5abe321e48ed82baa9da01f37a7411393275bc7f"
+    },
+    {
+      "file": "tb_scan.sv",
+      "sha256": "afbae854251b057479ea55501b02d0a29d6975193aa80e50a56af3cca4eb600c"
+    }
+  ]
+}

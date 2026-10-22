@@ -1,0 +1,67 @@
+-- Building without IPO
+-- C++ compiler does NOT support #embed
+-- Using external chipdb path: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/share/nextpnr
+CMake Warning (policy) at CMakeLists.txt:217 (find_package):
+  Policy CMP0167 is not set: The FindBoost module is removed.  Run "cmake
+  --help-policy CMP0167" for policy details.  Use the cmake_policy command to
+  set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-author or -Wno-policy to
+suppress it.
+
+-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.71.0/BoostConfig.cmake (found version "1.71.0") found components: program_options iostreams thread
+-- Could NOT find pybind11 (missing: pybind11_DIR)
+-- Using built-in pybind11
+CMake Warning (deprecated) at 3rdparty/pybind11/CMakeLists.txt:13 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+-- pybind11 v2.12.1 
+CMake Warning (deprecated) at 3rdparty/pybind11/tools/FindPythonLibsNew.cmake:110 (cmake_policy):
+  The OLD behavior for policy CMP0148 will be removed from a future version
+  of CMake.
+
+  The cmake-policies(7) manual explains that the OLD behaviors of all
+  policies are deprecated and that a policy should be set to OLD only under
+  specific short-term circumstances.  Projects should be ported to the NEW
+  behavior and not rely on setting a policy to OLD.
+Call Stack (most recent call first):
+  3rdparty/pybind11/tools/pybind11Tools.cmake:50 (find_package)
+  3rdparty/pybind11/tools/pybind11Common.cmake:192 (include)
+  3rdparty/pybind11/CMakeLists.txt:248 (include)
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+CMake Warning (deprecated) at /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-viewer-deps/usr/lib/cmake/eigen3/Eigen3Targets.cmake:7 (cmake_policy):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-viewer-deps/usr/lib/cmake/eigen3/Eigen3Config.cmake:30 (include)
+  CMakeLists.txt:254 (find_package)
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+CMake Warning (policy) at bba/CMakeLists.txt:6 (find_package):
+  Policy CMP0167 is not set: The FindBoost module is removed.  Run "cmake
+  --help-policy CMP0167" for policy details.  Use the cmake_policy command to
+  set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-author or -Wno-policy to
+suppress it.
+
+-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.71.0/BoostConfig.cmake (found version "1.71.0") found components: program_options
+-- Importing .bba files from 
+-- Configuring architecture: himbaechel
+-- Configuring Himbächel microarchitecture: gowin
+-- Enabled Himbaechel-Gowin devices: 
+-- Configuring done (2.7s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/build

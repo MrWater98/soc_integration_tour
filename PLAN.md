@@ -1,146 +1,560 @@
-# SoC Integration Project Plan
+> tour 同步说明：本计划引入 tutorial 的完整路线与进度。tour 原有 00–12 章保持原样，表中这些章节的历史验收尚未逐项重跑；13–20A 的同步范围及本地验收见 [进度说明](docs/progress/README.md)。
 
-[中文版](PLAN_zh.md)
+# 从 CPU 到 FPGA，再到 ASIC 流片：LiteX 教程编写计划
 
-## Objective and baseline
+> **状态（2026-10-16）：** 00–13、13A–13D 已有可运行教学实验；新增13F神经网络算子加速选学，已引入固定版本CFU Playground原版核心并完成真实CPU调用；14–16 已完成 Tang 开源构建和真实板卡运行。17 已通过 54 MHz 连续 600 秒、10 次热复位及 27 MHz 连续 120 秒，含硬件 RAM 事务计数；17A/17B 已实现真实 SMP RTL 仿真，板上 SMP 尚未验证。18 已通过 ICS55 最小标准单元映射/门级仿真/STA；19 新增无缓存 RV32I 小核心，完成常量 ROM、触发器 RAM、完整存储清单、通用/ICS55 网表启动与实际 IO 单元模型小实验；20 已完成本次故障/复位/压力/有限步形式与纯行覆盖验证包，生产冻结仍 OPEN；20A 已完成扫描和 March 故障实验。完整 ASIC 流程、温压范围和物理冷启动仍待执行。
 
-Build a reproducible single-core RV32 SoC around LiteX and VexRiscv, first in simulation and later on a selected FPGA. Keep each stage's hardware contract, firmware, maps, RTL inputs, and runtime evidence together.
+**到货更新：** Tang Primer 20K Dock 已到货。WSL 已获取板卡 USB；第 16 章增加 usbipd-win 连接与 twied 开源外设实验。固定 LED 原图案和反转图案已得到用户实物确认；VexRiscv SoC 已完成 JTAG 下载并捕获实际 UART HELLO/ALIVE，按钮与复位行为已由用户实物确认。
 
-The baseline is LiteX's native `vexriscv` CPU with the `minimal` variant: RV32I, no instruction cache, and no data cache. The CPU exposes separate instruction and data Wishbone masters. LiteX connects them to its shared Wishbone interconnect; there is no AXI-Lite-to-Wishbone bridge in this path. CPU RTL comes from the pinned `pythondata-cpu-vexriscv` package, so generating this CPU does not require Scala or SBT.
+**第 14 章主线：** 本仓库使用 Tang Primer 20K Dock；生成入口是 `tang_run.py`，构建使用 Yosys/nextpnr/Apicula。
 
-## Integration sequence
+**实施进度（2026-10-12）：** 主线 14–16 使用已到货的 Tang Primer 20K Dock；第 17 章的压力测试状态按独立结果目录记录。17A、17B 的 SMP 仿真与普通单核板上测试分开验收。小时级长跑、温压范围、物理冷启动与 SMP 上板仍需各自补齐证据。
 
-| Stage | Change | Required evidence |
+| 章节 | 当前交付 | 最近验证证据 |
 | --- | --- | --- |
-| 00 Environment | Pin LiteX, VexRiscv RTL data and host tools. | Strict environment report and Wishbone baseline test pass. |
-| 01 CPU reset path | Add VexRiscv, a small ROM, and a memory-mapped write target. | Fetch from reset address 0 and expected write; missing ACK remains a live request and does not report completion. |
-| 02 Wishbone endpoint | Verify read/write, byte enables, waits, missing/early/held ACK, and unmapped access. | Each case has an expected protocol result and recorded trace. |
-| 03 Firmware ROM | Assemble RV32I firmware, create an initialized ROM image, and boot it. | Image depth, reset vector, memory map, and completion write agree. |
-| 04 Writable SRAM | Add Wishbone SRAM for data and stack. | First/last locations and byte lanes read back; an undersized SRAM leaves the out-of-range Wishbone request unanswered, which the bounded test monitor captures. |
-| 05 Address decoding | Attach ROM, SRAM, and a register endpoint to explicit address regions. | Overlap is rejected; mapped targets work; the unmapped request remains unacknowledged and is captured by the test monitor. |
-| 06 LiteX SoC | Build the design with LiteX `SoCCore` and `Builder`. | Generated maps match firmware addresses and the CPU reaches the completion endpoint. |
-| 07 Bare-metal C | Add main RAM, startup code, and linker sections. | `.data` copy, `.bss` clearing, stack, and C execution are verified. |
-| 08 GPIO | Add input/output GPIO CSRs and deterministic pin stimulus. | CSR map, output transitions, and sampled inputs match expected values. |
-| 09 UART | Add UART transmit/receive at a fixed clock and baud. | Captured bytes match; wrong-baud and reset cases fail explicitly. |
-| 10 Timer and IRQ | Add a timer event routed to VexRiscv's external interrupt input. | Polling, ISR entry/return, pending-bit clear, and reset cases pass. LiteX IRQ source indices are checked against the generated map. |
-| 11 SPI and I2C | Add LiteX controllers and protocol-level slave models. | SPI edges and I2C START/address/ACK/STOP match; wrong chip select and NACK are detected. |
-| 12 External memory | Build separate async SRAM, LiteDRAM SDRAM, and SPI Flash configurations. | Each configuration passes its own initialization/readback check and saves its actual map and RTL. |
-| 13 Integrated regression | Combine selected CPU, memory, GPIO, UART, timer, and serial peripherals. | One command runs firmware checks with stable markers, maps, tool versions, and source hashes. |
-| 13A JTAG/TAP basics | Build an independent TAP, IR/DR shifting, BYPASS, and an example IDCODE. | State traces, bit order, invalid instructions, short scans, and reset during scanning are checked. |
-| 14 FPGA adaptation | Bind clocks, reset, pins, and memories to one named board. | Pin assignments, IO voltages, and clock constraints agree with board documentation. |
-| 15 FPGA build | Synthesize, place, route, and generate a bitstream. | Resource budgets and target-clock timing are met; complete build reports are preserved. |
-| 16 FPGA bring-up | Program the board and run startup and peripheral checks. | Board identity, programming logs, raw UART output, and per-test results are recorded. |
-| 17 FPGA stability | Repeat cold starts and warm resets; stress memory, UART, and interrupts. | Defined duration and transaction counts are reached, errors are counted, and a reproducible version is frozen. |
-| 17A SMP single-core comparison (optional) | Switch to `vexriscv_smp` with `cpu_count=1`. | Recheck ISA, caches, maps, and interrupt interfaces; rerun single-core checks. |
-| 17B Dual-core SMP (optional) | Run two harts using shared-RAM mailboxes. | Each hart records its own count and completion code; repeated boot and shared-memory checks pass. |
-| 18 ASIC specification | Select process, package, single-core features, memories, and test access. | Each requirement maps to RTL parameters, firmware tests, and constraints; library and macro sources are identified. |
-| 19 ASIC RTL adaptation | Replace FPGA clock, memory, IO, and PHY resources. | Macro interfaces match bus responses, instances are bound, and boot/memory regressions pass. |
-| 20 ASIC logic verification | Run lint, clock/reset-domain checks, coverage, and applicable formal verification. | Requirements trace to tests; boundary/fault cases pass; coverage gaps and waivers have a rationale. |
-| 20A Scan and RAM test basics | Demonstrate internal-state access and fault detection using a small scan chain and RAM. | Shift/capture and March-style tests detect specified faults; normal operation resumes after test mode. |
-| 21 DFT and technology synthesis | Implement process-specific scan/memory tests and mapped synthesis. | Chain connectivity, test coverage, area, and timing meet frozen targets; netlist functionality is checked. |
-| 22 Constraints and floorplan | Define SDC, macros, IO/pad ring, and power distribution. | Critical paths are constrained, macro/power connections are correct, and floorplan/power budgets are feasible. |
-| 23 Place, route, and STA | Place cells, build clock trees, route, extract parasitics, and analyze timing corners. | Setup/hold, slew, load, and congestion meet requirements; reports match the final netlist. |
-| 24 Physical and electrical signoff | Check process-required DRC, LVS, antenna, density, ERC, IR/EM, and IO/ESD. | Process/project acceptance criteria are met; waivers are traceable and layout matches the netlist. |
-| 25 Tapeout delivery | Freeze design/test deliverables, run project prechecks, and submit. | File lists, versions, hashes, and review records are complete; submission and acceptance have separate evidence. |
-| 26 Post-silicon validation | Power up samples, check test access, boot, self-test, and characterize performance/power. | Per-device measurements link to the tapeout revision; faults and revision actions are recorded. |
+| 00–02 | 环境、真实单核 VexRiscv 观察、Wishbone 事务 | 原章节记录；02 最新文档提交 `b115fac` |
+| 03 ROM | 汇编到完整 ROM 镜像、CPU 取指、完成码、配置拒绝及实际越界取指无 ACK | `python chapters/03-rom/run.py`；`results/03/normal.log`、`rom_oob.log`、`config.log`、`rom_init.hex` |
+| 04 SRAM | 首末字、窄写、函数栈、CPU 复位后 RAM 保留、写 ROM 和小容量持续无 ACK | `python chapters/04-sram/run.py`；`results/04/normal.log`、`small_ram.log`、`ram.hex` 与 `results/04-rom-write/rom_write.log` |
+| 05 地址译码 | ROM/SRAM/寄存器窗口、真实边界读值、各从设备 STB、重叠拒绝、未映射持续无 ACK | `python chapters/05-memory-map/run.py`；`results/05/normal.log`、`rom_init.hex`、`results/05-unmapped/unmapped.log` 与 `memory_map.csv` |
+| 06 SoCCore/Builder | LiteX 单核 VexRiscv SoC、生成地址表、重编译固件、CPU 完成写 | `python chapters/06-litex-soc/run.py`；`results/06/run.log` 含 `SOC_COMPLETE`，`results/06/memory_map.csv`/`builder/csr.csv` |
+| 07 裸机 C 与 main RAM | `.data` 拷贝、`.bss` 清零、函数栈、RAM 访问与过小 RAM 链接失败 | `python chapters/07-bare-metal/run.py`；`results/07/run.log`、`firmware/program.map`、`sections.txt`、`small-ram/negative.log` |
+| 08 CSR/GPIO | CSR C 接口、GPIO 输出 `0xa`、CPU 读取仿真输入 `0x5`、输入同步 | `python chapters/08-gpio/run.py`；`results/08/run.log`、`csr-header.txt`、`memory_map.csv` |
+| 09 UART | LiteX UART 引脚串行解码、CPU 回环、FIFO 满、错误波特率、发送中复位重启 | `python chapters/09-uart/run.py`；`results/09/run.log`、`results/09-wrong-baud/run.log`、`results/09-reset-tx/run.log` |
+| 10 Timer/IRQ | 倒计数轮询、一次性与周期中断、ISR 清事件、计数及 ISR 时复位 | `python chapters/10-timer-irq/run.py`；`results/10/run.log`、`results/10-reset-count/run.log`、`results/10-reset-isr/run.log` |
+| 11 SPI/I²C | CPU 位操作与独立从设备协议模型；错误片选和错误地址负例 | `python chapters/11-spi-i2c/run.py`；`results/11/run.log` |
+| 12 存储器 | 异步 SRAM 的总线桥、LiteDRAM SDRAM 初始化/刷新、SPI Flash 镜像与损坏校验负例 | `python chapters/12-memory/run.py`；`results/12-async-sram/`、`results/12-sdram/`、`results/12-spi-flash/` 的日志与地图 |
+| 13 整机自检 | 配置生成、八项串口自检、并发 IRQ/协议/内存访问；错误 CSR/IRQ、损坏 ROM、带种子 UART 与总线/IRQ 复位 | `python chapters/13-integration/run.py`；`results/13/summary.json` 的 8 个 PASS，`cases/*.log/.uart.txt/.fst`、`manifest.json` 和完整 `rtl/` |
+| 13A JTAG/TAP | 独立教学 TAP、串行读回、故障捕获、暂停恢复与全部状态转移 | `python chapters/13a-jtag-tap/run.py`；默认及 IR 长度 5 的配置各 10 个测试通过，32/32 状态转移；`results/13a/REPORT.md` 与完整 `rtl/` |
+| 13B 边界扫描 | 独立教学边界链、输出接管/释放、输入采样与两类数字故障 | `python chapters/13b-boundary-scan/run.py`；21 项检查通过，`results/13b/` 含完整 RTL 与离线可视化 |
+| 13C OpenOCD | 真实 OpenOCD→remote_bitbang→模拟适配器→TAP RTL | `python chapters/13c-openocd/run.py`；ID/USER/错误 IR 恢复通过，`results/13c/` 含完整 RTL 与引脚证据 |
+| 13D GDB | 本机递归 C 程序的断点、步进、调用栈、PC/SP 与返回 | `python chapters/13d-gdb/run.py`；进入 3/2/1、返回 2/3、结果 6；`results/13d/`；尚未连接 SoC CPU |
+| 13F CFU神经算子（选学） | 原版直通与四路INT8 MAC、C参考、两输出全连接+ReLU、实际CUSTOM0、软硬件对照、背压/复位/错误offset与计时范围 | `chapters/13f-cfu-ml/README.md`；`results/13f/summary.json`；2004组RTL向量，CPU点积13/输出[28,0]/64组长度检查；硬件619命令与619响应、软件0；完整TFLM/板卡/ASIC NOT_RUN |
+| 14 Tang Primer 20K Dock | 已购板卡适配；27/40.5 MHz、7 管脚、电平、ROM/固件与完整 RTL；理想 PLL 下 CPU/UART/按钮/复位数字仿真 | `results/14-tang20k/REPORT.md`、`digital-summary.json`、完整 `rtl/`；Tang 实物证据见 16、17 |
+| 14E seed / 算法参数搜索 | 固定同一 Tang 网表/CST/器件/150 MHz 目标，仅改变 seed，保存最终 Fmax、路径与耗时；16 KiB main RAM 的 12 个 seed 最好 147.21 MHz；缩到 4 KiB 后最好 142.35 MHz、块 RAM 原语 24→18、功能仿真通过；两组默认参数的 150 MHz 均通过 0/12；进一步完成 48 次算法/参数尝试，原 16 KiB 配置的 heap 时序权重 20 / seed 3 达到 150.49 MHz，150 MHz 静态时序通过，12-seed 对照通过 1/12 | `chapters/14e-seed-sweep/README.md`；`results/14e/`、`results/14e-algorithms/`；频率是工具估计，尚未上板 |
+| 15 Tang 开源构建 | 固定 OSS CAD Suite；gw2a 综合、nextpnr 时序目标检查、Apicula .fs 生成 | `results/15-tang20k/REPORT.md`、`results/15-tang20k-build/REPORT.md`；27 MHz 内部时钟目标通过；实际 UART/按钮/复位证据见 16 |
+| 16 真实上板 | Tang JTAG SRAM 下载、UART HELLO/ALIVE、按钮与复位 | `results/16-tang20k/REPORT.md`；实物观察已确认 |
 
-## Verification rules
 
-- Compile RV32I firmware with the `minimal` variant's ISA and ABI (`-march=rv32i2p0 -mabi=ilp32`). Do not assume multiply/divide instructions exist.
-- Keep byte addresses distinct from Wishbone word addresses in maps and traces.
-- Give every wait loop a bound. A missing response must be reported as a protocol failure or timeout, never as a pass.
-- Check the generated `csr.csv` and memory regions before running firmware that depends on them.
-- A simulation pass proves the modeled behavior only. It does not prove FPGA timing, physical SRAM behavior, or board wiring.
-- Preserve the complete RTL source list used to build each simulator under `results/<stage>/rtl/`.
+| 17 数字压力 | RAM 模式/随机/字节写、硬件已完成读写计数、IRQ、随机 UART 回显、热复位、连续运行与多频率脚本 | 新结果 `results/17-counted-hardware`、`17-counted-resets`、`17-counted-27mhz-hardware`；温压和物理冷启动未测，小时级计划未执行 |
+| 17A SMP 单核 | 真实 SMP 核心、独立栈、RAM、原子计数、CLINT 中断、UART、重复复位仿真 | `chapters/17a-smp-single/README.md`；`results/17a/summary.json`；FPGA NOT_RUN |
+| 17B SMP 双核 | 两 hart 独立邮箱、共享缓存 RAM、原子更新、延迟与失效用例、重复启动 | `chapters/17b-smp-dual/README.md`；`results/17b*/summary.json`；FPGA NOT_RUN |
+| 17C Linux | 已尝试上游 Tang 输入生成，依赖/目标适配未通过 | `results/17c-linux/REPORT.md`；DDR/内核/用户空间 NOT_RUN |
+| 18 ICS55 输入验证 | 固定 PDK 版本，最小计数器标准单元映射、门级仿真、TT 单角理想时钟 STA | `results/18/summary.json`；SoC 规格未冻结，物理设计未完成 |
+| 19 ASIC核心适配 | VexRiscv minimal/RV32I，无缓存；默认ROM4KiB、SRAM256B、main RAM2KiB，另测1KiB；所有数组映射为常量/触发器；通用与ICS55工艺模型启动通过，PBMUX输入/输出/Z通过 | `chapters/19-asic-rtl/README.md`；`results/19/summary.json`、`memory-inventory.json`、`rtl/`；完整pad ring/宏/封装/物理时序待做 |
+| 20 ASIC验证工作包 | 正常/故障/多次复位、网表回归、随机外设记分板、12步安全属性及ACK坏版本、lint、时钟连接审计和纯行覆盖（LCOV至少一项1854/2073，annotation全部关联项1770/2073）；生产冻结仍OPEN | `chapters/20-asic-verification/README.md`、`WAIVERS.md`；完整CDC/RDC、覆盖收敛、顺序等价和长时整机压力未完成 |
+| 20A DFT教学 | 4位内部扫描列举8个卡死故障，普通IO检测2/8、扫描检测8/8；默认8×8 RAM的March C-检测19/19个数据/地址故障；另测16×4参数组 | `results/20a/summary.json`、`REPORT.md`、`cases/`；未向SoC插入生产扫描，未运行ATPG或真实宏MBIST |
 
-## Repository layout
+
+03–05 增补 ROM 读延迟与 ACK 对齐、行为 SRAM 与真实 RAM 宏差异、译码与仲裁/权限的边界，后续章节继续沿用“用日志/波形解释一个具体事务”的教学要求。
+
+## 教学目标与边界
+
+面向了解寄存器、内存和基本 CPU 指令，但尚未独立搭过 SoC 的学生。主线使用 LiteX、Migen、Wishbone 和**单核 VexRiscv**；不要求读者设计一颗新 CPU。先在无 FPGA 板卡的 Linux 仿真中跑通，再迁移到板卡。单核系统稳定后，使用 **VexRiscv-SMP** 做双核集成案例。
+
+最终要分别得到三类成果：① CPU 从 ROM 启动并访问 RAM、GPIO、UART、Timer、SPI、I²C 的仿真 SoC，并能解释最小 JTAG/TAP 与故障可观测性；② 在指定开发板上完成构建、时序检查和运行自检的 FPGA SoC；③ 为指定工艺完成逻辑验证、DFT、物理实现、签核和提交准备的 ASIC 版本。生成 GDS 不等于代工厂接收，接收也不等于硅片已经回来；这些状态必须分别记录。每一步只增加少量概念和一个最小实现。
+
+本计划定义教程的结构和验收标准；各步代码和实测记录在编写教程时逐一补齐。**FPGA 路线会演示较丰富的存储器与外设；首版 ASIC 的必做功能收敛为 CPU、启动 ROM、工作 RAM、UART、Timer、少量 GPIO 和测试入口。** ASIC 上的 SPI/I²C、外部 SDRAM/Flash、SD 卡和以太网作为选做。这样能从完整 FPGA 系统走到一个可签核的首版芯片。
+
+**“可测试性”教学贯穿三个阶段，不能等到 21 章才第一次出现。** 13A–13D 逐步学习四线扫描、边界引脚实验、OpenOCD 适配器与 GDB；16 章结合板卡解释 JTAG 下载；20A 再用故障注入学内部扫描与 RAM 测试；21 章落实目标 ASIC 的制造测试，26 章在样片上执行实际可用的测试入口。第 13 章固件自检仍保留，但它只能发现其程序与访问路径可见的错误，不能代替扫描链、存储器测试或芯片 IO/板级连接测试。
+
+## 从实际讨论中形成的指导思想
+
+教程要让学生能够沿着代码找到硬件，沿着硬件解释一次访问，再通过实验定位失效。每章的完成标准是：学生能说明为什么这样构造、哪些配置可以改变，以及用什么证据判断它运行正确。
+
+**1. 从学生的具体疑问出发。** “为什么要栈”“GPIO 为什么是四位”“为什么两条 CPU 总线需要仲裁”都进入对应概念首次出现的章节。先用当前系统回答，再展开原理。说明必要的前置知识：讲栈时先画递归调用与返回，再列各层 SP、RA 和栈帧数据；SP 是当前栈边界的内存地址，RA 保存返回后的继续执行位置，编译器生成的指令负责分配栈帧和保存现场。教学简化要写清实际 ABI 中的寄存器传参、对齐及优化差异。
+
+**2. 以总线事务组织系统解释。** 先画“谁发请求 → 谁选择目的地 → 谁返回数据和完成信号”。以取指、写 SRAM、读 CSR 各走一遍，明确地址、数据、ACK 和 IRQ 的方向。模块层级树说明归属，实际接线图说明互联；`SoCBusHandler`、`SoCCSRHandler`、`SoCIRQHandler` 的管理任务，要与仲裁器、译码器、桥和中断线的硬件作用对应起来。图按本章真实配置绘制，标出当前接了哪些端点。
+
+**3. 把 Python 到 RTL 的联系讲出来。** 讲 `wishbone.Interface(...)` 时展示它定义了哪些信号；讲 `self.bus.add_slave(..., region=SoCRegion(...))` 时展示地址区域怎样产生译码和有效请求；讲 `self.comb`、`self.sync` 时展示对应的组合逻辑和时钟沿更新。每次选一小段本章代码，对照生成 RTL 的端口、连线或条件表达式，说明谁生成、谁连接、谁最终驱动信号。LiteX 配置、Migen 硬件描述、外部 CPU RTL 和 Verilator 仿真各交代其分工。
+
+**4. 对数字保持参数意识，这是优先编写要求。** 看到代码、图、表、日志中的任何数字，先追问它来自哪里、是否可配置、是否由其他参数计算得到。来源未确认时记录待核实；只有协议、ISA 或已确认的物理约束才能支持“必须是这个值”的表述。工具默认值和当前实验选值都写成“本章配置为……”。例如 GPIO 当前是 4 位，要说明位宽参数与引脚数量的关系；ROM 当前是 4 KiB，要说明容量参数、数据宽度、深度和地址范围的换算。
+
+每个影响行为的数值列出单位、来源、配置入口、当前取值、合法范围或约束，以及改变后的影响。GPIO 位宽、总线数据宽度、ROM/RAM 容量、地址区域、复位入口、时钟、UART 分频、等待周期、超时阈值、缓存大小/路数、核数和栈大小都按此处理。派生值给出公式与前提，例如总线的字节通道数取决于数据宽度；地址换算中的除以 4 来自当前 32 位、按字寻址的接口。修改参数后，列出需要同步调整的固件、镜像、链接脚本、测试预期、图表和时序约束。最小系统由本章目标和资源预算决定，保留与新增的功能都有明确用途。
+
+**5. 明确每段代码和每个 API 的来源。** 原生 LiteX 接口给出实际导入和本章用途；教程辅助函数说明输入、内部调用和输出。尤其讲清 `build_and_run` 如何调用 Builder、生成工程、运行仿真及组织结果目录。首次用到桥时展示其原生实例和接入位置；使用预生成 CPU RTL 时写明固定版本与配置。读者应能判断自己在调用库、描述电路、编译固件还是启动仿真。
+
+**6. 失效实验要展示问题怎样被捕获。** 每个案例按“改变什么 → 预计出现什么 → 实际哪一拍/哪条日志暴露问题 → 检查器如何判定”写。例如缺 ACK 时展示有效请求持续、等待计数增长和超时；过早或保持 ACK 时展示它出现在无有效请求的周期。区分端点没有应答、地址没有命中、错误端点被选中、返回值错误及超时器主动结束访问。负例的 PASS 必须指向被捕获的具体故障，并解释修复后的请求如何正常完成。
+
+**7. 软件与硬件用同一条执行路径解释。** 从汇编/C、ELF、二进制到 ROM 字数组，逐步解释字节序、地址单位和映射。复位入口追到 CPU 端口及其配置；`.data` 的 ROM→RAM 拷贝追到启动代码里的 load/store；`.bss` 清零追到 C 的初始化要求；栈追到实际 SRAM 地址与函数调用指令。每张表中的地址注明是 PC、返回地址、字节地址、Wishbone 字地址还是栈内数据。
+
+**8. 模型、FPGA 和 ASIC 的接口与实现分开讲清。** 同一条 Wishbone 访问可以接行为模型、FPGA RAM 或 SRAM 宏，分别说明存储介质、读延迟、写掩码、初始化及 ACK 的实现。使用 LiteX `SRAM` 时解释其 Memory 和总线包装；测试台另写应答模型时解释被替代的模块和实验目的。迁移 ICS55 时，模型假设逐项落实为库、宏、IO、供电和规则，面积与时序结果反过来决定配置。
+
+**9. 章节自包含，构建产物可直接查看。** 与 CPU、总线、存储器、固件和仿真有关的 Python 文件放在各自章节，允许为独立阅读保留必要重复；寻找固定版本 LiteX 的 `tutorial_paths.py` 可以共用。每章列出外部依赖，并在没有其他章节文件的情况下运行本章功能。实际使用的完整 HDL 与必要初始化文件列出来源，RTL 快照保存在 `results/<章节或场景>/rtl/`，以后重新构建也会更新。生成成功、事务完成和 CPU 继续执行分别给出证据。
+
+**10. 用简洁、准确的图和解释减少阅读负担。** 优先使用文本接线图、逐周期表、栈帧表和真实日志片段。正文回答当前问题，用具体动作解释因果；必要的问答放在本章合适位置。读者仍看不懂时，补出缺失的步骤或前置概念。每次解释只引入理解当前行为所需的术语，例子中的数值和连线与实际实现一致。
+
+## 统一约定
+
+- **数字先查来源。** 文档中的具体数值须标明是协议/ISA 要求、工具默认值、本章配置、计算结果还是一次实测值；可能为参数的数值先追到定义和约束，再解释其含义。图与日志中的当前值也遵循此要求。
+- 文档用中文，代码保留 LiteX 的英文标识。所有例子在这个独立仓库的 `chapters/` 中有独立入口和运行命令，并可从本仓库根目录执行；LiteX 是明确固定版本的外部依赖。
+- 起点是 `cpu_type=vexriscv`、`cpu_variant=standard`，32 位小端、单时钟域 `sys`、单核。后续 SMP 案例使用另一个 CPU 集成 `cpu_type=vexriscv_smp`，先设 `cpu_count=1` 做对照，再设 `cpu_count=2`。两者的中断、缓存与内存接口需要分别验证，不能仅改一个数字就宣称双核成功。
+- 数据路径从 32 位 Wishbone Classic 开始。明确区分字节地址和字地址，画出 `cyc/stb/we/sel/ack/dat_w/dat_r` 的一次读写时序；所有地址表以字节地址表示。
+- 第一次用到位（bit）、字节（byte）、字（word）和十六进制（hex）换算时，在章节目录提供独立的补充小测文档（03 章示例：`small_quiz.md`），用中英文对照、真实文件中的数值和从 0 开始的地址表教学；明确“字”的宽度取决于上下文，并让学生分别算容量、末字节地址与末字的首字节地址，练习答案仍放教师文件。主 README 只给补充文档入口，不重复整段单位教程。
+- 每章固定包含：**输入清单**（依赖、上一章产物、配置、激励）、本章目标、章首**概念速查**、新增概念与结构图、完整最小代码及相对上一章的差异、参数表及选值理由、运行命令、**输出清单**（源文件、生成文件、日志/波形、软件可见结果）、正常/边界/预期失败验证及波形核对、常见失败及排查、章末**本章速记**与**课堂回顾**、进入下一章的条件。首次出现的缩写要解释。
+- 概念速查优先收录本章真正会用到的 5–10 个术语，每项写“学生能懂的一句话＋本章具体例子/观察位置”，不能只展开英文缩写；章末速记用 3–5 条可复述的因果规则，覆盖输入、输出、关键参数与通过条件。每章独立可读，旧概念只保留本章要再次用到的部分。
+- 每章 README 的“课堂回顾”同时包含**基础快问快答**（8–12 题，混合选择、填空、判断、信号识别或简单计算）与**综合问答**（至少一道要求说明因果关系的题）。题目可给出真实输出片段或明确标记的假设情境。学生版 README 只放题目，不在题后、折叠区或同页“自测”写答案；教师参考答案、解释和 2–4 个达标点单独存放在 `instructor/answers/NN.md`。学生先独立口述或写出理由，遗漏关键因果关系时回到对应图、代码和日志再答。
+- 新信号首次出现在图、命令或波形观察说明时，就在同章交代英文来源、方向、`0/1` 的含义、何时采样和本章代码中的例子；例如 01 章第一次要求看 `cyc/stb` 时，必须先解释“总线占用”和“当前请求”，不能留到 02 章才解释。
+- 使用预生成的第三方 RTL 时，章节要说明上游项目、硬件描述/生成语言、配置入口与关键参数、RTL 如何生成，以及本教程是重新生成还是直接消费固定版本产物；分别记录生成器源码版本和打包版本，避免把 Verilator 编译仿真误写成 CPU RTL 生成。
+- 每章先回答“这个部件解决什么问题、谁发起请求、谁给出结果”，再介绍信号名和实现代码。首次出现的接口先用极小的手工例子或概念模型说明输入、输出及完成条件，然后映射到真实 RTL；概念模型的 PASS 与真实硬件仿真的 PASS 必须分开写。
+- 图和表要能拿着日志核对：标出数据方向、地址单位、一次事务的等待与完成、字节通道、关键字段的实际值。每章至少给一个由真实输出裁出的逐步读图示例和一道预测题；预测题的答案放独立教师文件。说明哪些数值是协议不变量，哪些只是当前实现的一次观测。
+- 软件从几条手写或预置机器指令开始，之后才使用 RISC-V 交叉编译器；优先用明确的内存映射读写演示外设，再引入 LiteX 生成的头文件和 BIOS。
+- 每步至少有一个自动验收入口，设置仿真超时；输出清楚的 PASS/FAIL/SKIP。分清“Python 层生成成功”“总线仿真成功”“CPU 运行成功”“外设协议完成”“FPGA 上板通过”“ASIC 签核通过”，避免把前者误当后者。预期失败演示结束后恢复正确配置并重跑 PASS。
+- 涉及“测试”时先说明被测对象和故障模型：固件自检、板级 JTAG 下载、JTAG TAP/边界扫描、CPU 外部调试、内部扫描链和 RAM 测试各有不同入口与证据。TAP 仿真通过不能写成 IEEE 1149.1 一致性通过；FPGA 下载成功不能写成 CPU 可调试或 ASIC DFT 已完成。
+
+## 逐步构造
+
+| 步骤 | 本章增加的最小实现 | 关键参数与需要解释的选择 | 验收标准 |
+| --- | --- | --- | --- |
+| 00 环境和路线图 | 依赖检查脚本、术语表、最终 SoC 结构图 | Python/Migen/LiteX、Verilator、RISC-V 工具链；哪些章节只需 Python，哪些需要编译 RTL | 依赖检查逐项给出可用/缺失结果，运行仓库已有的一个小型 Wishbone 测试 |
+| 01 CPU 的最小观察 | 先用可运行的六信号小总线讲请求/等待/完成，再展示单核 VexRiscv 的时钟、复位、指令/数据 Wishbone 接口；用极小的指令应答器提供几条预置指令 | PC 与复位向量、`iBus` 取指和 `dBus` load/store 的分工、字节/字地址、预取与执行的区别 | 读者能从日志和波形区分 FETCH、DECODE、DATA，指出首次取指和写地址；能解释无 ACK 为何阻止完成 |
+| 02 最简单的总线事务 | 暂用仿真测试主设备代替 CPU，直连一个 Wishbone 寄存器从设备；从小总线 `req/ready` 映射到 Wishbone，再读预置常数、写入回读 | 32 位数据宽度、`cyc/stb/ack` 的方向与时机、`sel=0xf`、地址单位、等待周期 | 用真实 CSV 给出读和写的逐周期表，读者能指出握手行、等待行及 `0x1000→0x400`，并解释超时/坏 ACK 如何报错 |
+| 03 ROM 启动 | 把总线主设备换成 CPU，接一块预初始化 ROM，执行能观察到结果的短程序 | ROM 起始地址与 CPU 复位地址一致、容量、初始化文件格式 | CPU 完成取指并到达约定的完成标志；展示 ROM 内容与取指波形对应关系 |
+| 04 SRAM 与栈 | 接入可写片上 SRAM，让 CPU 完成 store/load，随后运行一个调用函数的小程序 | SRAM 起始地址、容量、栈顶、字节使能与小端序 | RAM 读回预期数据，栈操作正确；故意缩小 RAM 时能说明失败原因 |
+| 05 地址译码与内存地图 | 将 ROM、SRAM 和一块简易寄存器设备接到同一总线 | 地址区间、对齐、重叠检测、无响应地址的超时 | 三个地址命中正确从设备，未映射地址不会被误认为成功 |
+| 06 LiteX SoC 集成 | 用最小 `SoCCore`/`Builder` 重新表达前面手搭的结构，生成 `csr.csv`、内存区域和软件头文件 | `clk_freq`、CPU/ROM/SRAM、关闭暂不需要的默认外设、输出目录 | 生成文件中的内存地图与手工设计一致；CPU 在集成后的系统继续通过前一章程序 |
+| 07 主 RAM 与 C 程序 | 加入 `main_ram`，编译并运行最小裸机 C 程序，解释 `.text/.data/.bss`、堆与栈 | 主 RAM 容量、链接地址、交叉编译 ISA/ABI | C 程序完成内存读写，并用 map/objdump 验证各段落在预定区域 |
+| 08 GPIO 和 CSR | 加入输出与输入 GPIO，演示 CPU 通过 CSR 控制和采样 | 引脚数量、方向、CSR 页大小与地址、仿真输入激励 | 输出翻转，输入变化能被程序读到；对照 `csr.csv` 指出寄存器地址 |
+| 09 UART | 加入 UART，先发送一个字符，再发送短字符串及接收回环 | 系统时钟、波特率、FIFO 深度、仿真终端连接 | 仿真终端出现确定字符串，接收回环得到原字节 |
+| 10 Timer 与中断 | 先轮询计数器，再加一次定时器中断；说明中断路由、清除和重入 | 计数宽度、装载值、IRQ 号、CPU 变体的中断能力 | 轮询时间递增；中断恰好触发预期次数并被正确清除 |
+| 11 SPI 与 I²C | 各用一个最小仿真从设备，完成 SPI 收发和 I²C 寄存器读写 | SPI 时钟/模式/片选、I²C 设备地址/上拉/时钟速率 | 收到与模型约定的字节；波形可指出 SPI 边沿和 I²C START/ACK/STOP |
+| 12 外部存储器 | 在片上 RAM 基线之上分别演示异步 SRAM、仿真 SDRAM/LiteDRAM、内存映射 SPI Flash | 外部时序、数据宽度、容量、刷新/初始化、缓存及可执行属性 | 各模型完成写读或 Flash 读回；SDRAM 初始化通过并显示真实容量与地址区间 |
+| 13 综合外设与完整系统 | 在同一 SoC 中运行串口命令或简短自检程序，覆盖内存、GPIO、Timer、SPI/I²C；说明 SD 卡和以太网的接入位置 | 外设基址、IRQ 分配、构建选项、资源预算 | 一条命令完成全系统自检并输出逐项结果；保存最终内存地图、CSR 表和可复现命令 |
+| 13A JTAG/TAP 入门 | 独立的最小 TAP 仿真，演示状态转移、IR/DR 移位、BYPASS 和示例 IDCODE；画出与 SoC、边界扫描、CPU 调试的关系 | TCK/TMS/TDI/TDO 方向、IR 长度、复位方式、TDO 采样边沿 | 自动检查状态轨迹与读回位序；错误 IR、少移一位和复位中断扫描得到可解释的失败；不声称示例 TAP 通过标准一致性测试 |
+| 13B 边界扫描 | 学会从测试入口控制输出、观察输入并定位连线故障 | 边界链位布局、IO 方向、测试指令与功能/测试选择 | 验证预装载、Shift 输出稳定、故障掩码与退出测试 |
+| 13C OpenOCD 适配器 | 用真实工具把扫描命令转换成逐事件引脚激励 | IR 长度、期望 ID、适配器协议、socket 端口 | 扫描识别、USER 写读、错误 IR 和恢复，保存协议与引脚证据 |
+| 13D GDB 入门 | 先调试本机程序，再理解远程 CPU 调试缺口 | 编译调试信息、目标架构、调试后端 | 真实断点/步进/栈帧实验；SoC 停机单步待核实调试配置后集成 |
+| 13F 神经网络算子加速（额外选学） | 从手算点积、bias/ReLU开始，接入CFU Playground固定版本的现成四路INT8 MAC，真实VexRiscv自定义指令调用，再做软件对拍与计时 | 有符号字节、打包、输入offset、累加器、funct7/funct3、valid/ready、CPU带CFU变体、数据准备成本 | 计算符合独立C参考；命令/响应计数；背压/复位/错误offset检测；分别计时；完整RTL/初值/许可/哈希可追溯 |
+| 14 板卡迁移 | 将仿真时钟、复位、引脚和外部存储模型映射到一块实际板卡的 target 示例 | 时钟频率、约束、UART 引脚/波特率、RAM 器件参数 | 完成板卡原理图与管脚表核对；无板卡的读者仍可完成 00–13D |
+| 15 FPGA 构建 | 从最小片上 RAM 配置开始综合、布局布线和生成 bitstream | 器件型号、系统频率、PLL、IO 标准、资源预算 | 配置文件生成、报告无未解释的关键警告或时序违例 |
+| 16 下载与上板 | 用板卡实际支持的下载通道配置 FPGA，再运行 LED、UART、RAM、Timer 与协议外设自检；若用 JTAG，画清下载器→FPGA 配置逻辑的路径 | 串口、电源、复位、下载器、JTAG 引脚/线序及外部器件可用性 | 保存板卡编号、下载日志、串口原始输出和各项 PASS；明确“JTAG 配置成功”与“用户 SoC CPU 调试成功”是两种证据；无实物板只能标 SKIP |
+| 17 FPGA 稳定性 | 连续运行内存/串口/中断/外设压力测试，冻结 FPGA 版本 | 运行时长、事务数、工作时钟、温度/电源范围 | 零意外错误，冷启动/热复位重复成功，时序报告满足目标 |
+| 17A SMP 单核对照 | 将 CPU 集成换为 `vexriscv_smp`，先配置 `cpu_count=1`，重跑单核自检 | CPU 集成类型、缓存/总线宽度、CLINT/PLIC、软件入口 | 同一软件功能重新通过，记录地图和资源变化；不把此结果算双核通过 |
+| 17B SMP 双核案例 | 配置 `cpu_count=2`，两个 hart 对共享 RAM 写独立邮箱，hart0 汇总并经 UART 报告 | `cpu_count`、原子指令/屏障、共享内存和缓存一致性、启动 hart | 两个 hart 都留下独立计数与完成码；重复启动无死锁；板卡资源允许时再上板 |
+| 18 ICS55 接入与规格冻结 | 先跑工艺小电路，再固定首版功能、封装、存储和测试入口 | PDK 提交/Release、库视图、IO/金属选项、宏与工具 | 工艺接入有证据；每项规格映射到 RTL 参数、固件和验证用例 |
+| 19 ASIC RTL 适配 | 替换 FPGA PLL、BRAM、IO 等专用资源；确定 ROM/RAM 的真实实现 | 宏的端口、读写延迟、掩码、初始化、供电 | 无未绑定原语或宏；重跑 CPU 启动与 RAM 回归 |
+| 20 ASIC 冻结回归 | 逻辑仿真、lint、CDC/RDC、目标适用的形式检查与覆盖分析 | 时钟/复位、X、非法地址、IRQ、低速/高速边界 | 每项需求有可追溯测试，未覆盖与豁免逐项解释 |
+| 20A 可测试性最小实验 | 用几个触发器做扫描链，用一块小 RAM 做 March 类读写检查；对固定故障做注入 | 可控性/可观测性、scan_enable、scan_in/out、测试时钟、RAM 地址/数据宽度 | 正常模式功能不变，扫描移入/移出位序正确；注入卡 0/卡 1、RAM 地址/数据故障能被指定序列抓到，报告检测数与未覆盖故障 |
+| 21 DFT 与综合 | 把 20A 的原理映射到目标工艺的测试入口、内部扫描和存储器测试或替代方案，再做工艺映射综合 | 测试时钟/复位、扫描链数量与长度、测试模式隔离、宏测试接口、面积和可测性目标 | DFT 规则/链连通/故障覆盖或目标项目认可的等效报告、无未绑定单元、初步时序/面积满足预算；工具/库不具备时写明缺项而不宣称量产测试通过 |
+| 22 规划与约束 | SDC、宏布局、IO/pad ring、供电网络和 die/core 面积 | 时钟和 IO 延迟、电源域、IR 预算、利用率 | 无未约束关键路径；电源/地及宏连通，布局空间合理 |
+| 23 布局布线 | 放置、时钟树、布线、寄生提取、多角时序迭代 | 电压/温度工艺角、setup/hold、转换与电容限制 | 各角时序、拥塞、面积/功耗报告可追溯，无未解释违例 |
+| 24 物理签核 | DRC、LVS、天线、ERC、电源/IR/EM、密度、IO/ESD 检查 | 所选工艺的官方规则与豁免流程 | 签核报告满足指定项目标准，GDS/网表/引脚一致 |
+| 25 流片提交准备 | 冻结源码、ROM、网表、GDS、约束、报告并对照目标项目清单预检 | 工艺、工具、设计版本和文件哈希 | 区分“准备好”“已提交”“被接收”，每个状态有独立证据 |
+| 26 硅后计划 | 收到样片后检查供电、时钟、启动、自检、性能和功耗 | 工装、芯片序列号、固件版本、供电条件 | 实测数据与仿真/FPGA/STA 对比；无样片时状态为待执行 |
+
+## 每章的输入与输出合同
+
+这里的“输入”指该章开始前读者实际要准备的文件、配置、设备或上一章产物；“输出”指该章结束时应产生并保存的东西。**一条 PASS 日志本身不是输出的全部**：能重建结果的源文件、参数和检查证据也必须保存。以下文件名为计划中的命名约定，编写具体章节时再以实际生成路径核对。
+
+| 章 | 输入：从哪里开始 | 输出：交给下一章什么 |
+| --- | --- | --- |
+| 00 环境 | 空工作目录、固定 LiteX 提交、Python 与可选工具清单 | `environment.json`（版本/路径/缺项）、依赖检查日志、学习路线图 |
+| 01 单核 Vex | 已安装的 LiteX/Migen/RTL 仿真器，VexRiscv `standard` RTL，复位时钟激励与极小指令序列 | 单核 CPU 包装、首次取指波形、PC/指令对照表、超时负例 |
+| 02 Wishbone | 单主设备测试激励、32 位总线定义、单寄存器从设备 | 可复用读写任务、字节使能与等待周期日志、逐周期握手图 |
+| 03 ROM | 01 的 CPU 包装、02 的 Wishbone 读写概念、汇编程序、复位地址 | `results/03/program.{elf,bin,hex}`、取指波形/日志、完成码事务、镜像容量和复位地址检查 |
+| 04 SRAM | 03 的 CPU+ROM、SRAM 基址/深度、存取与函数调用程序 | `results/04/normal.log`、VCD、首末字与部分写入读回、栈保存/恢复、容量不足超时 |
+| 05 译码 | 04 的 ROM/SRAM、寄存器设备和候选地址区间 | `results/05/memory_map.csv`、译码器 CPU 仿真、首末地址证据、未映射/重叠负例 |
+| 06 SoC Builder | 05 的内存图、单核 CPU 选项、时钟/复位、最小平台 | 可生成 RTL 的 SoC 入口、`csr.csv`、生成头文件、对应的软件地图 |
+| 07 裸机 C | 06 的 SoC、RISC-V 工具链、主 RAM 大小、启动汇编/链接脚本 | ELF/二进制、map/objdump、`.data/.bss/栈` 的运行证据 |
+| 08 GPIO | 07 的可运行软件、GPIO 位数/方向、仿真输入激励 | GPIO CSR、软件读写示例、引脚/CSR/总线三方对应记录 |
+| 09 UART | 08 的 SoC、实际系统时钟、目标波特率、串口模型 | UART 固件、原始 TX/RX 字节捕获、分频与 FIFO 测试结果 |
+| 10 Timer/IRQ | 09 的固件基线、Timer 参数、VexRiscv `standard` 中断入口和 IRQ 表 | 轮询与 ISR 示例、IRQ 波形、进入/退出及清中断计数 |
+| 11 SPI/I²C | 10 的 SoC、两个协议设备模型、时钟与设备地址参数 | 两个驱动示例、协议事务记录、NACK/错片选负例 |
+| 12 存储器 | 11 的 SoC、片上 RAM 基线、外部 SRAM/SDRAM/Flash 模型和镜像 | 各存储器独立演示、初始化/边界/刷新/镜像读回报告 |
+| 13 整机 | 00–12 的各模块、冻结的内存图/IRQ/CSR、各设备模型 | 自检固件、全系统 PASS/FAIL 编号、波形、软件与硬件版本哈希 |
+| 13A JTAG/TAP | 13 的 SoC 方框图、TCK/TMS/TDI/TDO 激励、最小 TAP/IR/DR 参数与测试向量 | 状态/引脚波形、IR/DR 位序表、BYPASS/示例 IDCODE 读回和故障注入日志；明确该模型与 CPU 调试或边界扫描的接口位置 |
+| 13B 边界扫描 | 本章自包含 TAP、边界单元、板上连线数字模型 | 完整 RTL、驱动/采样/故障掩码表、VCD 与离线引脚可视化 |
+| 13C OpenOCD | 本章自包含 TAP、模拟适配器、真实 OpenOCD | 配置、命令日志、协议记录、实际引脚轨迹、完整 RTL |
+| 13D GDB | 本章自包含递归 C 程序、GDB 命令文件、GCC/GDB | 调试日志、调用顺序/返回检查；无 RTL 与 JTAG CPU 通路 |
+| 13F CFU/ML（选学） | 07章C/启动基础、固定CFU Playground源文件、带CFU插件的CPU RTL、数学参考与数据编码 | 直接CFU向量/逐周期CSV、CPU软硬件日志、反汇编、计算/端到端分开计时、完整RTL和来源许可清单 |
+| 14 板卡 | 13 的 SoC、选定板卡原理图、晶振/IO bank/下载器资料 | 板卡 target、引脚/时钟/复位约束、原理图核对表 |
+| 15 FPGA 构建 | 14 的 target、SoC 源码/固件、FPGA 工具链与目标频率 | bitstream、综合资源/布局布线/时序报告及构建清单 |
+| 16 上板 | 15 的 bitstream、实物板、供电/下载器/串口线和测试固件；若经 JTAG 下载，查板卡线序与目标器件配置文档 | 下载日志、板号、串口原始数据、LED/按键/内存自检结果；标明下载与用户 CPU 调试是否分别实际执行 |
+| 17 稳定性 | 16 的工作板卡、压力参数（次数/时长）、监测方式 | 冷/热复位及持续运行报告、错误计数、冻结的 FPGA 版本 |
+| 17A SMP 对照 | 13 或 17 的单核验收包、`vexriscv_smp` 的单核配置、其 RTL/生成依赖 | SMP 集成 `cpu_count=1` 的构建与软件自检、CLINT/PLIC/缓存/地图差异表 |
+| 17B SMP 双核 | 17A 的基线、`cpu_count=2`、共享 RAM、两 hart 启动与同步程序 | hart0/hart1 独立邮箱与完成计数、UART 汇总、双核仿真结果；上板为选做 |
+| 18 ASIC 规格 | 17 的单核冻结版、13A 的 TAP 概念、目标 PDK/IP/宏/IO/封装/项目规则、面积功耗预算 | 首版 ASIC 规格、需求到测试表、冻结内存图、测试引脚/复位/时钟/访问路径及许可与可用性清单 |
+| 19 ASIC RTL | 18 的规格、单核 RTL、ROM 镜像、真实 RAM/IO/时钟实现视图 | 无 FPGA 原语的 ASIC RTL、宏清单/模型、重跑启动与 RAM 的报告 |
+| 20 ASIC 验证 | 19 的 RTL/模型/固件、需求到测试表、时钟/复位定义 | 回归/lint/CDC/RDC/适用形式检查/覆盖率报告及豁免表 |
+| 20A DFT 入门 | 20 的验证冻结版、小扫描链和小 RAM、可注入的固定故障集 | 逐周期扫描波形、RAM 测试记录、故障检测矩阵及正常模式回归 |
+| 21 DFT 综合 | 20/20A 的验证冻结版、标准单元库、存储宏测试资料、DFT 规则、时钟与面积预算 | 门级网表、测试入口与扫描/存储器测试实现或明确缺项、DFT 规则/链连通/故障覆盖、测试图样/ATE 交付要求、等价/面积/初步时序报告 |
+| 22 规划约束 | 21 的网表、宏 LEF/时序、IO 单元、工艺规则与引脚预算 | SDC、die/core/宏/IO 规划、PDN、未约束路径和电源检查结果 |
+| 23 布局布线 | 22 的物理规划、网表、工艺角及优化目标 | 放置/时钟树/布线数据库、寄生、各角 setup/hold 与拥塞报告 |
+| 24 签核 | 23 的最终物理数据库、工艺 DRC/LVS/天线/ERC/供电规则 | GDS/OASIS、最终网表、各签核报告、豁免与复核记录 |
+| 25 提交 | 24 的版图与签核包、官方项目提交清单和版本哈希 | 冻结的交付目录、官方预检结果；正式提交/接收各有独立记录 |
+| 26 硅后 | 实际封装样片、测试板/仪器、冻结固件与安全上电条件 | 每颗芯片的启动/功能/频率/功耗记录和修版问题单 |
+
+章内 README 要把以上每项再落为**具体路径、格式、单位和检查命令**。例如“ROM 镜像”需写是 `.bin` 还是文本字列表、谁生成、多少字节、哈希是什么；“时序报告”需写哪个角、哪份文件、最差裕量和如何判断 PASS。读者能凭输入复现输出，才能进入下一章。
+
+## 文件组织
 
 ```text
-chapters/
-  00-environment/   host tools, pinned sources, and verifier
-  01-cpu-bringup/   reset, ROM fetch, and first memory-mapped write
-  02-wishbone/      protocol timing and failure models
-  03-rom/           assembled firmware and ROM initialization
-  04-sram/          data memory, byte lanes, and stack
-  05-memory-map/    explicit regions and decode behavior
-  06-litex-soc/     SoCCore and Builder
-  07-bare-metal/    C startup, linker sections, and stack
-  08-gpio/          CSR-backed input and output
-  09-uart/          serial transmit and receive
-  10-timer-irq/     timer event, external interrupt, and ISR
-  11-spi-i2c/       serial peripheral protocols
-  12-memory/        async SRAM, SDRAM, and SPI Flash experiments
-results/            generated maps, logs, waveforms, and complete simulator RTL
+soc_integration_tour/          # 独立 Git 仓库的根目录
+  README.md                         # 入口、先修知识、推荐学习路径
+  PLAN.md                           # 本计划
+  chapters/00-environment/ ... 26-silicon/  # 逐章 README 与最小代码
+  chapters/13a-jtag-tap/ 13b-boundary-scan/ 13c-openocd/ 13d-gdb/
+  chapters/20a-dft-basics/                # 制造测试基础
+  chapters/17a-smp-one/ 17b-smp-two/ # SMP 单核对照与双核案例
+  tutorial_paths.py                # 仅共用 LiteX 路径定位
+  results/<章节或场景>/rtl/         # 保存并提交实际使用的 RTL 快照
+  fpga/                            # 板卡 target、约束、板上验证
+  asic/                            # 工艺适配、约束、签核与交付模板
+  run_all.py                       # 按依赖顺序执行验收并汇总结果
 ```
 
-## Execution plan through post-silicon
+例子以“能单独复制运行”为原则；逻辑与仿真辅助代码放在各自章节，LiteX 路径定位可以共用。每章保留完整命令和预期观测值，章节之间通过一个明确的新增代码差异衔接。早期总线仿真可使用 Migen 的仿真器，CPU 与外部设备使用适合其 RTL 的仿真后端；文档将分别列出所需工具。生成的波形、bitstream、GDS、PDK 和工具缓存不提交进源码目录；真实证据保存在各阶段指定的输出目录。
 
-The main flow keeps single-core VexRiscv `minimal`. Stages 13–17 establish the FPGA system; stages 18–25 use single-core as the first ASIC baseline. Stages 17A–17B are an optional SMP branch. Stage 26 executes when silicon samples arrive.
+## 实施与质量门槛
 
-Each stage records its inputs, implementation, acceptance conditions, and handoff outputs. Board, process, libraries, package, and memory capacity are selected at their respective stages. Clock frequency, test duration, coverage, and area budgets are frozen parameters.
+1. 先完成 00–05：验证 CPU、Wishbone 事务、ROM 启动、SRAM 和地址译码确实能逐章运行。
+2. 再完成 06–10：确认 LiteX 生成的内存图、CSR、C 程序和中断与前面的原理一致。
+3. 完成 11–13 和 13A：为协议外设和外部 RAM 配套最小仿真模型，形成完整系统和自检固件，再用独立 TAP 小模型建立 JTAG 概念。
+4. 完成 14–17：指定一块真实板卡，完成 FPGA 构建、时序、下载和板上测试；缺实物时诚实记录上板 SKIP。
+5. 完成 18–25（含 20A）：先完成 ICS55 的库/宏/规则及提交通道预检，再做扫描和 RAM 故障的教学小实验，再完成 ASIC 逻辑、实际 DFT、物理和提交包；26 是样片回来后的执行章。
+6. 每完成一章，在干净输出目录执行本章命令；记录工具版本、预计耗时和实际 PASS 条件。`run_all.py` 在缺少可选板级工具时明确标为 SKIP，不把缺依赖伪装成通过。
+7. 最终从一个只懂 CPU 基础、尚不了解 LiteX 的读者视角通读：每个新名词在首次出现时解释，每个地址和参数都能追溯来源，每个失败都能定位到具体层级。
 
-### 13–13A: Integrated system and test access
+## 学习路径与阶段验收
 
-**13 Integrated regression.** Combine the verified blocks into a declared ROM/RAM, GPIO, UART, timer, and SPI/I2C configuration. Run deterministic serial self-tests, then concurrent transactions, bus waits, and reset during accesses. Bound each test and check that interrupts preserve program state and stack. Deliver a common build entry, ELF/map, memory/IRQ maps, RTL source list, tool versions, and regression logs for FPGA and ASIC work.
+教程采用一条单核主线、一次 SMP 案例和两次工程落地。主线 00–13 与插章 13A–13C 为 RTL 仿真，13D 为本机进程调试，不需要 FPGA 板卡。14–17 是 FPGA 落地。17A–17B 在单核版已经验证后切换到 VexRiscv-SMP，以双核为案例；它是进阶案例，首版 ASIC 不以双核为硬门槛。18–25 包括 20A，使用单核版的软件可见内存图，为 ASIC 做技术适配和可测试性设计；ASIC 版本不直接继承 FPGA 原语。26 只在芯片回来后执行。推荐读者每次只看当前章和上一章，不需要先学完全部后端概念。
 
-**13A JTAG/TAP.** Use a separate small model to explain TCK/TMS/TDI/TDO, TAP states, IR instruction selection, DR scanning, BYPASS, and an example IDCODE. Record states and bit order; inject invalid instructions, short scans, and reset during scanning. Deliver waveforms and fault explanations. FPGA programming, boundary scan, and CPU debug depend on the hardware actually connected to the TAP. Select and verify compatible debug hardware separately when CPU debug is required.
+### 必做与选做的明确边界
 
-### 14–17: FPGA implementation and hardware validation
+| 章节范围 | 必做的最终检查 | 选做的扩展；即使不做也要说明接口位置 |
+| --- | --- | --- |
+| 00–05 | 环境、CPU 首次取指、Wishbone 读写、ROM 启动、SRAM/栈、地址译码 | burst、总线仲裁、多主设备、缓存 |
+| 06–10 | SoC 生成、裸机 C、CSR、GPIO、UART、Timer 轮询和 IRQ | 完整 BIOS、RTOS、DMA、复杂调试器 |
+| 11 | SPI 单从设备、I²C 单设备的寄存器读写 | 多片选、多主机、时钟拉伸、协议异常恢复 |
+| 12 | 片上 ROM/SRAM/main RAM、外部异步 SRAM、SDRAM 仿真、SPI Flash 读取 | ECC、缓存、XIP、PSRAM/HyperRAM、SD 卡、以太网 |
+| 13 | 每个必做模块的独立测试与整机自检 | 长时间随机压力、覆盖率驱动的复杂场景 |
+| 13A | 无板卡的最小 TAP 仿真：状态、IR/DR、BYPASS/示例 IDCODE、复位与故障注入 | 经核对的 VexRiscv 调试变体或 RISC-V DTM/DM 集成、真实边界扫描链 |
+| 13B | 四路教学边界链、数字连线与故障 | 双向 IO、真实 BSDL、多器件边界链与板上测试 |
+| 13C | OpenOCD 经模拟适配器访问教学 TAP | 真实适配器/目标配置，CPU 调试模块与时钟域集成 |
+| 13D | GDB 本机断点、源码步进、PC/SP、调用栈与返回 | 经核实的 SoC 调试 RTL、OpenOCD 目标支持与实物停机单步 |
+| 14–17 | 选板、约束、bitstream、板上启动和基本自检、持续运行 | 板上外部 DDR/Flash/SD 卡/以太网，取决于板卡配备 |
+| 17A–17B | VexRiscv-SMP 单核对照、双核共享内存邮箱、两个 hart 的完成证据 | 在资源足够的 FPGA 上运行双核、双核系统软件、SMP ASIC |
+| 18–21（含 20A） | ASIC 首版规格、ROM/RAM/IO/时钟适配、逻辑回归、扫描/RAM 故障教学实验、目标工艺 DFT 与综合 | SPI/I²C 落片、多时钟、低功耗、CPU 外部调试；边界扫描是否必做由封装/板级与目标项目规则确定，但测试访问路径必须确定 |
+| 22–25 | SDC/布局/供电、布线/STA、物理签核、官方项目清单预检 | 更高频率、多电源域、先进封装优化 |
+| 26 | 有样片才执行上电、启动、自检、表征 | 极限温度、长期可靠性和失效分析扩展 |
 
-**14 Board adaptation.** Start with the system baseline and a named board's schematic/device documentation. Use on-chip memory first; select board clock, reset polarity, UART/GPIO pins, IO voltage, and programming interface. Add external SDRAM/Flash according to the board configuration. Recalculate UART, SPI, I2C, and timer parameters. Deliver a board target, pin/clock constraints, configuration, and documentation traceability.
+13F是额外学习项：从基础算子到CFU的单独路径，不加入首版ASIC默认功能，也不取代00–13系统主线。
 
-**15 Build.** Freeze tool versions and run synthesis, placement, routing, timing checks, and bitstream generation. Check bound CPU/interconnect/memory instances and inferred RAM type, capacity, latency, and byte writes. Accept against target clock, resource budget, and constrained critical paths. Preserve bitstream hash, resource/timing reports, and build commands.
+“选做”只表示初学者不必完成该功能。若项目最终规格包含它，它立即变成该项目的必做项，并继承同样的验证、时序、物理和交付要求。
 
-**16 Bring-up.** Program the board through its actual interface. Check reset, UART startup markers, and RAM boundaries before GPIO, timer/IRQ, and protocol peripherals. Preserve board identity, bitstream/firmware revisions, programming logs, raw UART bytes, and failure waveforms. Hardware checks remain pending without a board.
+| 阶段出口 | 读者此时应该能够解释 | 必须保存的客观证据 |
+| --- | --- | --- |
+| 05 | CPU 的一次读/写怎样在 Wishbone 上握手和被地址译码 | 波形、断言报告、ROM/RAM 初值、地址图 |
+| 10 | C 程序怎样走到 GPIO/UART/Timer 的 CSR | ELF/map、`csr.csv`、串口捕获、IRQ 波形 |
+| 13 | 各外设和 RAM 如何组成完整系统 | 全系统自检日志、各设备协议波形、随机种子、配置哈希 |
+| 13A | TAP 指令/数据扫描怎样工作；JTAG 下载、边界扫描与 CPU 调试为何是不同能力 | TCK/TMS/TDI/TDO 波形、状态/位序表、正常与负例日志 |
+| 13B | 边界单元如何接管输出并采样输入 | 引脚模式、采样值、故障掩码、接管与释放轨迹 |
+| 13C | 软件扫描命令怎样变成引脚电平 | OpenOCD 日志、remote_bitbang 命令、RTL 引脚可视化 |
+| 13D | 断点/单步/调用栈是什么意思，换成芯片需要什么 | GDB 真实会话、进入/返回验证及调试链路图 |
+| 15 | FPGA 综合与时序通过意味着什么 | bitstream、资源报告、约束文件、时序报告 |
+| 17 | 板上运行与仿真一致到什么程度 | 板卡编号、下载日志、串口原始记录、复位/压力测试计数 |
+| 20A | 为什么需要控制/观察内部状态；扫描与 RAM 测试各能发现哪些示例故障 | 扫描输入输出波形、故障检测矩阵、RAM 测试轨迹与模式退出回归 |
+| 21 | ASIC RTL 能否被目标工艺综合和测试 | 库/宏清单、lint/CDC/回归、测试入口、链连通、故障覆盖及综合报告；缺生产 DFT 资源时明确 SKIP |
+| 24 | 物理版图是否满足目标工艺要求 | 各角 STA、DRC/LVS/天线/电源等签核报告和版图摘要 |
+| 25 | 是否满足实际流片项目的提交规则 | 官方预检、提交文件清单及哈希、状态/审核记录 |
 
-**17 Stability.** Freeze duration, transaction counts, reset counts, and operating conditions. Repeat power-cycle boot and warm reset; stress memory patterns, UART, and interrupts. Check error counts, deadlock, and recovery. Deliver a stability report and a reproducible FPGA release whose software interfaces feed the ASIC specification.
+### 章内验证的统一格式
 
-### 17A–17B: Optional SMP branch
+每个验证点写成四行：**动作**（运行哪条命令/施加什么输入）、**观测**（哪一条日志、寄存器或波形）、**通过条件**（精确数值/范围/条数）、**失败解释**（可能对应哪一层）。不得仅写“查看波形是否正确”。例如写 GPIO 输出时，要求在指定周期前 CPU 完成 CSR 写；该地址的 Wishbone 写握手恰好一次；`gpio_out[0]` 从 0 变 1；自检读取到新值。缺一项就只说明已验证了其中一层。
 
-`vexriscv_smp` is a separate LiteX integration. Start with one hart and document ISA/ABI, cache, bus-width, reset-vector, CLINT/PLIC, and map differences. Recompile firmware and pin RTL sources/generation dependencies again.
+自动脚本为每项检查输出 `PASS <编号>`、`FAIL <编号> 期望值/实测值/周期/地址` 或 `SKIP <编号> 原因`。结果附运行命令、工具版本、当前 Git 提交、参数文件哈希和运行耗时。超时属于 FAIL；故意注入错误的负例必须得到预期的 FAIL，再恢复原配置运行 PASS。脚本汇总时不把 SKIP 计入通过率。
 
-For two harts, use separate shared-RAM mailboxes and let hart0 report combined results through UART. Define hart startup, shared-region cache policy, atomics, and memory barriers. Require independent execution evidence, repeated boot, and deadlock checks. FPGA deployment depends on the resource budget.
+## 教学基准配置：先给出候选值，再用生成文件确认
 
-### 18–21: ASIC specification, adaptation, verification, and test
+这些数字只是让读者有一个可理解的起点，不代表已经适合特定 FPGA 或 ASIC。00、06、18 章各冻结一次，记录真实生成值。地址图均用**字节地址**；Wishbone 接口可能按字寻址，需要在 02 章演算转换。
 
-**18 Specification.** Select a process with available implementation data and a submission route. Freeze PDK, standard cells, IO library, package, single-core features, ROM/RAM capacities, clock, area/power budgets, and test access. Map each requirement to parameters, firmware checks, and constraints. Specify package pins for boot, reset, UART, and testing. Deliver a requirement/parameter/test/constraint matrix, library/macro inventory, pinout, and test specification.
+| 参数 | 教学候选 | 要解释的关系与更改后的检查 |
+| --- | --- | --- |
+| CPU | 单核 `vexriscv`、`standard`、32 位小端 | GCC 的 `-march/-mabi`、启动汇编、异常/IRQ 入口与该变体一致；SMP 的 ISA 与中断控制器单独核对 |
+| 总线 | 32 位 Wishbone Classic，先单主设备 | `sel=0xf` 为全字节写；`adr` 的地址单位、`cyc/stb/ack` 时序和超时上限要写明 |
+| ROM | 例如 16 KiB，起点等于 CPU 复位地址 | 检查程序是否装得下，镜像字节序和首条指令正确；ASIC 的掩模/逻辑 ROM 必须有物理方案 |
+| 片上 SRAM | 例如 8 KiB | 栈顶不得越界；FPGA BRAM 推断与 ASIC 存储宏语义可能不同 |
+| 主 RAM | 仿真/FPGA 起步可用 64 KiB | 链接地址、堆和栈大小要核对；改外部 DRAM 后重新测启动、延迟与缓存 |
+| 时钟 | 仿真可用 1 MHz 便于看波形 | FPGA/ASIC 目标频率单独定；每次变化重算 UART/SPI/I²C/Timer 并做 STA |
+| UART | 例如 115200 bit/s，FIFO 16 字节 | 分频由真实时钟计算；软件、仿真终端和板上终端参数一致 |
+| Timer | 32 位向下计数 | 装载/重装值是时钟周期数，非直接的毫秒；IRQ 号从生成表核对 |
+| CSR | LiteX 自动分配后冻结 | 软件用生成头文件，不手抄未经验证的寄存器地址 |
 
-**19 RTL adaptation.** Replace FPGA PLL, BRAM, IO, and PHY resources with ASIC implementations. Select fixed-logic ROM, an available ROM macro, or a loadable boot scheme and bind its firmware revision. Use RAM macros with functional models, Liberty, LEF, and layout views, or explicitly budget small register-based memories. Check ports, latency, write masks, read/write conflicts, power-up state, and supplies. Wishbone wrappers acknowledge when data is valid or writes complete; software initializes RAM. Deliver a technology top level, memory adapters, and passing boot/memory regressions.
+每章更新 `memory_map.csv` 与 `irq_map.csv`。首次引入时先用一次 CPU 访问解释**为什么需要地址约定**、软件地址与硬件译码不一致会怎样，再说明地址图和 IRQ 编号表各回答什么问题、空 IRQ 表代表什么，以及 CSV 是生成记录还是驱动硬件的输入；后续新增设备时用实际地址和仿真证据核对。内存图至少写：名称、起点、大小、末地址、权限、是否缓存、由哪一器件响应。检查 ROM/SRAM/CSR 不重叠，首字和末字可访问，越界访问按本章定义的错误/超时路径结束。CPU 复位地址必须落在可执行 ROM 内，IRQ 入口与固件向量表一致。
 
-**20 Logic verification.** Run lint, CDC/RDC, functional regression, coverage, and applicable formal properties on the ASIC top level. Cover boot, decode, bus waits, IRQ, memory, reset during transactions, and uninitialized reads. Use four-state simulation or randomized initial memory to expose initialization dependencies. Document coverage gaps, constraint exceptions, and waivers. Deliver a logic-freeze report tied to exact RTL/firmware revisions.
+### 参数变化后的回归规则
 
-**20A Testability experiments.** Add scan enable/input/output to a few registers; demonstrate shift-in, functional capture, and shift-out comparison. Inject stuck-at and broken-chain faults and record detecting vectors. Apply March-style ascending/descending address sequences to a small RAM with data-bit and address faults. Deliver scan waveforms, a fault matrix, RAM traces, normal-mode recovery, and coverage numerators/denominators.
+- 改 CPU、变体或 ISA：重编所有固件，重跑 01、03–13、FPGA 自检和 ASIC 逻辑回归。
+- 改任意 RAM/ROM 基址或容量：重生成 `csr.csv`、软件头文件与链接脚本，重跑边界、栈、启动和全系统测试。
+- 改时钟频率：重新计算串口与协议速度、Timer 时间常数；重跑仿真、FPGA 时序与 ASIC 全角 STA。
+- 改 ROM 镜像：更新镜像哈希、首条指令检查、启动仿真及 ASIC 版图版本追踪。
+- 改复位或跨时钟结构：重新做复位时序、CDC/RDC、仿真中途复位和物理约束检查。
+- 改 FPGA/ASIC 的技术实现：即使软件可见地址不变，也要重跑宏时序、门级或接口回归及相应签核。
 
-**21 Production DFT and synthesis.** Use the available libraries, macros, and tools to define scan chains, test clocks/reset, mode isolation, ATPG patterns, and memory testing. Specify the route from package pins to chains/macros. Check connectivity, fault coverage, and test time; rerun boot after test-mode exit. Map synthesis to frozen libraries, report logic/macro area, early timing, and power estimates, and perform applicable equivalence or gate-level checks. Deliver the mapped netlist, DFT configuration, vectors, and synthesis reports. Unavailable library/tool-dependent checks remain incomplete.
+## 00–05：把 CPU、总线和存储器真正讲清楚
 
-### 22–25: Physical implementation, signoff, and tapeout
+**00 环境。** 给 Linux 环境的逐项检查，而非一条笼统的安装命令。检查 Python、Migen、LiteX 当前源码、Verilator、RISC-V 编译器与工具链前缀；FPGA 板卡工具、PDK、OpenROAD/OpenLane/商业工具列为后续依赖。先实际运行 `python -m pytest test/interconnect/test_wishbone.py` 与 `python -m litex.tools.litex_sim --help`，保存退出码和工具版本。若基础测试因本机环境失败，先按依赖、导入路径、编译器三个方向定位，不进入 CPU RTL 仿真。
 
-**22 Constraints and floorplan.** Take the mapped netlist, library/macro views, pinout, and target clock. Write SDC for clocks, IO delays, uncertainty, and justified exceptions. Plan die/core size, utilization, macros, routing channels, pads, and power distribution. Check supplies, macro/IO connectivity, early congestion, and voltage drop. Deliver constraints, floorplan, power plan, and budget reports.
+**01 CPU。** 先讲“CPU 要取指，也要执行数据读写”，解释 PC、iBus、dBus 的名称和职责。运行只有 `req/addr/we/wdata/ready/rdata` 的概念模型，看请求、等待、应答和撤销，再说明它不是 VexRiscv RTL。随后画时钟、复位、PC、指令 Wishbone、数据 Wishbone 五个对象，使用单核 VexRiscv `standard`；用极小的指令应答器给 CPU 提供 2–3 条预置指令，不把它称为真正 ROM。拿真实日志逐行区分总线 FETCH 与内部 DECODE，解释缓存预取不是执行；让学生预测 `sw x1,0(x1)` 的 dBus 地址和写数据，再对照日志。验证复位期间无有效事务、释放复位后的首个取指地址等于复位向量、PC 顺序与指令表一致；拔掉应答器后测试应超时。此章暂不要求理解流水线与缓存内部结构。
 
-**23 Place and route.** Place cells, build clock trees, route, and extract parasitics. Run STA for the frozen process/voltage/temperature combinations; check setup/hold, clock skew, slew, and loads. Trace fixes to affected paths and rerun applicable equivalence/functional checks. Deliver final netlist, extraction data, and corner timing/area/power reports.
+**02 Wishbone。** 先把 01 章小模型的 `req/ready` 映射为 `cyc/stb/ack`，逐个交代主从设备和数据方向，再给单主设备、单寄存器从设备。用真实 `normal.csv` 从 `cyc=stb=1` 到 `ack=1` 写出读与写的逐周期表；说明空闲时可见的 `dat_r` 不等于已完成的读。用 `0x11223344` 作可辨认初值；分别让 `sel` 只选一个字节，检查未选字节不变；插入 0/2 个额外等待周期，保证数据只在握手时采样。让学生先预测 `sel=0001` 的新值和 `wait2` 哪一行握手，再对照输出。负例为一直没有 `ack`、`ack` 过早或保持过久，测试必须报出等待了多少周期。解释字节地址 `0x1000` 在 32 位字寻址从设备上为何对应 `adr=0x400`。
 
-**24 Signoff.** Use the target process/project rules for DRC, LVS, antenna, density/fill, ERC, IR drop, electromigration, IO/ESD, and package constraints. Preserve tool/rule versions, results, remaining issues, and formal waiver rationale. Final GDS/OASIS, netlist, pinout, and reports must identify the same design revision. Deliver a per-item signoff checklist.
+**03 ROM。** 用实际 ROM 取代指令应答器；预置程序执行一次可观察的总线写入并停止。核对 ROM 镜像首字与首条取指的字节顺序、复位地址与 ROM 起点、ROM 深度与镜像长度。空镜像、错误复位地址、镜像超出容量各有预期失败。PASS 条件是 CPU 发出完成标志的写事务，不能由 testbench 直接设置完成信号。
 
-**25 Delivery.** Freeze source commit, CPU/SoC parameters, firmware/ROM, netlist, layout, constraints, library versions, scripts, test vectors, and signoff reports. Organize files against the actual MPW/foundry checklist and run prechecks; verify hashes and revisions. Record package readiness, formal submission, and acceptance separately with supporting evidence. Deliver the manifest and acceptance records, and prepare the test board, firmware, and measurement scripts.
+**04 SRAM。** 增加一个可写存储器，固件先写/读固定模式，再调用一次函数并用栈保存返回地址。验证首字、末字、字节/半字/全字访问，复位后 RAM 状态按本章约定处理；写 ROM、SRAM 越界、栈顶设置太低时不能被误报为 PASS。比较 CPU 读值、总线波形和 RAM 实际内容三者。
 
-### 26: Post-silicon validation and revision feedback
+**05 译码。** 同时挂 ROM、SRAM、一个简易寄存器设备。用表格标出每个区域首末地址；分别访问每个区域的首字和末字，检查仅目标从设备收到 `stb`。未映射地址不得读到看似正常的旧数据；区域重叠的坏配置在构建期或测试期明确拒绝。此章冻结第一版软件可见地址图。
 
-Inputs are traceable samples, package documentation, a test board, current-limited supplies, clocks, measurement equipment, and test vectors. Check package orientation, supply connections, and static current first. Validate clock, reset, and test access under the frozen plan; exercise scan/memory tests and boot after test-mode exit. Then run UART, RAM, GPIO, timer/IRQ, and peripheral self-tests.
+## 06–10：把最小计算机变成 LiteX SoC
 
-For each device, record serial number, board identity, firmware hash, voltage, temperature, clock, vector revision, and results. Sweep frequency/voltage within permitted conditions and measure boot success, error rate, operating power, and highest stable frequency. Compare measurements with simulation, FPGA, and STA predictions. Preserve failure triggers, raw UART data, waveforms, reproduction steps, and revision actions.
+**06 SoC Builder。** 用 `SoCCore`/`Builder` 重现 05 的功能，先关闭不需要的默认 UART/Timer，避免学生分不清新增逻辑来自哪里。并列比较生成内存图、`csr.csv` 与手工版：若 VexRiscv/LiteX 固定映射使基址变化，明确列出旧、新地址，按新图重编固件并核对生成图与固件约定；不能声称地址逐项相同，也不能直接重用旧镜像。检查 CPU 复位地址在 ROM 内；生成 RTL 经语法检查或仿真编译；重跑 05 的程序。若 RAM 大小改了，头文件、链接脚本与测试都要跟着变化。
 
-Deliver per-device reports, functionality/performance/power measurements, issue records, and the next-revision plan. Without samples this stage remains planned. Freeze sample counts, test conditions, and acceptance criteria before execution.
+**07 裸机 C。** 从启动汇编、ELF、链接脚本讲到 `.text/.rodata/.data/.bss`、栈和堆，只写一个简单的内存校验程序。用 `readelf/objdump/map` 核对入口、节大小及位置；运行时检查 `.data` 初始化和 `.bss` 清零，测试函数调用后的栈恢复；故意用错误 ISA 或放不下程序的 RAM 让构建/运行失败。最终以 CPU 写完成标志结束，而不是只看编译成功。
 
-## Handoffs and status
+**08 CSR/GPIO。** 先写一个 LED 输出 CSR，再读一个按键输入 CSR，并画“C 指针写入 → CPU store → Wishbone → CSR 桥 → GPIO 寄存器 → 引脚”的数据路径。输出复位值、翻转次数、输入变化后的读值要与 `csr.csv` 地址匹配；写只读寄存器不应伪造输入变化；板级异步输入先经过同步器，再讨论消抖作为选做。
 
-| Stage exit | Deliverables for the next stage |
+**09 UART。** 先发单字符，再发固定 `HELLO`，最后收一个字节并回显。核对实际系统时钟和波特率分频，终端精确收到哪些字节、顺序如何；FIFO 空/满、连续发送、复位中途传输和错误波特率有明确验证。若仿真终端只显示了测试脚本注入的文本，而非 UART 波形解码，则不算通过。
+
+**10 Timer/IRQ。** 先轮询计数器，随后 one-shot 中断，最后周期中断。验收计数值变化、指定次数进入 ISR、清事件后不重复误触发、ISR 返回后主程序继续执行。禁用时不得触发；复位发生在计数或 ISR 中也要可控。VexRiscv `standard` 的中断入口和软件保存现场方式要对照本仓库 CPU 实现及实际固件，不能假设所有变体相同。波形必须显示硬件 IRQ 与 CPU 响应。
+
+## 11–13：协议外设、各种 RAM、整机自检
+
+**11 SPI/I²C。** SPI 必做一个 8 位从设备模型：CPU 发送命令、接收已知寄存器值；波形核对片选有效窗口、时钟边沿和 8 个数据位，错误片选应失败。I²C 必做一个两寄存器模型：CPU 发设备地址，写寄存器，再重复起始读回；核对 START、地址 ACK、数据 ACK/NACK、STOP，错误地址应 NACK。多片选、多主机、时钟拉伸属于选做。外设模型必须是协议响应者，不能在 CPU 读寄存器时直接塞预期值。
+
+**12 RAM 家族。** 先对比片上 ROM、片上 SRAM、主 RAM 的用途、延迟和上电状态；再分别用外部异步 SRAM、LiteDRAM 的 SDRAM 仿真模型、SPI Flash 镜像模型演示“访问方法不同”。外部 SRAM 验证读写时序、字节掩码、连续访问与首末地址；SDRAM 必须先完成初始化，再测数据模式、边界与刷新后的读回；SPI Flash 先只读镜像头及校验值，擦写需独立章节或选做。ECC、burst、缓存、XIP、PSRAM/HyperRAM、SD 卡和以太网均为选做，不能因缺依赖阻塞核心 SoC。
+
+**13 整机（已实现）。** 当前交付在 `chapters/13-integration/`：单核片上存储器配置，八项自检由真实 UART 引脚输出，8 个正常/失效/复位场景已通过。另增加本章独立的压力工具 `campaign.py`：可复现随机外设/内存操作，随机等待与多次复位，按未命中功能点选择场景；Verilator RTL 覆盖与功能覆盖分开报告，保存实际时钟数、覆盖缺口和失败重跑参数。长时间运行量由参数指定并以实际计数验收，不以 watchdog 上限冒充完成证据。外部 SDRAM/Flash、SD 卡和以太网按资源作为后续配置接入。原验收要求继续保留：写一个短小自检固件，依序输出 ROM 镜像校验、RAM、GPIO、UART、Timer、SPI、I²C 的固定编号和 PASS/FAIL，最后写唯一完成码。用同一固件做随机时机复位、长字符串串口发送、重复中断、内存边界、错误设备地址等压力回归；保存随机种子。故意改错一个 CSR 地址或 IRQ 映射，相关自检必须失败，证明自检会抓错。全系统仿真 PASS 的条件是所有必做项通过、无未解释超时和错误、软件版本/硬件参数哈希一致。
+
+**13A–13D：把 JTAG 分成四步，避免一次引入整套调试工具。** 13A 用独立 TAP 学四线、IR/DR、Capture/Shift/Update 与扫描负例，10 场景覆盖 32/32 状态转移。13B 加教学边界单元和四路回环连线，验收预装载、EXTEST 输出接管、输入采样、stuck-low/数字短接与恢复功能输出，共 21 项检查。13C 使用真实 OpenOCD，经本机 remote_bitbang 模拟适配器驱动真实 TAP RTL，验证 ID/USER 与错误 IR 恢复；协议、引脚 CSV/VCD 和离线 HTML 同时保存。13D 先使用真实 GDB 调试本机递归 C 程序，验证断点、步进、调用栈、PC/SP 和返回；这个实验没有经过 JTAG。各章代码自包含，13A 的复杂时序、跨时钟与错误快照讨论放本章参考文档。当前教学系统尚未集成可由 OpenOCD/GDB 控制的 CPU 调试路径；后续需核实 VexRiscv 调试变体、生成 RTL、目标软件支持、复位与时钟域交接，再单独验收停机/寄存器/单步/恢复。真实 FPGA 配置入口、板级边界扫描与 CPU 调试分别按实际硬件能力讲解。
+
+## 13F：神经网络算子加速（独立额外学习项）
+
+本章不作为FPGA或首版ASIC验收的必做前提。建议掌握07章的C、内存与启动后学习；它不要求先上板，也不要求掌握训练框架。
+
+**教学顺序：** 手算一个点积 → 一个神经元的bias/ReLU → 四个INT8值打包进32位 → 原版直通CFU认识接口 → 原版四路MAC逐行读 → 真实VexRiscv CUSTOM0 → 两输出全连接层 → 不同长度对拍 → 背压/复位/错误输入约定 → 数据准备与计算内核分别计时。
+
+**复用现成IP：** 固定CFU Playground提交`7f8ec4147b39db98534f8a10f9ddb1c26aca5648`，保留proj/dse_template/cfu.v及软件接口原件、许可、哈希；本地只写运行壳、测试与独立参考。上游模板software_cfu.cc仍为加法示例，不能直接用来证明MAC正确。源文件在本章upstream，完整checkout在external，章节逻辑不导入其他章节Python。
+
+**当前实现：** 4路×8位、输入固定offset=128、32位累加器均为所选核心属性，不预设为通用神经网络参数。CPU采用现有full+cfu/RV32IM预生成RTL，SoCCore通过cpu_cfu绑定；这不改动19章minimal/RV32I的ASIC实验规格。独立RTL默认4组固定+2000组seed向量；CPU核对点积13、全连接ReLU结果[28,0]及64组长度1～17，对照软件模拟路径。默认硬件接受619命令/619响应，软件路径0。另测257随机向量/seed7。
+
+**性能报告必须说清范围：** 本次64次8项计算，普通C10971周期，每次打包的CFU24859周期，操作数预先就绪的CFU循环727周期。不能以最后一个数字宣称整网加速15倍。CFU不直接访问RAM，数据仍由CPU搬运。后续完整TFLM模型、DMA、卷积或Tang资源/时序作为进一步选做，各自重新验证；本章不默认它们已完成。
+
+**文档要求：** 先解释输入、权重、偏置和激活，不先堆框架缩写；对打包/有符号、原版CFU、C宏到指令、SoCCore连接逐行或逐段解释；图和实际CSV/反汇编、源码字段对上。完整RTL与所有.init统一放results/13f/rtl，直接实验在其direct子目录分组，避免两个同名Cfu混编。
+
+## 14–17：FPGA 构建与上板的详细步骤
+
+**板卡决定（2026-10-09）：已购买 Sipeed Tang Primer 20K 核心板＋Dock，实物已到货，已完成开源构建和板上启动。** FPGA 为 `GW2A-LV18PG256C8/I7`，开源路线采用 Yosys 的 gw2a 综合、nextpnr-himbaechel 和 Apicula，下载用 openFPGALoader。14 章已加入本章独立的 Tang 配置、时钟/复位、CST、片内存储器固件和完整 RTL，15 章提供高云综合与构建入口，16 章提供未到货 SKIP 及到货后的识别/下载/串口证据工具。第一版用单核、27 MHz、片内 RAM，DDR3、双核和实物运行分别验收；实际板卡修订/IO 电压到货后核对。
+
+先在 14 章选一块**实际可获得且有公开原理图/约束资料**的板卡，记录板卡型号及修订、FPGA 型号、晶振频率、配置方式、串口和至少一个 LED/按键。可以优先查 LiteX-Boards 支持列表；选板后才填写引脚号，不能把通用计划里的示意管脚写成事实。如果读者换板，提供“板卡参数迁移表”，包含晶振、复位极性、IO bank 电压、UART/SPI/I²C/DRAM 引脚、配置闪存、下载器型号。
+
+**14 平台约束与电气核对（已实现）。** 使用 Tang Primer 20K Dock，生成完整 RTL、固件、CST 并检查引脚、电平、PLL、内存图与约束负例。综合与上板分别在 15、16 验证。先只接晶振、复位、UART、LED/按键；按板卡原理图逐个标明 FPGA 球位、IO 电平、上拉/下拉和与其他功能复用情况。确认电源组允许的电压，I²C 的上拉在板上或外部存在。异步按钮/外设输入有同步策略；PLL 锁定前复位保持有效。检查引脚无重复分配、时钟脚合理、生成约束与板卡版本一致。SPI、I²C、外部 RAM 的引脚只在板上确有器件或扩展口时启用。
+
+**15 构建（必做，开源流程已实现）。** `chapters/15-fpga-build/run.py` 默认对 Tang RTL 做 `synth_gowin -family gw2a`；`build_tang.py` 用 nextpnr 布局布线、检查目标时序，并用 Apicula 打包。证据在 `results/15-tang20k-build/`。从片上 ROM/RAM 版做第一份 bitstream，再根据板卡资源启用外部 RAM/Flash。脚本先生成 RTL，再综合、布局布线、时序分析、配置文件。每步保存退出码、命令和报告。读者要能定位资源报告里的 LUT/触发器/BRAM/DSP 数量，以及时序报告里最差路径的起终点、约束周期和裕量。通过条件是配置文件存在且非空，未解释的锁存器、多驱动、未约束时钟或关键时序违例为零；不能只凭工具返回 0 断言成功。若目标频率不满足，先解释关键路径，再考虑降频/流水线/换资源，而非删除约束。
+
+**16 下载和冒烟（必做，有实物板时）。** 记录供电与板号，按板卡文档选实际下载通道，下载 bitstream 并确认配置成功。若通道是 JTAG，先画下载器到 FPGA 器件配置逻辑的路径，核对线序/识别信息，保存命令与原始日志；这一步不自动提供用户 SoC 的 TAP、边界扫描或 CPU 停机/单步。按顺序检查电源/时钟/复位、LED、UART `HELLO`、RAM、自检固件、Timer 中断，随后测板上真实 SPI/I²C/外部 RAM。做一次按键硬复位、一次软件复位、一次重新上电；保存原始串口字节流和每次运行的 PASS 编号。若设备未焊装，对该设备标 SKIP；不能让仿真模型冒充板上器件。没有板卡时 15 可以 PASS，16 必须 SKIP。
+
+**17 稳定性（必做，有实物板时）。** 定义运行时长、事务数和允许错误数，例如用配置文件写明“连续 N 次 RAM 模式校验、N 次 UART 回环、N 次 IRQ、N 次冷启动”；这些数字在教程实现时依据板卡和测试耗时定，不写“运行一会儿”。记录电源电压、温度、时钟、板号和失败计数；观察时序报告是否满足真实频率。此章冻结 FPGA 版本，列出已知问题及会影响 ASIC 的 FPGA 专用资源：BRAM 初值、PLL、IO buffer、双向引脚和外部存储 PHY。
+
+**2026-10-12 实测：** 54 MHz 连续 600.04 秒（无复位），RAM 完成读 143384 / 写 1006736447 次、599956 次 IRQ、1165 次回显；独立 60.01 秒完成 10 次热复位；27 MHz 连续 120.02 秒通过。详见 `results/17-acceptance/REPORT.md`。
+
+**当前实现与验收方式：** `RAMTraffic` 在主 RAM 从设备上按 `cyc & stb & ack` 计数，读写分别统计；缓存命中的 CPU load 不包含在内。主机保存各 BOOT 阶段及累计计数下界，不把最大单阶段计数当累计值。连续运行与热复位分开测试，27/54 MHz 用同一压力程序、不同生成配置独立构建。`campaign.json` 中一小时等数字是可修改的计划，只有对应日志才说明实际执行。当前温度、电压没有仪器实测，保持空值和 NOT_MEASURED；物理断电冷启动未执行。单点条件和范围验证分别记录。
+
+## 17A–17C：VexRiscv-SMP 与 Linux 进阶实验
+
+**当前交付：** 17A/17B 已有本章独立代码、完整 RTL 快照与实际仿真。检查 RAM 模式/字节写、CLINT 软件/定时器中断、原子计数、独立邮箱、系统复位重跑；17B 增加停止 hart、错误结果和延迟情境。PLIC 外部中断、随机长跑、完整一致性覆盖以及 SMP 上板尚未验收。
+
+**这是一条完整的进阶案例，不改变 ASIC 首版仍以单核为基线的决定。** LiteX 中 `vexriscv` 与 `vexriscv_smp` 是两个 CPU 集成目录；后者有 `--cpu-count` 配置、CLINT/PLIC 地址、缓存和可选的 LiteDRAM 接口。教程先解释这些差别，再让两个 hart 执行最小任务。匹配的 SMP RTL 可能需要预生成网表或 Scala/SBT 生成环境；17A 的输入检查要打印来源、生成参数和版本，不允许用占位模块声称双核通过。
+
+**17A 单核对照（SMP 案例必做）。** 输入是 13/17 章已通过的单核功能自检、SMP CPU 集成、`cpu_count=1`、SMP 所需 RTL/生成工具。将 CPU 类型改为 `vexriscv_smp` 后**重新编译固件**，保留软件功能相同的 ROM/RAM/UART/Timer/GPIO 测试。输出新的内存图、`CPU_COUNT`、CLINT/PLIC/CSR 地址、构建与仿真日志，并与单核 Vex 结果逐项比较。判定原则是“软件功能相同，底层实现差异被解释”；不能复用旧 ELF 或仅看到 CPU 实例就标 PASS。先检查 CPU 数确为 1、取指入口正确、UART/内存/IRQ 自检通过、无未绑定 RTL；其中任何一项失败先在此章解决，不进入双核。
+
+**17B 双核共享内存（SMP 案例必做）。** 输入是 17A 的通过包、`cpu_count=2`、共享主 RAM、两个 hart 的启动代码和固定的邮箱地址。hart0 初始化同步状态；hart1 在自己的邮箱写 `hart_id`、计数和完成标志；hart0 等待两个完成标志，用约定的原子操作或内存屏障保障可见性，校验结果后经 UART 输出。输出是每个 hart 的独立 PC/邮箱/完成计数、UART 汇总、超时日志和双核资源报告。测试冷启动、重复启动、改变两个 hart 的执行速度、错误邮箱地址、一个 hart 不响应、重复中断；验证错误情形会超时或 FAIL。特别解释缓存一致性与原子指令为何在双核重要，并核对编译 ISA 是否包含所用指令。板卡资源足够时，再把双核 bitstream 上板运行；上板属于此案例选做，未上板不影响 17B 的仿真结果，但不能称板上双核通过。
+
+若 SMP 需要额外外部依赖，17A 文档写出下载/生成命令、版本、成功产物和离线替代方案。`cpu_count=2` 是构建参数，不是双核验证结论；两个不同 hart 的独立行为才是结论。
+
+**17C Linux（FPGA 进阶选做）。** 参考 [Linux-on-LiteX-VexRiscv](https://github.com/litex-hub/linux-on-litex-vexriscv)，该项目已列出 Tang Primer 20K。先以 `vexriscv_smp`、一个 hart 的 Linux 配置验证，再考虑双核。顺序为：核对 CPU RTL/生成参数 → LiteDRAM DDR 初始化及读写自检 → Yosys/nextpnr/Apicula 构建和时序 → BIOS 日志 → 匹配地址图的设备树 → 内核、根文件系统与串口 shell。当前片内 16 KiB 主 RAM 不适用 Linux，必须接入板上 DDR；上游支持列表不替代本地开源工具链的 DDR PHY/原语/时序验收。保留完整 RTL、工具版本、资源和原始串口记录，分别记录 DDR、内核、用户空间的状态。
+
+**2026-10-12 实施记录。** 17 章已提供本地独立构建与主机测试工具，覆盖 RAM 固定/随机模式、字节写入、Timer IRQ、UART 随机编号回显及软件热复位，结果目录为 `results/17` 和 `results/17-hardware`。实物 54 MHz / 180.03 秒测试通过，三次热复位、356 次 UART 回显，单启动阶段最大 29,600 轮 RAM 检查及 44,947 次 IRQ；冷启动、温压扫描与小时级运行尚未执行。17 章负例已在板上捕获指定下标的 RAM 位翻转。Linux 上游输入检查目前停在旧板卡目标的 Python 3.11 时钟域兼容问题，尚未构建或启动 Linux。18 章固定 ICS55 v1.10.102，计数器已完成真实库映射、70,000 周期门级功能仿真及理想时钟 OpenSTA；物理流程和规格冻结仍待完成。详见对应章节与机器可读报告。
+
+## 18–21：ASIC 规格、设计适配、验证与综合
+
+ASIC 主线选择 **浙江创芯 ICS55（ICsprout 55nm）**，目标是在浙江创芯的学术/教学小批量通道完成流片。18 章先完成下面的 PDK 接入实验，再冻结芯片规格；标准单元、存储器和封装预算一起决定首版 SoC 的规模。
+
+### ICS55 工艺接入：先跑一个小电路，再迁移整颗 SoC
+
+PDK 把 RTL 中的逻辑连接落实成可制造的单元、金属层和设计规则。需要建立这条实际路径：
+
+```text
+VexRiscv / LiteX RTL
+        │ 综合 + 标准单元 Liberty
+        ▼
+映射网表：实际的门、触发器、IO 和存储器实例
+        │ cell LEF + technology LEF + 电源/时钟约束
+        ▼
+布局布线 + 寄生提取 + 多角时序检查
+        │ cell/macro GDS + 层映射 + DRC/LVS 规则
+        ▼
+完整芯片版图 + 签核报告 + 流片交付包
+```
+
+**公开资料核对（2026-10-07）：** [官方文档](https://icsproutpdk.openecos.com/zh-cn/latest/)仍标注预览状态，适用教学和学术小批量测试；其中“2025 年 12 月首次班车”是原计划日期，实际班车、结果和接收要求在 18 章向项目方确认。[仓库 README](https://github.com/openecos-projects/icsprout55-pdk#todo)仍列出 RAM、SPICE、PDN、RC 提取等待补内容。我们将这些记为待核实依赖，不预设 SRAM compiler 或 PLL 已经可用。
+
+**1. 固定完整 PDK，而不是只固定 Git 仓库。** Liberty 和 GDS 大文件由上游 `make unzip` 从 Release 下载。研究时看到的 [Release](https://github.com/openecos-projects/icsprout55-pdk/releases)为 `v1.10.102`；对应提交是 `ebc3f7e5d22a67f9423e0d980cd056291a58f307`，当时 main 为 `dc12bb4691c7cacdd37f6a78e7d30a0ecebb27c9`。这些是研究版本记录；18章现已下载固定提交与Release的RVT小实验输入，并验证Liberty/单元模型接入，完整流片PDK及制造方认可版本仍未冻结。实施时选择项目方认可的提交与匹配 Release，显式使用 `make unzip RELEASE_TAG=<已选版本>`，记录压缩包和解压文件的 SHA-256。上游默认下载 latest，并会清理已有 Liberty/GDS 目录；下载在独立 PDK 工作目录执行。依据是 [Makefile](https://github.com/openecos-projects/icsprout55-pdk/blob/main/Makefile)。
+
+Release `v1.10.101` 记录了 IO 更新到 `20260119`、标准单元更新到 `20251119`，README 目录示例仍出现旧名称。实际使用前逐项比对下载文件、LEF、Liberty、GDS、Verilog 和 CDL 的版本及单元名，目录名不作为唯一版本依据。[Release 更新说明](https://github.com/openecos-projects/icsprout55-pdk/releases/tag/v1.10.101)。
+
+**2. 做库与工具的接入清单。** 下表是我们要完成的工程工作；可用性以选定版本的实际文件和工具读入结果为准。
+
+| 文件/对象 | 解决什么问题 | 18 章需要得到的证据 |
+| --- | --- | --- |
+| 标准单元 Liberty（`.lib`） | 综合映射、延迟、功耗和工作条件 | 选择 HVT/LVT/RVT 的具体库；列出真实 PVT 角、单位、电压和温度；工具读入成功 |
+| 单元 Verilog、CDL | 门级功能模型与 LVS 单元连接 | 网表实例在逻辑和电路模型中都有对应定义，电源引脚与顺序一致 |
+| cell LEF、technology LEF | 单元尺寸、引脚、布线层、via 和放置 site | LEF 宏名与网表单元名一致；site、层名、单位和数据库精度匹配 |
+| cell/macro GDS 与层映射 | 合并真实单元版图，输出正确工艺层 | 顶层引用都能解析，GDS 层号与规则文件匹配 |
+| IO 库、封装与 pad ring | 把 RTL 端口接到实际封装引脚 | 核对输入/输出/双向 pad、输出使能极性、电源 pad、corner/filler、ESD 和上电条件 |
+| RC 提取数据 | 布线后的真实延迟与电气分析 | 确认提取工具、数据来源和工艺角；提取数据可被 STA 读取 |
+| DRC/LVS/天线规则 | 检查制造几何、连接与天线问题 | 选定工具能够执行规则；保存运行配置和已知问题的检测结果 |
+| SRAM/ROM、PLL、扫描单元 | 决定存储、时钟和制造测试的真实实现 | 每项明确供应来源、视图、工具支持和项目方接收条件 |
+
+ICS55 的库组织和公开规则入口见 [PDK 内容清单](https://github.com/openecos-projects/icsprout55-pdk#contents)。HVT/LVT/RVT 的选择在小电路上比较时序、面积和漏电后冻结；首版可以先评估 RVT。电压、频率与 PVT 组合从实际库和项目要求读取，不凭工艺名字设定。
+
+**3. 用最小电路验证工具链。** 先综合一个复位计数器，检查映射触发器、门级仿真和 SDC；再完成放置、时钟树、布线、GDS 合并、寄生提取及 STA。另做 pad 输入/输出/三态实验，核对 IO 电平、使能与电源连接。用少量可控版图错误和连接错误确认 DRC/LVS 会捕获问题。工具链可以评估现有开源实现工具，但需要逐项验证 ICS55 支持。公开规则为 Calibre 路线；使用其他检查器时，先确认有可用且被流片项目接受的规则适配或最终复核通道。具体依据是 [DRC 规则](https://github.com/openecos-projects/icsprout55-pdk/blob/main/pv/DRC/ICsprout_CalDRC_55LLULP1233_REV1_0_OS.drc)与[Calibre LVS 快速入门](https://github.com/openecos-projects/icsprout55-pdk/blob/main/docs/quick-start_on_ICsprout_calibrelvs.pdf)。
+
+**4. 提前决定每一块存储器怎么制造。** 从生成 RTL 列出启动 ROM、工作 SRAM、CPU 指令/数据缓存、缓存标签和寄存器堆的宽度、深度、端口数、读延迟、写掩码及同址冲突行为；实际存在的数组都进入清单。取得适用于 ICS55 的 SRAM 宏时，先核对功能模型、Liberty、LEF、GDS/CDL、供电和测试资料，再做单宏读写实验。否则先综合小型触发器 RAM，测得面积和时序后决定容量及 CPU 变体，冻结新的配置并重跑固件。CPU 缓存里的数组也需要映射，不能只解决主 RAM。
+
+Wishbone 适配层负责地址换算、字节写使能和 ACK 时刻；SRAM 宏负责实际存储。若宏不支持字节写，明确采用分 bank 或受控的读改写，并验证等待、原子性和冲突。启动 ROM 先评估固定逻辑实现或已获得的 ROM 宏；可装载方案要另有真正的引导入口。`.init`/`$readmemh` 的仿真初值需要落实到具体可制造结构。RAM 上电状态由启动代码初始化，栈、`.data`、`.bss` 回归继续保留。
+
+**5. 冻结工艺选项和物理单元。** [公开 DRC runset](https://github.com/openecos-projects/icsprout55-pdk/blob/main/pv/DRC/ICsprout_CalDRC_55LLULP1233_REV1_0_OS.drc)包含 IO 选项、总金属层数、顶层金属类型等开关；这些值要与项目方提供的工艺选项、technology LEF、RC 数据和层映射一致。按库资料确认 tap/endcap、tie、filler、decap、时钟 buffer、天线修复单元与扫描触发器的实际可用性和插入要求。核心电源与 IO 电源、pad ring、ESD 路径和封装引脚一起规划。首版优先评估外部时钟输入，若引入 PLL，再落实宏、约束和锁定/复位验证。
+
+**6. 在开始整芯片实现前确认制造交付路径。** 向 ECOS/浙江创芯确认实际班车、允许使用的 PDK/库/金属选项、die 尺寸、封装与 bonding、测试接口、签核工具、规则版本、交付文件及费用/时间；把答复版本记入规格。当前公开页面不能作为已获流片名额或已完成工艺验证的证据。项目保持教学研究流片定位，最终以该批次的正式接收条件组织交付。
+
+**阶段输出：** 保存 PDK 提交与 Release/文件哈希清单、库与工具兼容表、小电路实现报告、存储器实现决策、IO/供电/金属选项表及项目方交付要求。大体积 PDK 文件保存在外部依赖目录，教程提交下载与检查脚本、版本清单和适配配置。18章已完成固定RVT输入的计数器映射、功能门级仿真和单角理想时钟STA，19章增加小SoC逻辑映射与IO功能模型实验；其余物理、供电、规则签核及制造通道确认仍待实施。
+
+| 章节 | ICS55 要增加的工作 | 进入下一步的依据 |
+| --- | --- | --- |
+| 18 | 完成 PDK 小电路接入；确认 SRAM/IO/时钟方案与制造通道 | 库视图和工具链可用，关键缺项有已验证的替代实现，预算可行 |
+| 19 | 绑定选定存储实现、pad、电源和复位；落实所有 CPU 内部数组 | 无未绑定 FPGA 原语或存储实例；门级模型与端口一致 |
+| 20–21 | 工艺模型回归、扫描单元与测试模式适配、工艺映射综合 | 逻辑和测试功能通过，面积/时序符合冻结预算 |
+| 22 | 实现 pad ring、物理单元、PDN；同步金属选项与布线规则 | 供电连通、宏通路、封装引脚和 IO 电平符合冻结规格 |
+| 23 | 使用真实 RC 数据提取，执行要求的多角 STA | 提取数据和库角相匹配，时序与电气指标通过 |
+| 24 | 使用项目认可的规则和配置签核，合并全套单元 GDS | DRC/LVS、天线、密度、电气和供电报告达到接收要求 |
+| 25 | 按 ICS55 当批交付清单提交版图、网表、配置、测试与报告 | 哈希可追溯，获得正式接收记录 |
+| 26 | 按实际封装、核心/IO 电压和测试入口执行样片测试 | 逐芯片记录测量条件与结果，反馈到宏与工艺假设 |
+
+**18 产品规格冻结（必做）。** 用一页表写：CPU/ISA、频率目标、启动路径、ROM/RAM 容量、UART/Timer/GPIO 功能、内存图/IRQ、顶层引脚、时钟与复位、供电域、封装、面积/功耗预算和测试入口。测试入口至少明确测试模式控制、测试时钟/复位、扫描输入/输出、RAM 测试访问及是否实现 JTAG TAP/边界扫描/CPU 调试；列出每种入口可用的封装引脚和复用约束。选择不上 JTAG 时，也要给出制造测试数据进出芯片的实际路径。每条规格指向一个 RTL 参数、一个或多个测试、一个物理约束。明确 ASIC 首版不包含 FPGA 哪些功能，软件要如何检测/避免访问不存在的外设。对 IP/PDK/宏的许可与制造提交资格做清单核对。规格修改后，冻结状态失效并按回归表重跑。
+
+**19–20A本次实施边界（2026-10-15）：** 首次ASIC逻辑实验单独收敛为VexRiscv minimal/RV32I，与前面standard/RV32IM FPGA配置不同；无I/D缓存，仍完整列出寄存器堆。ROM综合成固定逻辑，RAM采用受限容量触发器实现。19的单元面积只作预算输入，尚非规格认可的面积；20提供可执行验证并保留未收敛项；20A是独立教学电路，不是SoC已具备生产扫描。每项具体参数和通过状态以各结果summary为准。
+
+**19 去 FPGA 化与真实存储器（必做）。** 逐项替换 FPGA PLL、BRAM、IO 原语、DDR PHY 等；外部时钟由芯片引脚/设计允许的时钟单元提供，复位按工艺规范实现。ROM 选择实际可制造方式：掩模 ROM、综合为固定逻辑或可装载启动存储，并解释每种方式怎样绑定固件镜像。RAM 必须选已获授权且有功能模型、时序库、LEF/GDS 的宏，或缩小到可接受的触发器实现；不能让综合把大 RAM 无声地变成巨量触发器。核对宏端口、位宽、深度、读延迟、写掩码、上电状态和供电引脚，重跑 03–13 与 ASIC 相关的功能回归。
+
+**20 设计验证冻结（必做）。** 要求需求到测试的追踪表；每个关键功能有正常、边界、故障注入用例。固定 RTL lint、复位/时钟域检查（CDC/RDC）、综合前后可适用的等价或定向形式属性、代码/功能覆盖；未覆盖项逐个说明是否不可达或待补测试。全系统长跑要检查死锁、X、总线无应答、复位中断事务和 IRQ 清除。仿真 PASS 不能代替 lint/CDC，lint PASS 不能代替系统运行。
+
+**20A 可测试性最小实验（必做，独立仿真插章）。** 在几位状态机上先展示故障难以从正常 IO 观察，再给这些触发器增加 scan_enable、scan_in、scan_out：正常模式运行业务逻辑，扫描模式移入已知位型、捕获、移出并比较，逐周期解释“控制内部状态”和“观察内部状态”。注入一处卡 0 和一处卡 1 故障，正常与扫描实验各记可见/不可见；用“被检测的故障数 / 本实验列举的故障总数”写清覆盖率分母，不把玩具覆盖率当作芯片 ATPG 覆盖率。另用一块小 RAM 展示固定的 March 类地址递增/递减读写检查，注入至少一个数据位故障和一个地址故障，说明这种检查与逻辑扫描是两类测试。输出扫描链波形、故障矩阵、RAM 每步读写日志和正常模式回归；测试模式释放并复位后业务逻辑还要能正常启动。若用现成 DFT 工具，记录工具/库支持的实际功能，不能仅凭“有 scan_in/out 引脚”宣称芯片可测。
+
+**21 DFT 与综合（必做）。** 从 20A 的教学模型走向目标工艺：列出可用扫描触发器、scan_enable、测试时钟/复位、链数量与长度、链输入/输出引脚、跨时钟域处理、测试模式隔离、ROM/RAM 宏测试端口及测试时间预算；明确测试数据怎样从封装引脚或已验证 TAP 到达内部链/宏。若采用边界扫描，另核对边界单元、指令/数据路径和 BSDL；不能用内部扫描链的存在代替边界扫描。按目标项目的 DFT 规则做扫描插入或认可的等效实现、链连通检查、固定故障测试图样及故障覆盖分析；报告可测试与排除的故障总数、检测数、覆盖率分母和未覆盖原因。RAM 做宏供应商认可的 MBIST/测试接口方案或项目接受的外部可访问方案，并记录测试覆盖范围。测试模式下不能意外运行正常固件，退出测试后要能冷启动；还要检查未使能、复位中途切换、短链/断链等负例。综合使用目标工艺库，报告逻辑面积、宏面积、功耗估计、时序路径和未绑定实例。DFT 规则、链连通、覆盖率或等效可测性指标与目标规范比较；网表与 RTL 在适用边界做等价或关键功能门级回归。缺扫描库、宏测试资料或 DFT 工具时，20A 可完成教学 PASS，但 21 的生产 DFT 项必须标缺项/SKIP，不能写成可量产测试。早期 setup/hold 报告和面积预算有明确差额，不能只输出一个综合文件。
+
+## 22–26：物理设计、签核、提交、硅后
+
+**22 时序约束、布局规划和供电（必做）。** 提供最小 SDC 教程：定义时钟、输入/输出延迟、复位处理、真实的假路径或多周期路径；每条例外要写设计依据和审核记录。选择 die/core 尺寸、目标利用率、宏位置、IO/pad ring、电源地引脚、供电网络（PDN）。检查关键 IO 与时钟都被约束，RAM 宏周围有通路，电源和地连通；早期 IR drop、拥塞和引脚间距满足目标工艺可接受范围。不能通过把关键路径标为假路径来“修复”时序。
+
+**23 布局布线与时序收敛（必做）。** 执行标准单元放置、时钟树、布线、寄生提取；对目标工艺要求的电压、温度、工艺角分别做 setup/hold STA。报告最差裕量、违例路径数、最大转换/电容、拥塞、面积和功耗。每次优化要说明它改的是哪条路径，并重跑受影响逻辑回归。最终报告中不得有未解释的负裕量、未连接信号或违反目标规则的转换/负载。
+
+**24 物理和电气签核（必做）。** 按目标项目的签核清单检查 DRC、LVS、天线、ERC、密度/填充、IR drop/电迁移、IO/ESD 和封装约束。保存每个工具的版本、规则集、日志、错误数、豁免项及复核人。GDS/OASIS、最终网表和引脚摘要应互相一致，版图查看器能打开并检查顶层边界、宏和 pad ring。具体容许阈值由所选工艺/项目决定，不凭空规定“零违规”适用于所有情形；任何豁免必须有正式依据。
+
+**25 流片交付（必做）。** 冻结源码 Git 提交、ROM 镜像、参数、固件哈希、综合/布局脚本、PDK/工具版本、网表、GDS、LEF、SDC、测试与签核报告。将每个文件映射到目标 MPW/代工厂官方清单，运行官方预检；由第二人或明确的复核步骤核对哈希和报告。状态分为“交付包准备好”“正式提交”“被项目/代工厂接收”。没有官方接收证据，只能说流片就绪；不能说已经流片。
+
+**26 硅后（收到样片后必做，否则待执行）。** 先检查封装/方向、短路与静态电流，再按安全上电顺序检查测试引脚可达性、测试模式、扫描链/存储器测试路径和退出测试后的冷启动；具体执行范围服从 21 章冻结的测试方案和工装能力。随后检查时钟、复位、UART 启动、RAM、GPIO/Timer 和自检。逐芯片记录序列号、板号、供电、温度、固件版本、成功/失败项及测试图样/向量版本；最后测最大频率和功耗，比较 FPGA、仿真、STA 与实际硅片。出现失效要保存波形和可复现步骤，形成下一版修订问题单。
+
+## 横贯全程的验证矩阵
+
+每一行未来都要链接到脚本、波形或报告。矩阵也是写章时的检查清单；只有“生成成功”不能代替行为验证。
+
+| 对象 | 定向正常测试 | 边界/故障注入 | 实际证据 |
+| --- | --- | --- | --- |
+| 时钟/复位/启动 | 首次取指、ROM 跳转、进入主程序 | 复位中断事务、错误 ROM/复位地址、PLL 未锁定 | 首次 PC 波形、固件版本/入口日志 |
+| Wishbone/译码 | 读写、等待周期、字节使能 | 无 `ack`、重复应答、区域重叠、未映射地址 | 逐周期事务表、断言与地址图 |
+| ROM/SRAM/main RAM | 首末地址、连续/混合宽度访问、栈 | 写 ROM、越界、容量不足、读写冲突 | 镜像/内存校验、ELF map、CPU 读值 |
+| CSR/GPIO | 复位值、位翻转、输入采样 | 只读写入、保留位、异步按键变化 | `csr.csv`、CSR 波形、板上 LED/按键 |
+| UART | TX/RX、回环、不同长度 | 错分频、FIFO 满/空、复位中断字符 | 原始字节捕获、位周期、错误计数 |
+| Timer/IRQ | one-shot、周期、ISR 返回 | 禁用、清事件顺序、复位期间 IRQ | IRQ/PC 波形、ISR 计数 |
+| SPI/I²C | 已知设备寄存器读写 | 错片选、NACK、错误地址、总线超时 | 协议解码日志和软件返回值 |
+| 外部 SRAM/SDRAM/Flash | 初始化、数据模式、边界、刷新/读镜像 | 初始化未完成、等待周期、损坏镜像 | 模型日志、内存校验、时序与协议波形 |
+| JTAG/TAP | 状态转换、IR/DR 扫描、BYPASS/示例 IDCODE | 错误 IR、位数错误、扫描中复位、TDO 位序错误 | 引脚波形、状态/位序表和模型日志；另列板级配置或真实调试证据 |
+| 内部扫描/逻辑 DFT | 正常模式、扫描移入/捕获/移出、模式退出 | 卡 0/卡 1、断链、测试中复位、未覆盖故障 | 小实验故障矩阵；目标 ASIC 的链连通、故障覆盖及 DFT 规则报告另列 |
+| RAM 测试 | 固定读写图样覆盖地址和数据位 | 数据位卡死、地址译码故障、测试模式退出失败 | March 类逐步日志；目标宏 MBIST/测试接口及覆盖报告另列 |
+| FPGA | 综合、bitstream、板上自检 | 漏约束、错误引脚、冷/热复位 | 资源与 STA 报告、下载/串口记录 |
+| ASIC | RTL/网表/物理签核 | 未绑定宏、未约束路径、DRC/LVS/电源违例 | 逐项签核报告、提交包和状态记录 |
+
+## 教程本身如何验收
+
+1. **文档可照做**：每章命令从仓库根目录运行，明确依赖和输出目录；不能出现省略的隐藏初始化步骤。首个新术语要用一句中文解释，并给一个小例子。
+2. **读者能解释现象**：第一次出现的总线或外设接口，先给需求、数据方向和最小交互图；再拿真实日志/CSV/VCD 逐项对照。学生应能在看答案前预测一个地址、数据或握手结果，并解释预测为何成立。
+3. **读者能记住并复述**：每章 README 有章首“概念速查”、章末“本章速记”和含 8–12 道快问快答及综合问答的“课堂回顾”；学生合上正文后，能用自己的话说明本章谁输入、谁输出、何时算完成，以及下一章为何需要它。答案和达标点放在独立教师文件，并能从本章代码或输出核对。
+4. **实例够小**：一章只增加一个主要组件或工程问题；先给最小工作版，再给进阶/选做。每章可独立运行，且与上一章差异一目了然。
+5. **检查真能抓错**：正常、边界、故障注入各有证据；坏配置确实导致有解释的 FAIL，恢复后能 PASS。所有仿真有超时和确定完成条件。
+6. **参数有来源**：CPU ISA、复位地址、内存图、IRQ、时钟、IO 和工艺宏都能追溯到代码、生成文件、板卡原理图或目标工艺资料。
+7. **结果不夸大**：明确分辨仿真、FPGA 构建、上板、ASIC 签核、官方接收、硅后实测；缺实物或缺工艺规则时相应阶段保持 SKIP/待执行。
+8. **版本可复现**：SoC 功能版、FPGA 板级版、ASIC 流片版分别冻结；保存 Git 提交、依赖版本、配置、固件哈希、命令、日志、已知限制。
+
+## 给初学者的缩写速查
+
+| 词 | 在本教程中先这样理解 |
 | --- | --- |
-| 13 | Integrated RTL, software interfaces, firmware, and automated regression baseline |
-| 17 | Reproducible FPGA release, constraints, hardware self-tests, and stability report |
-| 20 | Frozen ASIC RTL/firmware and requirement coverage report |
-| 21 | Technology-mapped netlist, test access, vectors, and synthesis reports |
-| 24 | Final layout, netlist, extraction data, and signoff checklist |
-| 25 | Versioned/hashed package, submission, and acceptance records |
-| 26 | Per-device measurements, reproducible issues, and revision plan |
+| RTL | 描述寄存器和组合逻辑如何工作的硬件代码；后续会被综合为门电路 |
+| Wishbone | CPU 和 RAM/外设之间的一套读写握手信号约定 |
+| CSR / MMIO | CPU 通过内存地址读写外设控制寄存器的方法 |
+| ISA / ABI | CPU 能执行哪些指令；编译后的程序如何使用寄存器、栈和函数接口 |
+| PDK | 某种芯片工艺的器件、设计规则和工具所需数据集合 |
+| STA | 不跑每条程序，而是计算所有受约束路径能否按时到达的静态时序分析 |
+| CDC / RDC | 信号跨不同时钟域 / 复位域时的安全性检查 |
+| JTAG / TAP | 外部串行测试/访问接口及其状态机；是否能下载、边界扫描或调试 CPU 取决于芯片中实际接了什么 |
+| 边界扫描 | 在芯片 IO 边界观察或驱动引脚相关信号，用于板级连接等测试；不能由一个空 TAP 自动得到 |
+| scan / ATPG | 扫描链让内部触发器可控、可观测；ATPG 为给定故障模型生成并评估测试图样 |
+| MBIST | 芯片内部对存储器执行测试序列的电路；其覆盖范围取决于宏与测试算法 |
+| ATE | 晶圆或封装测试时施加测试图样、采集响应的自动测试设备；教程需说明它如何接入芯片测试入口 |
+| DFT | 为生产测试而加入或规划的电路与测试模式 |
+| DRC / LVS | 检查版图是否符合工艺规则 / 版图连接是否和网表一致 |
+| IR drop / EM | 供电网络压降 / 导线因长期大电流造成的可靠性问题 |
+| GDS/OASIS | 交给制造流程的几何版图文件格式；有文件不代表已经签核或被接收 |
 
-Chapters 00–12 have runnable implementations. Stages 13–26, including 13A, 17A–17B, and 20A, are planned. Record PASS, FAIL, or SKIP/pending with evidence paths when checks execute; unavailable boards, process data, or samples retain their actual status.
+每章第一次使用缩写时仍须在正文解释一次。教学先用“它解决什么问题”，再给具体工具命令和报告字段；不要求读者预先掌握芯片后端术语。
+
+## 参考资料与现有代码锚点
+
+编写教程时以 LiteX 对应版本的 `litex/soc/interconnect/wishbone.py`、`litex/soc/integration/soc.py`、`litex/tools/litex_sim.py`、`litex/soc/cores/cpu/vexriscv/core.py`、`litex/soc/cores/cpu/vexriscv_smp/core.py`、`litex/soc/cores/{gpio,timer}.py` 及对应测试为准。板卡和工艺章节还必须分别核对所选板卡原理图与目标工艺的正式资料。
+
+JTAG/DFT 章节还要分别核对 [IEEE 1149.1 工作组对 TAP 与边界扫描的说明](https://grouper.ieee.org/groups/1149/1/)、[RISC-V Debug Specification 的 JTAG DTM 章节](https://docs.riscv.org/reference/debug/v1.0/dtm.html)和[OpenROAD DFT 文档](https://openroad.readthedocs.io/en/latest/main/src/dft/README.html)。这些资料说明三个接口/流程的范围；特定芯片是否实现它们，仍要查所用 RTL、库和目标项目规则。当前 LiteX 单核 `standard` 与 `standard+debug` 是不同变体，而后者提供的接口也需与 JTAG DTM 分开核对。
+
+**原 LiteX 工作区预检（2026-09-28）：** 当时在 Python 3.11 环境安装 Migen 0.9.2 后，运行 LiteX 源码树中的 `python -m pytest test/interconnect/test_wishbone.py -q` 得到 `31 passed in 0.61s`。此结果只证明那个 LiteX 工作区的 Wishbone 测试通过；独立教程仓库需要在 00 章固定 LiteX 版本并重跑。PLAN 中其余验证表描述的是未来教程的验收标准，不代表已经得到 PASS。
+
+- [LiteX 项目 README](https://github.com/enjoy-digital/litex)：LiteX 的 CPU、总线、仿真和 FPGA 生态入口。
+- [OpenROAD 流程说明](https://openroad.readthedocs.io/en/latest/main/README.html)：从 RTL 到版图的主要阶段。
+- [OpenLane 流程选项](https://openlane2.readthedocs.io/en/latest/reference/flows.html)及[时序收敛说明](https://openlane2.readthedocs.io/en/latest/usage/timing_closure/index.html)：多角时序、DRC/LVS 和约束；使用时再核对实际版本。
+- [ICS55 官方文档](https://icsproutpdk.openecos.com/zh-cn/latest/)、[PDK 仓库](https://github.com/openecos-projects/icsprout55-pdk)和[Release](https://github.com/openecos-projects/icsprout55-pdk/releases)：本项目 ASIC 主线的工艺资料入口；实际库、宏、规则及制造接收条件在 18 章冻结。
+
+
+### 商业工具对照附录
+
+本机 `module avail` 提供 `lic/eda`、VCS 2023.12、Xcelium 23.09、ModelSim 21.3、Design Compiler 2023.12 与 Genus 21.18 等候选。工具存在不等于许可证、目标器件或工艺库可用。对照遵守以下约定：保存同一 HDL/初始化文件哈希；锁定顶层、参数、固件、目标器件或 Liberty/SDC；分别量编译、运行、综合、布局布线；保留失败日志；只有两端完成同一功能检查才计算性能比。共享主机的单次墙钟测量是本机观察值，不作普遍排名。
+
+| 附录 | 开源基线 | 商业候选 | 重点与当前边界 |
+| --- | --- | --- | --- |
+| [13E 整机仿真](chapters/13e-tool-comparison/README.md) | Verilator | VCS 与 Xcelium | 相同第 13 章 RTL/ROM 的八项自检，编译与三次运行分开计时；目前只测正常场景、无波形/覆盖 |
+| 20E/21E ASIC 验证与综合（待第 18–21 章实现） | Yosys 与可用开源验证工具 | VCS/Xcelium、DC/Genus 等 | 冻结同一工艺 Liberty、宏模型、SDC 与测试套件后，比较映射面积、路径时序、未绑定单元和运行耗时；缺库时明确 SKIP |
+
+
+### 工具附录实施证据
+
+| 章节 | 当前交付 | 证据与边界 |
+| --- | --- | --- |
+| 13E 商业工具对照 | 以 13 章相同 RTL、ROM、时钟和正常自检比较 Verilator、VCS、Xcelium；保留编译与运行耗时、周期数及原始日志 | `chapters/13e-tool-comparison/README.md`；`results/13e/summary.json`、`results/13e-xrun/summary.json` |
+
+### 工具附录验收约定
+
+| 实验 | 工作范围 | 固定参数与记录 | 验收 |
+| --- | --- | --- | --- |
+| 13E 商业仿真附录 | 复用 13 的生成 RTL/ROM 与正常自检，以相同的 Verilog 时钟测试台运行 Verilator 和商业事件仿真器 | 源文件 SHA-256、工具版本、线程数、无波形模式、编译和运行墙钟时间、相同的模拟时钟数 | 两端八项自检与完成码均通过，分别报告编译与运行时间和重复测量；许可证/兼容性失败保留日志并标 SKIP/FAIL |
+
+### 工具附录输入与交付
+
+| 实验 | 输入 | 交付 |
+| --- | --- | --- |
+| 13E 商业仿真对照 | 13 的完整 RTL/ROM 快照、Verilator、VCS 或 Xcelium 的可用许可证 | 同一正常场景的源码哈希、编译墙钟时间、重复运行墙钟时间、模拟时钟数、功能检查和日志；失败或许可证不足不填加速比 |

@@ -1,0 +1,25 @@
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/asic_soc.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/VexRiscv_Min.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/reset_sync.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/peripheral.v
+hierarchy -check -top asic_soc
+proc
+opt
+memory_collect
+memory_map
+opt
+synth -top asic_soc -flatten
+delete t:$scopeinfo
+setattr -unset init w:*
+check -assert
+write_json /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/generic.json
+write_verilog -noattr /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/generic.v
+stat
+dfflibmap -liberty /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/icsprout55-pdk/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CR/liberty/ics55_LLSC_H7CR_typ_tt_1p2_25_nldm.lib
+abc -liberty /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/icsprout55-pdk/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CR/liberty/ics55_LLSC_H7CR_typ_tt_1p2_25_nldm.lib
+read_liberty -lib /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/icsprout55-pdk/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CR/liberty/ics55_LLSC_H7CR_typ_tt_1p2_25_nldm.lib
+clean
+check -assert
+stat -liberty /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/icsprout55-pdk/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CR/liberty/ics55_LLSC_H7CR_typ_tt_1p2_25_nldm.lib
+write_verilog -noattr -noexpr /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/rtl/mapped.v
+write_json /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/mapped.json

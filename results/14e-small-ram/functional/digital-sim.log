@@ -1,0 +1,10 @@
+UART 14 HELLO: CPU reached main; LEDs are mapped
+UART BUTTONS=0x00000000
+UART BUTTONS=0x00000001
+UART BUTTONS=0x00000000
+UART 14 HELLO: CPU reached main; LEDs are mapped
+PASS TANG_DIGITAL_BOOT_BUTTON_RESET
+- tang_tb.sv:39: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.034 2025-02-24
+- Verilator: $finish at 18ms; walltime 0.407 s; speed 44.029 ms/s
+- Verilator: cpu 0.407 s on 1 threads; alloced 89 MB

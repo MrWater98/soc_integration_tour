@@ -1,0 +1,36 @@
+[
+  [
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/yosys",
+    "-p",
+    "read_verilog rtl/rgb_led.v; synth_gowin -top rgb_led -family gw2a -json netlist.json; check -assert"
+  ],
+  [
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/nextpnr-himbaechel",
+    "--json",
+    "netlist.json",
+    "--write",
+    "routed.json",
+    "--report",
+    "pnr-report.json",
+    "--device",
+    "GW2A-LV18PG256C8/I7",
+    "--vopt",
+    "family=GW2A-18C",
+    "--vopt",
+    "cst=constraints/rgb_led.cst",
+    "--freq",
+    "27",
+    "--seed",
+    "1"
+  ],
+  [
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/gowin_pack",
+    "-d",
+    "GW2A-18C",
+    "--ready_as_gpio",
+    "--done_as_gpio",
+    "-o",
+    "rgb_led.fs",
+    "routed.json"
+  ]
+]

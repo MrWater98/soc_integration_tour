@@ -1,0 +1,22 @@
+{
+  "compile": [
+    "verilator",
+    "--binary",
+    "--timing",
+    "--top-module",
+    "tb",
+    "-Wno-fatal",
+    "-j",
+    "2",
+    "-CFLAGS",
+    "-std=c++20",
+    "-MAKEFLAGS",
+    "CXX=/usr/bin/g++-11",
+    "--Mdir",
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/17a-parameters/obj",
+    "Ram_1w_1rs_Generic.v",
+    "VexRiscvLitexSmpCluster_Cc1_Iw32Is4096Iy1_Dw32Ds4096Dy1_ITs4DTs4_Ood_Wm.v",
+    "sim.v",
+    "tb.sv"
+  ]
+}

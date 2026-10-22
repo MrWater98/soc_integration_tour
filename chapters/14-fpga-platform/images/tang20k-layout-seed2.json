@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "input": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e/best/routed.json.gz",
+      "input_sha256": "f51ae0397956aeae0937e04b384eeffe2ed7c94fc255a8e74c8760b7cd5096df",
+      "target_mhz": 150,
+      "system_fmax_estimate_mhz": 147.21035766601562,
+      "seed": 2,
+      "placed_cells": 7262,
+      "routed_wire_occurrences": 56671
+    }
+  ],
+  "coordinate_bounds": [
+    56,
+    55
+  ],
+  "density_log_scale_max": 4.844187086458591,
+  "visualization": "BEL locations and routed-wire occurrences; no inferred wire geometry"
+}

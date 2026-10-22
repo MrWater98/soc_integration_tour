@@ -1,0 +1,4 @@
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/generic.v
+hierarchy -check -top asic_soc
+proc
+write_json /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/clock-structure.json

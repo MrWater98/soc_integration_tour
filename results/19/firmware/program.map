@@ -1,0 +1,77 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+scratch             0x80              /tmp/ccHaUyyI.o
+irq_count           0x4               /tmp/ccHaUyyI.o
+zero_initialized    0x4               /tmp/ccHaUyyI.o
+
+Discarded input sections
+
+ .comment       0x0000000000000000        0xf /tmp/ccHaUyyI.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x0000000000000000 0x0000000000001000 xr
+ram              0x0000000040000000 0x0000000000000800 rw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+
+.text           0x0000000000000000      0x4b4
+ *(.text.init)
+ .text.init     0x0000000000000000      0x16c /tmp/ccXOthbL.o
+                0x0000000000000000                _start
+                0x0000000000000068                trap_entry
+ *(.text .text.*)
+ .text          0x000000000000016c        0x0 /tmp/ccXOthbL.o
+ .text          0x000000000000016c      0x348 /tmp/ccHaUyyI.o
+                0x00000000000001b0                timer_isr
+                0x0000000000000200                main
+ *(.rodata .rodata.*)
+
+.rela.dyn       0x00000000000004b4        0x0
+ .rela.text.init
+                0x00000000000004b4        0x0 /tmp/ccXOthbL.o
+ .rela.text     0x00000000000004b4        0x0 /tmp/ccXOthbL.o
+
+.data           0x0000000040000000        0x4 load address 0x00000000000004b4
+                0x0000000040000000                __data_start = .
+ *(.data .data.* .sdata .sdata.*)
+ .data          0x0000000040000000        0x0 /tmp/ccXOthbL.o
+ .data          0x0000000040000000        0x0 /tmp/ccHaUyyI.o
+ .sdata         0x0000000040000000        0x4 /tmp/ccHaUyyI.o
+                0x0000000040000000                initialized_data
+                0x0000000040000004                __data_end = .
+                0x00000000000004b4                __data_load_start = LOADADDR (.data)
+
+.bss            0x0000000040000004       0x88 load address 0x00000000000004b8
+                0x0000000040000004                __bss_start = .
+ *(.bss .bss.* .sbss .sbss.* COMMON)
+ .bss           0x0000000040000004        0x0 /tmp/ccXOthbL.o
+ .bss           0x0000000040000004        0x0 /tmp/ccHaUyyI.o
+ COMMON         0x0000000040000004       0x88 /tmp/ccHaUyyI.o
+                0x0000000040000004                scratch
+                0x0000000040000084                irq_count
+                0x0000000040000088                zero_initialized
+                0x000000004000008c                . = ALIGN (0x4)
+                0x000000004000008c                __bss_end = .
+                0x0000000040000800                __stack_top = (ORIGIN (ram) + LENGTH (ram))
+                0x0000000000000001                ASSERT (((__bss_end + 0x200) <= __stack_top), RAM needs data plus 512-byte stack reserve)
+
+/DISCARD/
+ *(.comment)
+ *(.eh_frame*)
+                0x0000000000000800                MAIN_RAM_LENGTH = 0x800
+LOAD /tmp/ccXOthbL.o
+LOAD /tmp/ccHaUyyI.o
+OUTPUT(/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19/firmware/program.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x0000000000000000       0x1c
+ .riscv.attributes
+                0x0000000000000000       0x1a /tmp/ccXOthbL.o
+ .riscv.attributes
+                0x000000000000001a       0x1c /tmp/ccHaUyyI.o

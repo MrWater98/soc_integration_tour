@@ -1,0 +1,18 @@
+[
+  "/home/ziyue/miniconda3/bin/python",
+  "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/14e-seed-sweep/run.py",
+  "--output",
+  "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-algorithms/static-router2",
+  "--seeds",
+  "2,5,8",
+  "--timeout",
+  "600",
+  "--jobs",
+  "2",
+  "--placer",
+  "static",
+  "--router",
+  "router2",
+  "--analyze-existing",
+  "--replay"
+]

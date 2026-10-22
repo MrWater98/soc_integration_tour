@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "snapshot_sha256": "c76ba62500f8bcb4882e383bd342ba69c64919cab9d13e6621e8beed6ab460ac",
+  "placed_cells": 7293,
+  "nonempty_routed_nets": 8082,
+  "routing_resource_triples": 58372,
+  "verification": "read saved JSON into actual nextpnr context and export it; compare all BEL positions and per-net route triples",
+  "empty_route_normalization": "blank/space-only ROUTING attributes represent no routing",
+  "rerun_placement_routing": false
+}

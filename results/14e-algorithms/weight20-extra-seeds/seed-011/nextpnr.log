@@ -1,0 +1,319 @@
+Info: Using uarch 'gowin' for device 'GW2A-LV18PG256C8/I7'
+
+Info: Reading constraints...
+Info: Create constant nets...
+Info: Modify LUTs...
+Info: Pack IOBs...
+Info: Pack I3C IOs...
+Info: Pack MIPI IOs...
+Info: Pack diff IOBs...
+Info: Pack FFs into IO cells...
+Info: Pack IODELAY...
+Info: Pack Input Edge Monitors...
+Info: Pack IO logic...
+Info: Pack DESER16 logic...
+Info: Pack GSR...
+Info: Pack HCLK cells...
+Info: Pack DLLDLYs...
+Info: Pack wide LUTs...
+Info: Packed MUX2_LUT8:5, MUX2_LU7:17, MUX2_LUT6:26, MUX2_LUT5:491
+Info: Pack ALUs...
+Info: Pack SSRAMs...
+Info: Constrained 491 LUTFF pairs.
+Info: Pack PLL...
+Info: Pack ADC...
+Info: Pack GW JTAG...
+Info: Pack BSRAMs...
+Info: Pack DSP...
+Info: Pack INV...
+Info: Pack buffered nets...
+Info: Pack EMCU and UserFlash cells...
+Info: Pack UserFlash cells...
+Info: Pack DQCE cells...
+Info: Pack DCS cells...
+Info: Checksum: 0x01d57daf
+
+Info: Device utilisation:
+Info: 	                 VCC:       1/      1   100%
+Info: 	                 IOB:       7/    384     1%
+Info: 	                LUT4:    3831/  20736    18%
+Info: 	            IOLOGICI:       0/    384     0%
+Info: 	            IOLOGICO:       0/    384     0%
+Info: 	           MUX2_LUT5:     651/  10368     6%
+Info: 	           MUX2_LUT6:      80/   5184     1%
+Info: 	           MUX2_LUT7:      27/   2592     1%
+Info: 	           MUX2_LUT8:       5/   2592     0%
+Info: 	                 ALU:     602/  15552     3%
+Info: 	                 GND:       1/      1   100%
+Info: 	                 DFF:    1713/  15552    11%
+Info: 	           RAM16SDP4:       4/    648     0%
+Info: 	               BSRAM:      24/     46    52%
+Info: 	              ALU54D:       0/     24     0%
+Info: 	     MULTADDALU18X18:       0/     24     0%
+Info: 	        MULTALU18X18:       0/     24     0%
+Info: 	        MULTALU36X18:       0/     24     0%
+Info: 	           MULT36X36:       0/     12     0%
+Info: 	           MULT18X18:       4/     48     8%
+Info: 	             MULT9X9:       0/     96     0%
+Info: 	              PADD18:       0/     48     0%
+Info: 	               PADD9:       0/     96     0%
+Info: 	                 GSR:       1/      1   100%
+Info: 	                 OSC:       0/      1     0%
+Info: 	                rPLL:       1/      2    50%
+Info: 	             GW_JTAG:       0/      1     0%
+Info: 	                BUFG:       0/     24     0%
+Info: 	                DQCE:       0/     24     0%
+Info: 	                 DCS:       0/      8     0%
+Info: 	               DHCEN:       0/     24     0%
+Info: 	              CLKDIV:       0/      8     0%
+Info: 	             CLKDIV2:       0/     16     0%
+
+Info: Running custom HCLK placer...
+Info: Placed 0 cells based on constraints.
+Info: Creating initial analytic placement for 3697 cells, random placement wirelen = 218955.
+Info:     at initial placer iter 0, wirelen = 2181
+Info:     at initial placer iter 1, wirelen = 1799
+Info:     at initial placer iter 2, wirelen = 1954
+Info:     at initial placer iter 3, wirelen = 1887
+Info: Running main analytical placer, max placement attempts per cell = 6069128.
+Info:     at iteration #1, type ALL: wirelen solved = 1951, spread = 45661, legal = 70777; time = 0.42s
+Info:     at iteration #2, type ALL: wirelen solved = 3146, spread = 44304, legal = 66970; time = 0.32s
+Info:     at iteration #3, type ALL: wirelen solved = 4507, spread = 42410, legal = 65008; time = 0.23s
+Info:     at iteration #4, type ALL: wirelen solved = 6080, spread = 43345, legal = 64149; time = 0.24s
+Info:     at iteration #5, type ALL: wirelen solved = 7633, spread = 36047, legal = 61506; time = 0.27s
+Info:     at iteration #6, type ALL: wirelen solved = 9517, spread = 38201, legal = 59833; time = 0.24s
+Info:     at iteration #7, type ALL: wirelen solved = 11386, spread = 37412, legal = 59674; time = 0.29s
+Info:     at iteration #8, type ALL: wirelen solved = 11703, spread = 39725, legal = 63435; time = 0.31s
+Info:     at iteration #9, type ALL: wirelen solved = 12920, spread = 36488, legal = 59145; time = 0.34s
+Info:     at iteration #10, type ALL: wirelen solved = 13920, spread = 40502, legal = 61800; time = 0.47s
+Info:     at iteration #11, type ALL: wirelen solved = 14919, spread = 39573, legal = 60474; time = 0.37s
+Info:     at iteration #12, type ALL: wirelen solved = 16045, spread = 38176, legal = 58314; time = 0.30s
+Info:     at iteration #13, type ALL: wirelen solved = 17637, spread = 40090, legal = 58243; time = 0.28s
+Info:     at iteration #14, type ALL: wirelen solved = 18818, spread = 39994, legal = 56795; time = 0.40s
+Info:     at iteration #15, type ALL: wirelen solved = 19317, spread = 42830, legal = 58677; time = 0.26s
+Info:     at iteration #16, type ALL: wirelen solved = 20177, spread = 41016, legal = 57941; time = 0.28s
+Info:     at iteration #17, type ALL: wirelen solved = 20916, spread = 42089, legal = 57444; time = 0.30s
+Info:     at iteration #18, type ALL: wirelen solved = 21311, spread = 42148, legal = 60040; time = 0.30s
+Info:     at iteration #19, type ALL: wirelen solved = 22256, spread = 40812, legal = 58177; time = 0.26s
+Info: HeAP Placer Time: 6.57s
+Info:   of which solving equations: 1.39s
+Info:   of which spreading cells: 0.20s
+Info:   of which strict legalisation: 4.52s
+
+Info: Running simulated annealing placer for refinement.
+Info:   at iteration #1: temp = 0.000000, timing cost = 191, wirelen = 56795
+Info:   at iteration #5: temp = 0.000000, timing cost = 126, wirelen = 40023
+Info:   at iteration #10: temp = 0.000000, timing cost = 149, wirelen = 37431
+Info:   at iteration #15: temp = 0.000000, timing cost = 124, wirelen = 36224
+Info:   at iteration #20: temp = 0.000000, timing cost = 102, wirelen = 35395
+Info:   at iteration #25: temp = 0.000000, timing cost = 110, wirelen = 34825
+Info:   at iteration #26: temp = 0.000000, timing cost = 109, wirelen = 34872 
+Info: SA placement time 8.65s
+
+Info: Max frequency for clock 'boardsoc_crg_gw2apll2': 409.33 MHz (PASS at 150.00 MHz)
+Info: Max frequency for clock          'VexRiscv.clk': 89.21 MHz (FAIL at 150.00 MHz)
+
+Info: Slack histogram:
+Info:  legend: * represents 7 endpoint(s)
+Info:          + represents [1,7) endpoint(s)
+Info: [ -4544,  -3996) |+
+Info: [ -3996,  -3448) |+
+Info: [ -3448,  -2900) |+
+Info: [ -2900,  -2352) |**+
+Info: [ -2352,  -1804) |**+
+Info: [ -1804,  -1256) |*****+
+Info: [ -1256,   -708) |*****+
+Info: [  -708,   -160) |*******+
+Info: [  -160,    388) |***********+
+Info: [   388,    936) |**************+
+Info: [   936,   1484) |**************+
+Info: [  1484,   2032) |***********+
+Info: [  2032,   2580) |*************** 
+Info: [  2580,   3128) |*************+
+Info: [  3128,   3676) |****************+
+Info: [  3676,   4224) |****************+
+Info: [  4224,   4772) |************************+
+Info: [  4772,   5320) |***************+
+Info: [  5320,   5868) |********************+
+Info: [  5868,   6416) |************************************************************ 
+Info: Checksum: 0xf833b11f
+Info: Routing globals...
+Info:     'boardsoc_crg_gw2apll2' net was routed using global resources only.
+Info:     'VexRiscv.clk' net was routed using global resources only.
+Info:     'VexRiscv.execute_CsrPlugin_csr_3264_LUT4_I1_I3_LUT3_F_I2[1]' is routed using segments.
+Info:     'builder_socbushandler_roundrobin1_LUT3_I2_F[0]' is routed using segments.
+Info:     'boardsoc_eventmanager_csrstatus12_LUT4_I1_F_MUX2_LUT5_I1_S0_LUT2_I1_F[2]' is routed using segments.
+Info:     'VexRiscv.memory_to_writeBack_IS_MUL_LUT2_I0_F_LUT3_F_I2_ALU_SUM_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I3_F_MUX2_LUT5_O_I1_LUT4_F_I3_LUT3_F_I2[0]' is routed using segments.
+Info:     'VexRiscv.CsrPlugin_mepc_DFF_Q_10_D_MUX2_LUT5_O_I1_LUT1_F_I0[3]' is routed using segments.
+Info:     'VexRiscv.HazardSimplePlugin_writeBackBuffer_valid_DFFR_Q_D[0]' is routed using segments.
+Info:     'builder_socbushandler_decoder1_DFFR_Q_1_D_LUT4_F_I3_MUX2_LUT5_O_S0_LUT4_I2_F_MUX2_LUT5_I1_O_MUX2_LUT6_I1_O_MUX2_LUT7_I0_O_MUX2_LUT8_I0_O[1]' is routed using segments.
+Info:     'VexRiscv.decode_to_execute_CSR_WRITE_OPCODE_LUT4_I0_F' is routed using segments.
+Info:     'builder_socbushandler_decoder1[1]' is routed using segments.
+Info:     'VexRiscv.CsrPlugin_mtvec_base_DFFE_Q_10_D_LUT4_F_I3_LUT4_I1_F_LUT3_F_1_I2[1]' is routed using segments.
+Info:     'VexRiscv.memory_DivPlugin_div_done_DFFRE_Q_CE[0]' is routed using segments.
+Info:     'builder_rs232phyrx_fsm0_LUT1_I0_F' is routed using segments.
+Info:     'VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F[0]' is routed using segments.
+Info:     'boardsoc_ram_bus_ack_DFFR_Q_D_LUT3_F_I2_LUT3_F_I0_LUT4_I3_F[0]' is routed using segments.
+Info:     'VexRiscv._zz_execute_SRC2_CTRL_DFFE_Q_1_D_LUT3_I2_F_LUT4_I3_I2_LUT2_I1_F[2]' is routed using segments.
+Info:     'VexRiscv._zz_execute_SHIFT_CTRL_LUT2_I1_F[0]' is routed using segments.
+Info:     'VexRiscv.CsrPlugin_exceptionPortCtrl_exceptionContext_badAddr_DFFE_Q_10_D_LUT3_F_I2[1]' is routed using segments.
+Info:     'builder_socbushandler_roundrobin1_LUT3_I2_F[2]' is routed using segments.
+Info:     'builder_socbushandler_roundrobin1_LUT3_I2_F[1]' is routed using segments.
+Info:     'boardsoc_eventmanager_csrstatus12_LUT4_I1_F_MUX2_LUT5_I1_S0_LUT2_I1_F[1]' is routed using segments.
+Info:     'builder_interconnectshared_dat_r_LUT4_I0_I3[1]' is routed using segments.
+Info:     'builder_socbushandler_decoder1_DFFR_Q_1_D_LUT4_F_I3_MUX2_LUT5_O_S0[3]' is routed using segments.
+Info:     'builder_socbushandler_decoder1[2]' is routed using segments.
+Info:     'boardsoc_ram_bus_ack_DFFR_Q_D_LUT3_F_I2_LUT3_F_I0[2]' is routed using segments.
+Info:     'VexRiscv.decode_to_execute_IS_RS2_SIGNED_LUT2_I0_F[1]' is routed using segments.
+Info:     'VexRiscv.dataCache_1.loader_valid_LUT2_I0_F' is routed using segments.
+Info:     'VexRiscv.CsrPlugin_hadException' is routed using segments.
+Info:     'VexRiscv.CsrPlugin_exceptionPortCtrl_exceptionValidsRegs_writeBack_LUT3_I0_F_LUT2_I1_F' is routed using segments.
+Info:     'VexRiscv.CsrPlugin_mie_MSIE_LUT4_I1_F_MUX2_LUT5_O_S0[1]' is routed using segments.
+Info:     'VexRiscv._zz_dBus_rsp_valid_LUT2_I1_F[4]' is routed using segments.
+
+Info: Routing..
+Info: Setting up routing queue.
+Info: Routing 18474 arcs.
+Info:            |   (re-)routed arcs  |   delta    | remaining|       time spent     |
+Info:    IterCnt |  w/ripup   wo/ripup |  w/r  wo/r |      arcs| batch(sec) total(sec)|
+Info:       1000 |        2        997 |    2   997 |     17477|       0.62       0.62|
+Info:       2000 |       21       1948 |   19   951 |     16503|       0.41       1.03|
+Info:       3000 |       44       2602 |   23   654 |     15532|       0.18       1.21|
+Info:       4000 |       49       3429 |    5   827 |     14540|       0.24       1.45|
+Info:       5000 |       52       4327 |    3   898 |     13545|       0.38       1.83|
+Info:       6000 |       61       5217 |    9   890 |     12560|       0.41       2.25|
+Info:       7000 |       73       6096 |   12   879 |     11600|       0.41       2.66|
+Info:       8000 |       85       6984 |   12   888 |     10614|       0.49       3.14|
+Info:       9000 |       98       7859 |   13   875 |      9630|       0.51       3.66|
+Info:      10000 |      128       8708 |   30   849 |      8666|       0.54       4.19|
+Info:      11000 |      175       9564 |   47   856 |      7732|       0.69       4.88|
+Info:      12000 |      258      10396 |   83   832 |      6854|       0.71       5.60|
+Info:      13000 |      337      11214 |   79   818 |      5972|       0.89       6.48|
+Info:      14000 |      444      12009 |  107   795 |      5116|       1.23       7.71|
+Info:      15000 |      605      12775 |  161   766 |      4395|       1.18       8.89|
+Info:      16000 |      804      13506 |  199   731 |      3720|       1.16      10.05|
+Info:      17000 |     1055      14192 |  251   686 |      3169|       1.37      11.43|
+Info:      18000 |     1334      14856 |  279   664 |      2677|       1.40      12.83|
+Info:      19000 |     1606      15536 |  272   680 |      2191|       1.49      14.32|
+Info:      20000 |     1863      16210 |  257   674 |      1630|       1.52      15.84|
+Info:      21000 |     2166      16854 |  303   644 |      1131|       1.58      17.42|
+Info:      22000 |     2512      17477 |  346   623 |       666|       1.79      19.21|
+Info:      23000 |     2869      18095 |  357   618 |       417|       1.89      21.10|
+Info:      24000 |     3230      18703 |  361   608 |        58|       1.92      23.02|
+Info:      24101 |     3258      18770 |   28    67 |         0|       0.25      23.26|
+Info: Routing complete.
+Info: Router1 time 23.26s
+Info: Checksum: 0x5077d6e8
+
+Info: Critical path report for clock 'boardsoc_crg_gw2apll2' (posedge -> posedge):
+Info:       type curr  total name
+Info:   clk-to-q  0.23  0.23 Source boardsoc_crg_DFFRE_Q_7.Q
+Info:    routing  0.24  0.47 Net boardsoc_crg[8] (44,28) -> (44,26)
+Info:                          Sink boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_MUX2_LUT5_O_S0_LUT4_F_1.I1
+Info:                          Defined in:
+Info:                               tutorial14.v:114.15-114.27
+Info:      logic  0.57  1.04 Source boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_MUX2_LUT5_O_S0_LUT4_F_1.F
+Info:    routing  0.14  1.18 Net boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_MUX2_LUT5_O_S0[3] (44,26) -> (44,26)
+Info:                          Sink boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_MUX2_LUT5_O_I1_LUT4_F.I3
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.37  1.55 Source boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_MUX2_LUT5_O_I1_LUT4_F.F
+Info:    routing  0.00  1.55 Net boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_MUX2_LUT5_O_I1 (44,26) -> (44,26)
+Info:                          Sink boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_MUX2_LUT5_O.I1
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:151.13-151.15
+Info:      logic  0.27  1.82 Source boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_MUX2_LUT5_O.O
+Info:    routing  0.24  2.05 Net boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3[3] (44,26) -> (44,26)
+Info:                          Sink boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_LUT4_I3.I3
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.37  2.42 Source boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_LUT4_I3.F
+Info:    routing  0.55  2.97 Net boardsoc_crg_gw2apll1_LUT3_I1_I2_LUT4_F_I3_LUT4_I3_F[1] (44,26) -> (43,28)
+Info:                          Sink boardsoc_crg_DFFRE_Q_14.CE
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      setup  0.04  3.01 Source boardsoc_crg_DFFRE_Q_14.CE
+Info: 1.84 ns logic, 1.16 ns routing
+
+Info: Critical path report for clock 'VexRiscv.clk' (posedge -> posedge):
+Info:       type curr  total name
+Info:   clk-to-q  0.23  0.23 Source VexRiscv.CsrPlugin_exceptionPortCtrl_exceptionValidsRegs_memory_DFFR_Q.Q
+Info:    routing  0.14  0.37 Net VexRiscv.CsrPlugin_exceptionPendings_2 (3,7) -> (3,7)
+Info:                          Sink VexRiscv.CsrPlugin_interrupt_valid_LUT4_I3.I1
+Info:                          Defined in:
+Info:                               VexRiscv.v:956.23-956.77
+Info:      logic  0.57  0.94 Source VexRiscv.CsrPlugin_interrupt_valid_LUT4_I3.F
+Info:    routing  0.17  1.11 Net VexRiscv.CsrPlugin_interrupt_valid_LUT4_I3_F[3] (3,7) -> (4,7)
+Info:                          Sink VexRiscv.CsrPlugin_pipelineLiberator_pcValids_2_LUT4_I0.I3
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.37  1.48 Source VexRiscv.CsrPlugin_pipelineLiberator_pcValids_2_LUT4_I0.F
+Info:    routing  1.54  3.02 Net VexRiscv.CsrPlugin_exceptionPortCtrl_exceptionValidsRegs_writeBack_LUT3_I0_F[1] (4,7) -> (25,12)
+Info:                          Sink VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_LUT3_F_I2_ALU_SUM_CIN_ALU_COUT.I0
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.55  3.57 Source VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_LUT3_F_I2_ALU_SUM_CIN_ALU_COUT.COUT
+Info:    routing  0.00  3.57 Net VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_LUT3_F_I2_ALU_SUM_CIN (25,12) -> (25,12)
+Info:                          Sink VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_LUT3_F_I2_ALU_SUM.CIN
+Info:                          Defined in:
+Info:                               VexRiscv.v:1337.60-1337.110
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.04  3.60 Source VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_LUT3_F_I2_ALU_SUM.COUT
+Info:    routing  0.00  3.60 Net VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_LUT3_F_I2_ALU_SUM_COUT (25,12) -> (25,12)
+Info:                          Sink VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_LUT3_F_I2_ALU_SUM_COUT_ALU_CIN.CIN
+Info:                          Defined in:
+Info:                               VexRiscv.v:1337.60-1337.110
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/arith_map.v:57.7-63.5
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_sim.v:1033.25-1033.29
+Info:      logic  0.47  4.07 Source VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_LUT3_F_I2_ALU_SUM_COUT_ALU_CIN.SUM
+Info:    routing  0.64  4.72 Net VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F[3] (25,12) -> (18,12)
+Info:                          Sink VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_MUX2_LUT5_O.S0
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.10  4.82 Source VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F_MUX2_LUT5_O.O
+Info:    routing  0.88  5.70 Net VexRiscv.IBusCachedPlugin_fetchPc_inc_ALU_I0_COUT_ALU_CIN_COUT_ALU_CIN_COUT_ALU_CIN_SUM_LUT4_I2_F[3] (18,12) -> (18,12)
+Info:                          Sink VexRiscv.IBusCachedPlugin_cache.banks_0.0.1_ADB_3_MUX2_LUT5_O_I1_LUT4_F.I3
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:130.20-130.21
+Info:      logic  0.37  6.07 Source VexRiscv.IBusCachedPlugin_cache.banks_0.0.1_ADB_3_MUX2_LUT5_O_I1_LUT4_F.F
+Info:    routing  0.00  6.07 Net VexRiscv.IBusCachedPlugin_cache.banks_0.0.1_ADB_3_MUX2_LUT5_O_I1 (18,12) -> (18,12)
+Info:                          Sink VexRiscv.IBusCachedPlugin_cache.banks_0.0.1_ADB_3_MUX2_LUT5_O.I1
+Info:                          Defined in:
+Info:                               /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/lib/../share/yosys/gowin/cells_map.v:151.13-151.15
+Info:      logic  0.27  6.34 Source VexRiscv.IBusCachedPlugin_cache.banks_0.0.1_ADB_3_MUX2_LUT5_O.O
+Info:    routing  1.05  7.38 Net VexRiscv.IBusCachedPlugin_cache.banks_0.0.1_ADB_3 (18,12) -> (22,9)
+Info:                          Sink VexRiscv.IBusCachedPlugin_cache.ways_0_tags.0.0.ADB5
+Info:      setup  0.03  7.42 Source VexRiscv.IBusCachedPlugin_cache.ways_0_tags.0.0.ADB5
+Info: 3.00 ns logic, 4.42 ns routing
+
+Info: Max frequency for clock 'boardsoc_crg_gw2apll2': 332.78 MHz (PASS at 150.00 MHz)
+ERROR: Max frequency for clock          'VexRiscv.clk': 134.81 MHz (FAIL at 150.00 MHz)
+
+Info: Slack histogram:
+Info:  legend: * represents 3 endpoint(s)
+Info:          + represents [1,3) endpoint(s)
+Info: [  -752,   -401) |+
+Info: [  -401,    -50) |**+
+Info: [   -50,    301) |+
+Info: [   301,    652) |***+
+Info: [   652,   1003) |******+
+Info: [  1003,   1354) |*****+
+Info: [  1354,   1705) |*****+
+Info: [  1705,   2056) |******+
+Info: [  2056,   2407) |*********+
+Info: [  2407,   2758) |*******+
+Info: [  2758,   3109) |***********+
+Info: [  3109,   3460) |*************************+
+Info: [  3460,   3811) |************************************************************ 
+Info: [  3811,   4162) |*********************************************************+
+Info: [  4162,   4513) |*****************************+
+Info: [  4513,   4864) |********************************+
+Info: [  4864,   5215) |*******************************************+
+Info: [  5215,   5566) |******************************************+
+Info: [  5566,   5917) |***********************+
+Info: [  5917,   6268) |******+
+
+0 warnings, 1 error
+
+Info: Program finished normally.

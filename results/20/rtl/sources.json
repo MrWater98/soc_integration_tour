@@ -1,0 +1,52 @@
+{
+  "files": [
+    {
+      "file": "VexRiscv_Min.v",
+      "sha256": "758874a989724fe2b92a5413b43265c9a5129638fee9d7358fcd6724992b598f"
+    },
+    {
+      "file": "asic_soc.v",
+      "sha256": "2c7397e857f3d21c30076e517c6fe8c0acd1514a7411d895ad75a315d4cbbb8b"
+    },
+    {
+      "file": "asic_soc_main_ram.init",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "asic_soc_rom.init",
+      "sha256": "0d08db5e42ed35cef6554c8fb31048167e644caae46ed81a127355c743b85217"
+    },
+    {
+      "file": "asic_soc_sram_1.init",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "elaborated.v",
+      "sha256": "2045d70d3e0a17990d618c81218929d245bb6a88b267604c1aa5976c5ae71be3"
+    },
+    {
+      "file": "generic.v",
+      "sha256": "b562bd05372ab68c311521f8d86eb29452a7dbd23c192eb2f7d980188f822c19"
+    },
+    {
+      "file": "ics55_LLSC_H7CR.v",
+      "sha256": "c06a1da785f3856c013e8c0c31c8bceb21b98b6b656eea99533c0e6db07f8307"
+    },
+    {
+      "file": "icsIOA_N55_3P3.v",
+      "sha256": "21bc29120ed990e9439f838402ce152e5c7134a4b68c4c88ac67d0022ca6dfb1"
+    },
+    {
+      "file": "mapped.v",
+      "sha256": "2a4cba8d04cb6511b528e489f29809d7fd78ed530be31239ede4e4c6dddd3d32"
+    },
+    {
+      "file": "peripheral.v",
+      "sha256": "41f359246bde362ee1630616632e83631df69b5e6781c94976af1da3fa370cab"
+    },
+    {
+      "file": "reset_sync.v",
+      "sha256": "9c4dea26d2384934522b8da60f6aa01ec5af985d004930a827be31905b76b7a7"
+    }
+  ]
+}

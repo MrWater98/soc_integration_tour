@@ -1,0 +1,10 @@
+{
+  "mode": "Verilator --coverage-line; annotate minimum 1",
+  "lines_hit": 1854,
+  "lines_total": 2073,
+  "percent": 89.4356005788712,
+  "scope": "instrumented source lines in one firmware run, includes CPU; no toggle counters",
+  "all_points_hit_lines": 1770,
+  "annotation_lines": 2073,
+  "all_points_hit_percent": 85.383502170767
+}

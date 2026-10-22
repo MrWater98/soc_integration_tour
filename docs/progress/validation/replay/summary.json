@@ -1,0 +1,30 @@
+{
+  "status": "PASS selected imported RTL checks",
+  "cases": [
+    {
+      "case": "19-rtl",
+      "status": "PASS"
+    },
+    {
+      "case": "19-generic",
+      "status": "PASS"
+    },
+    {
+      "case": "19-mapped",
+      "status": "PASS"
+    },
+    {
+      "case": "20-repeated-reset",
+      "status": "PASS"
+    },
+    {
+      "case": "20-missing-ack",
+      "status": "PASS expected failure detected"
+    },
+    {
+      "case": "20-wrong-gpio",
+      "status": "PASS expected failure detected"
+    }
+  ],
+  "scope": "Replay existing snapshots; synthesis, full chapter20 regression and physical signoff not rerun"
+}

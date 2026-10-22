@@ -1,0 +1,161 @@
+step,phase,address,operation,expected_or_written,read_value
+0,0,0,write,0,X
+1,0,1,write,0,X
+2,0,2,write,0,X
+3,0,3,write,0,X
+4,0,4,write,0,X
+5,0,5,write,0,X
+6,0,6,write,0,X
+7,0,7,write,0,X
+8,0,8,write,0,X
+9,0,9,write,0,X
+10,0,10,write,0,X
+11,0,11,write,0,X
+12,0,12,write,0,X
+13,0,13,write,0,X
+14,0,14,write,0,X
+15,0,15,write,0,X
+16,1,0, read,0,0
+17,1,0,write,f,0
+18,1,1, read,0,0
+19,1,1,write,f,0
+20,1,2, read,0,0
+21,1,2,write,f,0
+22,1,3, read,0,0
+23,1,3,write,f,0
+24,1,4, read,0,0
+25,1,4,write,f,0
+26,1,5, read,0,0
+27,1,5,write,f,0
+28,1,6, read,0,0
+29,1,6,write,f,0
+30,1,7, read,0,0
+31,1,7,write,f,0
+32,1,8, read,0,0
+33,1,8,write,f,0
+34,1,9, read,0,0
+35,1,9,write,f,0
+36,1,10, read,0,0
+37,1,10,write,f,0
+38,1,11, read,0,0
+39,1,11,write,f,0
+40,1,12, read,0,0
+41,1,12,write,f,0
+42,1,13, read,0,0
+43,1,13,write,f,0
+44,1,14, read,0,0
+45,1,14,write,f,0
+46,1,15, read,0,0
+47,1,15,write,f,0
+48,2,0, read,f,d
+49,2,0,write,0,d
+50,2,1, read,f,d
+51,2,1,write,0,d
+52,2,2, read,f,d
+53,2,2,write,0,d
+54,2,3, read,f,d
+55,2,3,write,0,d
+56,2,4, read,f,d
+57,2,4,write,0,d
+58,2,5, read,f,d
+59,2,5,write,0,d
+60,2,6, read,f,d
+61,2,6,write,0,d
+62,2,7, read,f,d
+63,2,7,write,0,d
+64,2,8, read,f,d
+65,2,8,write,0,d
+66,2,9, read,f,d
+67,2,9,write,0,d
+68,2,10, read,f,d
+69,2,10,write,0,d
+70,2,11, read,f,d
+71,2,11,write,0,d
+72,2,12, read,f,d
+73,2,12,write,0,d
+74,2,13, read,f,d
+75,2,13,write,0,d
+76,2,14, read,f,d
+77,2,14,write,0,d
+78,2,15, read,f,d
+79,2,15,write,0,d
+80,3,15, read,0,0
+81,3,15,write,f,0
+82,3,14, read,0,0
+83,3,14,write,f,0
+84,3,13, read,0,0
+85,3,13,write,f,0
+86,3,12, read,0,0
+87,3,12,write,f,0
+88,3,11, read,0,0
+89,3,11,write,f,0
+90,3,10, read,0,0
+91,3,10,write,f,0
+92,3,9, read,0,0
+93,3,9,write,f,0
+94,3,8, read,0,0
+95,3,8,write,f,0
+96,3,7, read,0,0
+97,3,7,write,f,0
+98,3,6, read,0,0
+99,3,6,write,f,0
+100,3,5, read,0,0
+101,3,5,write,f,0
+102,3,4, read,0,0
+103,3,4,write,f,0
+104,3,3, read,0,0
+105,3,3,write,f,0
+106,3,2, read,0,0
+107,3,2,write,f,0
+108,3,1, read,0,0
+109,3,1,write,f,0
+110,3,0, read,0,0
+111,3,0,write,f,0
+112,4,15, read,f,d
+113,4,15,write,0,d
+114,4,14, read,f,d
+115,4,14,write,0,d
+116,4,13, read,f,d
+117,4,13,write,0,d
+118,4,12, read,f,d
+119,4,12,write,0,d
+120,4,11, read,f,d
+121,4,11,write,0,d
+122,4,10, read,f,d
+123,4,10,write,0,d
+124,4,9, read,f,d
+125,4,9,write,0,d
+126,4,8, read,f,d
+127,4,8,write,0,d
+128,4,7, read,f,d
+129,4,7,write,0,d
+130,4,6, read,f,d
+131,4,6,write,0,d
+132,4,5, read,f,d
+133,4,5,write,0,d
+134,4,4, read,f,d
+135,4,4,write,0,d
+136,4,3, read,f,d
+137,4,3,write,0,d
+138,4,2, read,f,d
+139,4,2,write,0,d
+140,4,1, read,f,d
+141,4,1,write,0,d
+142,4,0, read,f,d
+143,4,0,write,0,d
+144,5,0, read,0,0
+145,5,1, read,0,0
+146,5,2, read,0,0
+147,5,3, read,0,0
+148,5,4, read,0,0
+149,5,5, read,0,0
+150,5,6, read,0,0
+151,5,7, read,0,0
+152,5,8, read,0,0
+153,5,9, read,0,0
+154,5,10, read,0,0
+155,5,11, read,0,0
+156,5,12, read,0,0
+157,5,13, read,0,0
+158,5,14, read,0,0
+159,5,15, read,0,0

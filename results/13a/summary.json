@@ -1,0 +1,227 @@
+{
+  "status": "PASS",
+  "ir_length": 4,
+  "idcode": "0x12345679",
+  "state_edges": "32/32",
+  "cases": [
+    {
+      "case": "idcode",
+      "status": "PASS",
+      "cycles": 43,
+      "diagnoses": [],
+      "scans": [
+        {
+          "kind": "DR",
+          "bits": 32,
+          "value": "0x12345679",
+          "interpreted": "0x12345679",
+          "expected": "0x12345679"
+        }
+      ]
+    },
+    {
+      "case": "capture-ir",
+      "status": "PASS",
+      "cycles": 53,
+      "diagnoses": [],
+      "scans": [
+        {
+          "kind": "IR",
+          "bits": 4,
+          "value": "0x1",
+          "interpreted": "0x1",
+          "expected": "0x1"
+        },
+        {
+          "kind": "DR",
+          "bits": 32,
+          "value": "0x12345679",
+          "interpreted": "0x12345679",
+          "expected": "0x12345679"
+        }
+      ]
+    },
+    {
+      "case": "user-register",
+      "status": "PASS",
+      "cycles": 90,
+      "diagnoses": [],
+      "scans": [
+        {
+          "kind": "IR",
+          "bits": 4,
+          "value": "0x1",
+          "interpreted": "0x1",
+          "expected": "0x1"
+        },
+        {
+          "kind": "DR",
+          "bits": 32,
+          "value": "0xcafef00d",
+          "interpreted": "0xcafef00d",
+          "expected": "0xcafef00d"
+        },
+        {
+          "kind": "DR",
+          "bits": 32,
+          "value": "0x2468ace1",
+          "interpreted": "0x2468ace1",
+          "expected": "0x2468ace1"
+        }
+      ]
+    },
+    {
+      "case": "bypass",
+      "status": "PASS",
+      "cycles": 33,
+      "diagnoses": [],
+      "scans": [
+        {
+          "kind": "IR",
+          "bits": 4,
+          "value": "0x1",
+          "interpreted": "0x1",
+          "expected": "0x1"
+        },
+        {
+          "kind": "DR",
+          "bits": 12,
+          "value": "0x59c",
+          "interpreted": "0x59c",
+          "expected": "0x59c"
+        }
+      ]
+    },
+    {
+      "case": "wrong-ir",
+      "status": "PASS",
+      "cycles": 53,
+      "diagnoses": [
+        "WRONG_IR_READBACK"
+      ],
+      "scans": [
+        {
+          "kind": "IR",
+          "bits": 4,
+          "value": "0x1",
+          "interpreted": "0x1",
+          "expected": "0x1"
+        },
+        {
+          "kind": "DR",
+          "bits": 32,
+          "value": "0x0",
+          "interpreted": "0x0",
+          "expected": "0x12345679"
+        }
+      ]
+    },
+    {
+      "case": "short-scan",
+      "status": "PASS",
+      "cycles": 42,
+      "diagnoses": [
+        "SHORT_SCAN"
+      ],
+      "scans": [
+        {
+          "kind": "DR",
+          "bits": 31,
+          "value": "0x12345679",
+          "interpreted": "0x12345679",
+          "expected": "0x12345679"
+        }
+      ]
+    },
+    {
+      "case": "wrong-bit-order",
+      "status": "PASS",
+      "cycles": 53,
+      "diagnoses": [
+        "WRONG_BIT_ORDER"
+      ],
+      "scans": [
+        {
+          "kind": "IR",
+          "bits": 4,
+          "value": "0x1",
+          "interpreted": "0x1",
+          "expected": "0x1"
+        },
+        {
+          "kind": "DR",
+          "bits": 32,
+          "value": "0xcafef00d",
+          "interpreted": "0xb00f7f53",
+          "expected": "0xcafef00d"
+        }
+      ]
+    },
+    {
+      "case": "reset-during-scan",
+      "status": "PASS",
+      "cycles": 70,
+      "diagnoses": [
+        "RESET_INTERRUPTED_SCAN"
+      ],
+      "scans": [
+        {
+          "kind": "IR",
+          "bits": 4,
+          "value": "0x1",
+          "interpreted": "0x1",
+          "expected": "0x1"
+        },
+        {
+          "kind": "DR",
+          "bits": 8,
+          "value": "0xd",
+          "interpreted": "0xd",
+          "expected": "0xcafef00d"
+        },
+        {
+          "kind": "DR",
+          "bits": 32,
+          "value": "0x12345679",
+          "interpreted": "0x12345679",
+          "expected": "0x12345679"
+        }
+      ]
+    },
+    {
+      "case": "pause-resume",
+      "status": "PASS",
+      "cycles": 49,
+      "diagnoses": [],
+      "scans": [
+        {
+          "kind": "DR",
+          "bits": 32,
+          "value": "0x12345679",
+          "interpreted": "0x12345679",
+          "expected": "0x12345679"
+        }
+      ]
+    },
+    {
+      "case": "all-state-edges",
+      "status": "PASS",
+      "cycles": 338,
+      "diagnoses": [],
+      "scans": []
+    }
+  ],
+  "tools": {
+    "iverilog": "Icarus Verilog version 10.3 (stable) ()"
+  },
+  "sources": [
+    {
+      "file": "tap.sv",
+      "sha256": "c548b644778bb11386635de04f1b1d80d92968d2afb13546c11afb5b1212c057"
+    },
+    {
+      "file": "tb.sv",
+      "sha256": "eadd740df2b16e121fd773e9d0e3c4868e9c2375a4d3317d534644041336348b"
+    }
+  ]
+}

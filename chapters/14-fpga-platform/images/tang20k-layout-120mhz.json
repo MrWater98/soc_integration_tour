@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "input": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/15-tang20k-build-120mhz/routed.json",
+      "input_sha256": "be61aa66f0ebfc37c0699eb2f38d1cf0d81039ca80c3a23b0c4c053ce6901047",
+      "target_mhz": 120.0,
+      "cpu_fmax_estimate_mhz": 126.16704559326172,
+      "seed": 1,
+      "placed_cells": 7752,
+      "routed_wire_occurrences": 60286
+    }
+  ],
+  "coordinate_bounds": [
+    56,
+    55
+  ],
+  "density_log_scale_max": 4.77912349311153,
+  "visualization": "BEL locations and routed-wire occurrences; no inferred wire geometry"
+}

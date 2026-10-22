@@ -1,0 +1,44 @@
+{
+  "seed": 10,
+  "elapsed_seconds": 73.90856066194829,
+  "exit_code": 1,
+  "status": "TIMING_FAIL",
+  "system_fmax_mhz": 136.55606079101562,
+  "limiting_fmax_mhz": 136.55606079101562,
+  "clocks": {
+    "VexRiscv.clk": {
+      "achieved": 136.55606079101562,
+      "constraint": 150
+    },
+    "boardsoc_crg_gw2apll2": {
+      "achieved": 335.0083923339844,
+      "constraint": 150
+    }
+  },
+  "routed_sha256": "152a288ad819d936a77f714c5a6b0fc7fd73b38d5d6af3efeb87044fe284fd33",
+  "critical_path": {
+    "start": {
+      "cell": "builder_socbushandler_roundrobin1_DFFR_Q",
+      "loc": [
+        37,
+        13
+      ],
+      "port": "Q"
+    },
+    "end": {
+      "cell": "boardsoc_syncfifobuffered0_syncfifo02_DFFRE_Q_1",
+      "loc": [
+        40,
+        8
+      ],
+      "port": "CE"
+    },
+    "delay_ns_by_type": {
+      "clk-to-q": 0.23100000619888306,
+      "routing": 5.002000004053116,
+      "logic": 2.0550000369548798,
+      "setup": 0.03500000014901161
+    },
+    "total_delay_ns": 7.32300004735589
+  }
+}

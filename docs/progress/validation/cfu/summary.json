@@ -1,0 +1,28 @@
+{
+  "status": "PASS direct CFU RTL only",
+  "upstream_commit": "7f8ec4147b39db98534f8a10f9ddb1c26aca5648",
+  "direct": {
+    "vectors": 261,
+    "random_vectors": 257,
+    "seed": 7,
+    "passthrough_cases": 8,
+    "tested_hold_cycles": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "backpressure": "PASS stable through all tested hold cycles",
+    "reset_recovery": "PASS",
+    "bad_offset": "DETECTED"
+  },
+  "cpu": [],
+  "integration": "upstream unmodified CFU and headers in chapter-local LiteX harness",
+  "tflm_full_model": "NOT_RUN",
+  "fpga_board": "NOT_RUN",
+  "asic": "NOT_RUN"
+}

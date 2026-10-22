@@ -1,0 +1,14 @@
+[clocker] loaded
+MDEBUG: Save time: -1, load_time: 0
+[clocker] sys_clk: freq_hz=1000000, phase_deg=0
+CFU_DOT result=13
+CFU_DENSE_0 result=28
+CFU_DENSE_1 result=0
+CFU_RANDOM_CHECKS count=64
+CFU_CPU_REFERENCE_CYCLES value=10971
+CFU_ACCEL_CYCLES value=24859
+CFU_PREPACKED_CYCLES value=727
+CFU_COMPLETE code=0x0000005a commands=619 responses=619
+- /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/13f/builder/gateware/sim.v:569: Verilog $finish
+
+[sim] sys_clk=1.000MHz, simulated=109.895ms, elapsed=47.791ms, performance=2.300x realtime

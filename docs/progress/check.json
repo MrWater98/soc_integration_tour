@@ -1,0 +1,23 @@
+{
+  "status": "PASS file integrity and Python syntax",
+  "files_checked": 1841,
+  "python_files_checked": 62,
+  "literal_memory_initialization_references": 171,
+  "tools": {
+    "iverilog": "/usr/bin/iverilog",
+    "vvp": "/usr/bin/vvp",
+    "verilator": "/usr/local/bin/verilator",
+    "verilator_coverage": "/usr/local/bin/verilator_coverage",
+    "yosys": "/home/ziyue/miniconda3/bin/yosys",
+    "riscv64-unknown-elf-gcc": "/usr/bin/riscv64-unknown-elf-gcc",
+    "nextpnr-himbaechel": null,
+    "gowin_pack": null,
+    "openFPGALoader": null,
+    "openocd": "/usr/bin/openocd",
+    "gdb": "/usr/bin/gdb",
+    "sta": null
+  },
+  "pdk_present": false,
+  "errors": [],
+  "scope": "No simulation, synthesis, dependency install, or board access performed"
+}

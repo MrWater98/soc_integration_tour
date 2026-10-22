@@ -1,0 +1,2 @@
+PASS_PAD input=0/1 output=0/1/Z
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/19-asic-rtl/pad_pilot.sv:22: $finish called at 5000 (1ps)

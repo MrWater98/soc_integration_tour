@@ -1,0 +1,528 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.60 (git sha1 5bafeb77dc71e054fa331ab9efa613e6fb0a1c49, g++ 14.3.0-14 -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/yosys_1764806625050/work=/usr/local/src/conda/yosys-0.60 -fdebug-prefix-map=/home/ziyue/miniconda3=/usr/local/src/conda-prefix -fPIC -O3)
+
+-- Executing script file `/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/negative-properties.ys' --
+
+1. Executing Verilog-2005 frontend: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v
+Parsing formal SystemVerilog input from `/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v' to AST representation.
+verilog frontend filename /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v
+Generating RTLIL representation for module `\peripheral'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv
+Parsing formal SystemVerilog input from `/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv' to AST representation.
+verilog frontend filename /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv
+Generating RTLIL representation for module `\properties'.
+Successfully finished Verilog frontend.
+
+3. Executing PREP pass.
+
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1.1. Analyzing design hierarchy..
+Top module:  \properties
+Used module:     \peripheral
+
+3.1.2. Analyzing design hierarchy..
+Top module:  \properties
+Used module:     \peripheral
+Removed 0 unused modules.
+Module properties directly or indirectly contains formal properties -> setting "keep" attribute.
+
+3.2. Executing PROC pass (convert processes to netlists).
+
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33 in module properties.
+Marked 3 switch rules as full_case in process $proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10 in module peripheral.
+Marked 1 switch rules as full_case in process $proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:24$8 in module peripheral.
+Removed a total of 0 dead cases.
+
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 4 redundant assignments.
+Promoted 9 assignments to connections.
+
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:12$75'.
+  Set init value: \past_valid = 1'0
+
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:12$75'.
+Creating decoders for process `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+     1/9: $assert$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:29$58_EN
+     2/9: $assert$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:27$56_EN
+     3/9: $assert$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:26$54_EN
+     4/9: $assert$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:23$53_EN
+     5/9: $assert$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:22$51_EN
+     6/9: $assert$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:21$49_EN
+     7/9: $assert$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:20$47_EN
+     8/9: $assert$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:19$45_EN
+     9/9: $assume$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:15$40_EN
+Creating decoders for process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+     1/12: $0\gpio_sync[3:0]
+     2/12: $0\gpio_meta[3:0]
+     3/12: $0\response_ready[0:0]
+     4/12: $0\tx_div[15:0]
+     5/12: $0\tx_bits[3:0]
+     6/12: $0\tx_shift[9:0]
+     7/12: $0\timer_pending[0:0]
+     8/12: $0\timer_enable[0:0]
+     9/12: $0\timer_count[31:0]
+    10/12: $0\stage[7:0]
+    11/12: $0\result[31:0]
+    12/12: $0\gpio_out[3:0]
+Creating decoders for process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:24$8'.
+     1/1: $1\dat_r[31:0]
+
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\peripheral.\dat_r' from process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:24$8'.
+
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\properties.\past_valid' using process `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+  created $dff cell `$procdff$271' with positive edge clock.
+Creating register for signal `\properties.$past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:18$20$0' using process `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+  created $dff cell `$procdff$272' with positive edge clock.
+Creating register for signal `\properties.$past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:25$21$0' using process `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+  created $dff cell `$procdff$273' with positive edge clock.
+Creating register for signal `\properties.$past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:26$22$0' using process `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+  created $dff cell `$procdff$274' with positive edge clock.
+Creating register for signal `\properties.$past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:27$23$0' using process `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+  created $dff cell `$procdff$275' with positive edge clock.
+Creating register for signal `\properties.$past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:28$24$0' using process `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+  created $dff cell `$procdff$276' with positive edge clock.
+Creating register for signal `\peripheral.\gpio_out' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$277' with positive edge clock.
+Creating register for signal `\peripheral.\result' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$278' with positive edge clock.
+Creating register for signal `\peripheral.\stage' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$279' with positive edge clock.
+Creating register for signal `\peripheral.\gpio_meta' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$280' with positive edge clock.
+Creating register for signal `\peripheral.\gpio_sync' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$281' with positive edge clock.
+Creating register for signal `\peripheral.\timer_count' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$282' with positive edge clock.
+Creating register for signal `\peripheral.\timer_enable' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$283' with positive edge clock.
+Creating register for signal `\peripheral.\timer_pending' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$284' with positive edge clock.
+Creating register for signal `\peripheral.\tx_shift' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$285' with positive edge clock.
+Creating register for signal `\peripheral.\tx_bits' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$286' with positive edge clock.
+Creating register for signal `\peripheral.\tx_div' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$287' with positive edge clock.
+Creating register for signal `\peripheral.\response_ready' using process `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+  created $dff cell `$procdff$288' with positive edge clock.
+
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:12$75'.
+Found and cleaned up 5 empty switches in `\properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+Removing empty process `properties.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:13$33'.
+Found and cleaned up 9 empty switches in `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+Removing empty process `peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:36$10'.
+Found and cleaned up 1 empty switch in `\peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:24$8'.
+Removing empty process `peripheral.$proc$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:24$8'.
+Cleaned up 15 empty switches.
+
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module properties.
+Optimizing module peripheral.
+
+3.3. Executing FLATTEN pass (flatten design).
+Deleting now unused module peripheral.
+
+3.4. Executing FUTURE pass.
+
+3.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module properties.
+
+3.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \properties..
+Removed 15 unused cells and 115 unused wires.
+
+3.7. Executing CHECK pass (checking for obvious problems).
+Checking module properties...
+Found and reported 0 problems.
+
+3.8. Executing OPT pass (performing simple optimizations).
+
+3.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module properties.
+
+3.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\properties'.
+Removed a total of 19 cells.
+
+3.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \properties..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $flatten\dut.$procmux$208: \dut.timer_enable -> 1'0
+      Replacing known input bits on port A of cell $flatten\dut.$procmux$206: \dut.timer_enable -> 1'1
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+3.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \properties.
+Performed a total of 0 changes.
+
+3.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\properties'.
+Removed a total of 8 cells.
+
+3.8.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \properties..
+Removed 0 unused cells and 29 unused wires.
+
+3.8.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module properties.
+
+3.8.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.8.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \properties..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+3.8.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \properties.
+Performed a total of 0 changes.
+
+3.8.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\properties'.
+Removed a total of 0 cells.
+
+3.8.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \properties..
+
+3.8.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module properties.
+
+3.8.14. Finished fast OPT passes. (There is nothing left to do.)
+
+3.9. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 4) from port B of cell properties.$eq$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:25$65 ($eq).
+Removed top 1 bits (of 4) from port B of cell properties.$eq$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:28$72 ($eq).
+Removed top 3 bits (of 4) from port B of cell properties.$flatten\dut.$procmux$256_CMP0 ($eq).
+Removed top 1 bits (of 4) from port B of cell properties.$flatten\dut.$procmux$236_CMP0 ($eq).
+Removed top 1 bits (of 4) from port B of cell properties.$flatten\dut.$procmux$214_CMP0 ($eq).
+Removed top 2 bits (of 4) from port B of cell properties.$flatten\dut.$procmux$147_CMP0 ($eq).
+Removed top 31 bits (of 32) from port B of cell properties.$flatten\dut.$sub$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:57$18 ($sub).
+Removed top 16 bits (of 32) from port Y of cell properties.$flatten\dut.$sub$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:57$18 ($sub).
+Removed top 31 bits (of 32) from port B of cell properties.$flatten\dut.$sub$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:55$17 ($sub).
+Removed top 28 bits (of 32) from port Y of cell properties.$flatten\dut.$sub$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:55$17 ($sub).
+Removed top 31 bits (of 32) from port B of cell properties.$flatten\dut.$sub$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:50$14 ($sub).
+Removed top 28 bits (of 32) from wire properties.$flatten\dut.$sub$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:55$17_Y.
+Removed top 17 bits (of 32) from wire properties.$flatten\dut.$sub$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/bad_ack.v:57$18_Y.
+
+3.10. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \properties..
+Removed 0 unused cells and 2 unused wires.
+
+3.11. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.12. Executing OPT pass (performing simple optimizations).
+
+3.12.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module properties.
+
+3.12.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\properties'.
+Removed a total of 0 cells.
+
+3.12.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \properties..
+
+3.12.4. Finished fast OPT passes.
+
+3.13. Printing statistics.
+
+=== properties ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      128 wires
+      992 wire bits
+       39 public wires
+      308 public wire bits
+        1 ports
+        1 port bits
+      121 cells
+        7   $anyseq
+       10   $check
+       16   $dff
+        9   $eq
+        8   $logic_and
+        8   $logic_not
+        1   $logic_or
+       57   $mux
+        1   $reduce_bool
+        1   $scopeinfo
+        3   $sub
+
+3.14. Executing CHECK pass (checking for obvious problems).
+Checking module properties...
+Found and reported 0 problems.
+
+4. Executing ASYNC2SYNC pass.
+
+5. Executing SAT pass (solving SAT problems in the circuit).
+
+Setting up time step 1:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$350 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$346 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$344 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$340 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$338 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$334 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$332 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$328 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$326 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$322 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$320 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$316 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$314 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$310 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$308 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$304 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$302 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$298 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$296 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$292 = 1'0
+Import set-constraint from init attribute: \past_valid = 1'0
+Final init constraint equation: { \past_valid $auto$async2sync.cc:107:execute$292 $auto$async2sync.cc:116:execute$296 $auto$async2sync.cc:107:execute$298 $auto$async2sync.cc:116:execute$302 $auto$async2sync.cc:107:execute$304 $auto$async2sync.cc:116:execute$308 $auto$async2sync.cc:107:execute$310 $auto$async2sync.cc:116:execute$314 $auto$async2sync.cc:107:execute$316 $auto$async2sync.cc:116:execute$320 $auto$async2sync.cc:107:execute$322 $auto$async2sync.cc:116:execute$326 $auto$async2sync.cc:107:execute$328 $auto$async2sync.cc:116:execute$332 $auto$async2sync.cc:107:execute$334 $auto$async2sync.cc:116:execute$338 $auto$async2sync.cc:107:execute$340 $auto$async2sync.cc:116:execute$344 $auto$async2sync.cc:107:execute$346 $auto$async2sync.cc:116:execute$350 } = 21'001010101010101010101
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 2:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 3:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 4:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 5:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 6:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 7:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 8:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 9:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 10:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 11:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Setting up time step 12:
+Final constraint equation: { } = { }
+Imported 171 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$350 when $auto$async2sync.cc:107:execute$346.
+Import proof for assert: $auto$async2sync.cc:116:execute$344 when $auto$async2sync.cc:107:execute$340.
+Import proof for assert: $auto$async2sync.cc:116:execute$338 when $auto$async2sync.cc:107:execute$334.
+Import proof for assert: $auto$async2sync.cc:116:execute$332 when $auto$async2sync.cc:107:execute$328.
+Import proof for assert: $auto$async2sync.cc:116:execute$326 when $auto$async2sync.cc:107:execute$322.
+Import proof for assert: $auto$async2sync.cc:116:execute$320 when $auto$async2sync.cc:107:execute$316.
+Import proof for assert: $auto$async2sync.cc:116:execute$314 when $auto$async2sync.cc:107:execute$310.
+Import proof for assert: $auto$async2sync.cc:116:execute$308 when $auto$async2sync.cc:107:execute$304.
+Import proof for assert: $auto$async2sync.cc:116:execute$302 when $auto$async2sync.cc:107:execute$298.
+Import proof for assert: $auto$async2sync.cc:116:execute$296 when $auto$async2sync.cc:107:execute$292.
+
+Solving problem with 60031 variables and 161422 clauses..
+SAT proof finished - model found: FAIL!
+
+   ______                   ___       ___       _ _            _ _ 
+  (_____ \                 / __)     / __)     (_) |          | | |
+   _____) )___ ___   ___ _| |__    _| |__ _____ _| | _____  __| | |
+  |  ____/ ___) _ \ / _ (_   __)  (_   __|____ | | || ___ |/ _  |_|
+  | |   | |  | |_| | |_| || |       | |  / ___ | | || ____( (_| |_ 
+  |_|   |_|   \___/ \___/ |_|       |_|  \_____|_|\_)_____)\____|_|
+
+
+  Time Signal Name                                                                                                                                   Dec       Hex                                 Bin
+  ---- ------------------------------------------------------------------------------------------------------------------------------------- ----------- --------- -----------------------------------
+  init $auto$async2sync.cc:107:execute$292                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$298                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$304                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$310                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$316                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$322                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$328                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$334                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$340                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:107:execute$346                                                                                                             0         0                                   0
+  init $auto$async2sync.cc:116:execute$296                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$302                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$308                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$314                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$320                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$326                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$332                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$338                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$344                                                                                                             1         1                                   1
+  init $auto$async2sync.cc:116:execute$350                                                                                                             1         1                                   1
+  init $past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:18$20$0                1         1                                   1
+  init $past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:25$21$0                0         0                                   0
+  init $past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:26$22$0       1931903459  732681e3    01110011001001101000000111100011
+  init $past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:27$23$0       -237518589  f1d7c103    11110001110101111100000100000011
+  init $past$/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/properties.sv:28$24$0                0         0                                   0
+  init \dut.gpio_out                                                                                                                                   0         0                                0000
+  init \dut.response_ready                                                                                                                             1         1                                   1
+  init \dut.result                                                                                                                             201342492   c003e1c    00001100000000000011111000011100
+  init \dut.stage                                                                                                                                      0         0                            00000000
+  init \dut.timer_count                                                                                                                              128        80    00000000000000000000000010000000
+  init \dut.timer_enable                                                                                                                               0         0                                   0
+  init \dut.timer_pending                                                                                                                              0         0                                   0
+  init \dut.tx_bits                                                                                                                                    2         2                                0010
+  init \dut.tx_div                                                                                                                                     1         1                    0000000000000001
+  init \dut.tx_shift                                                                                                                                   0         0                          0000000000
+  init \past_valid                                                                                                                                     0         0                                   0
+
+ERROR: Called with -verify and proof did fail!

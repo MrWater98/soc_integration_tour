@@ -1,0 +1,4 @@
+seed=5 status=TOOL_ERROR fmax=N/A MHz elapsed=12.25s
+seed=2 status=TOOL_ERROR fmax=N/A MHz elapsed=12.20s
+seed=8 status=TOOL_ERROR fmax=N/A MHz elapsed=11.64s
+NO_VALID_TIMING_RESULTS

@@ -1,0 +1,102 @@
+{
+  "status": "PASS bounded ASIC core pilot",
+  "cpu": "VexRiscv minimal RV32I cache-free",
+  "ram_bytes": 2048,
+  "rom_bytes": 4096,
+  "sram_bytes": 256,
+  "uart_div": 8,
+  "gpio_width": 4,
+  "firmware_bytes": 1208,
+  "memory_bits": 52224,
+  "memories": [
+    {
+      "module": "VexRiscv",
+      "name": "RegFilePlugin_regFile",
+      "width": 32,
+      "depth": 32,
+      "read_ports": 2,
+      "write_ports": 1,
+      "read_clocked": "00",
+      "write_clocked": "1",
+      "init_defined_bits": 0,
+      "implementation": "flip-flops + multiplexers"
+    },
+    {
+      "module": "asic_soc",
+      "name": "main_ram",
+      "width": 32,
+      "depth": 512,
+      "read_ports": 1,
+      "write_ports": 4,
+      "read_clocked": "0",
+      "write_clocked": "1111",
+      "init_defined_bits": 0,
+      "implementation": "flip-flops + multiplexers"
+    },
+    {
+      "module": "asic_soc",
+      "name": "rom",
+      "width": 32,
+      "depth": 1024,
+      "read_ports": 1,
+      "write_ports": 0,
+      "read_clocked": "0",
+      "write_clocked": "0",
+      "init_defined_bits": 9664,
+      "implementation": "constant logic"
+    },
+    {
+      "module": "asic_soc",
+      "name": "sram_1",
+      "width": 32,
+      "depth": 64,
+      "read_ports": 1,
+      "write_ports": 4,
+      "read_clocked": "0",
+      "write_clocked": "1111",
+      "init_defined_bits": 0,
+      "implementation": "flip-flops + multiplexers"
+    }
+  ],
+  "generic_cell_counts": {
+    "$_MUX_": 22305,
+    "$_ANDNOT_": 3578,
+    "$_OR_": 1525,
+    "$_NAND_": 154,
+    "$_AND_": 315,
+    "$_NOR_": 223,
+    "$_ORNOT_": 180,
+    "$_NOT_": 241,
+    "$_XNOR_": 35,
+    "$_XOR_": 290,
+    "$_SDFFCE_PP1P_": 2,
+    "$_SDFFCE_PP0P_": 1,
+    "$_DFF_P_": 238,
+    "$_SDFF_PP0_": 6,
+    "$_DFFE_PN_": 395,
+    "$_DFFE_PP_": 19639,
+    "$_SDFFCE_PN0P_": 31,
+    "$_SDFFCE_PN0N_": 2,
+    "$_SDFF_PN0_": 93,
+    "$_SDFFCE_PN1N_": 2,
+    "$_SDFFE_PP0P_": 7,
+    "$_SDFFE_PN0P_": 83,
+    "$_SDFFE_PN0N_": 1,
+    "$_SDFF_PN1_": 13,
+    "$_DFF_PN0_": 2
+  },
+  "generic_cells": 49361,
+  "ics55_mapped": true,
+  "area_report": [
+    "235567.920000"
+  ],
+  "pad_cell_function": "PASS actual PBMUX 0/1/Z; no timing/ESD qualification",
+  "physical_pad_ring": "PENDING",
+  "sram_macro": "NOT_USED: bounded flip-flop implementation",
+  "production_release": "NOT_READY: IO/power/package/DFT/physical signoff remain",
+  "pdk": {
+    "commit": "ebc3f7e5d22a67f9423e0d980cd056291a58f307",
+    "liberty": "ics55_LLSC_H7CR_typ_tt_1p2_25_nldm.lib",
+    "liberty_sha256": "15af0dceceeeb02e174174e7123c7d551551369bf5ad1e8417d3ce8dcbc24fcd"
+  }
+}

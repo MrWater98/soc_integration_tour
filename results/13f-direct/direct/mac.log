@@ -1,0 +1,3 @@
+VCD info: dumpfile cfu.vcd opened for output.
+PASS_MAC vectors=261 backpressure=0..7 reset_recovery=PASS
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/tb_mac.sv:53: $finish called at 14360000 (1ps)

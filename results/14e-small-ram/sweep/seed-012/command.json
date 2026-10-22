@@ -1,0 +1,21 @@
+[
+  "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/bin/nextpnr-himbaechel",
+  "--json",
+  "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-small-ram/sweep/input/netlist.json",
+  "--write",
+  "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-small-ram/sweep/seed-012/routed.json",
+  "--report",
+  "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-small-ram/sweep/seed-012/pnr-report.json",
+  "--top",
+  "tutorial14",
+  "--device",
+  "GW2A-LV18PG256C8/I7",
+  "--vopt",
+  "family=GW2A-18C",
+  "--vopt",
+  "cst=/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-small-ram/sweep/input/tutorial14.cst",
+  "--freq",
+  "150",
+  "--seed",
+  "12"
+]

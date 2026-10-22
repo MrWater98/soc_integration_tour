@@ -1,0 +1,111 @@
+{
+  "board": "Tang Primer 20K Dock standard",
+  "device": "GW2A-LV18PG256C8/I7",
+  "family": "GW2A-18C",
+  "board_revision": "awaiting delivery; verify physical revision",
+  "config": {
+    "reference_clk_hz": 27000000,
+    "sys_clk_hz": 40500000,
+    "baud": 115200,
+    "led_count": 1,
+    "button_count": 1,
+    "blink_hz": 1,
+    "rom_size": 8192,
+    "sram_size": 4096,
+    "main_ram_size": 16384,
+    "stack_size": 1024,
+    "por_cycles": 65536
+  },
+  "pll": {
+    "diff": 0.0,
+    "idiv": 2,
+    "odiv": 16,
+    "vco": 648000000.0,
+    "fdiv": 3,
+    "PSDA_SEL": "0000",
+    "SDIV_SEL": 2,
+    "CLKOUT_SRC": "CLKOUT"
+  },
+  "pins": {
+    "serial_rx": "T13",
+    "serial_tx": "M11",
+    "clk27": "H11",
+    "btn_n0": "T10",
+    "led4": "A13",
+    "led5": "C13",
+    "btn_n1": "T3"
+  },
+  "firmware_sha256": "53f997e85e45ff4453008573397cb445fb831a9b03c8e090e47f22973599da97",
+  "sources": [
+    {
+      "file": "VexRiscv.v",
+      "origin": "/home/ziyue/miniconda3/lib/python3.11/site-packages/pythondata_cpu_vexriscv/verilog/VexRiscv.v",
+      "source_sha256": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+      "snapshot_sha256": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+      "role": "design"
+    },
+    {
+      "file": "tutorial14.v",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14-tang20k-parameters/builder/gateware/tutorial14.v",
+      "source_sha256": "ff950b133c67f2da1feada37f30af94673aa313b37eb0785cf482a3f898ccd4f",
+      "snapshot_sha256": "b9a8dfec2a4f359704dddfff9296accd3e58a02e80fb221f144ecf0940bcf07b",
+      "role": "design"
+    },
+    {
+      "file": "tutorial14_sram.init",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14-tang20k-parameters/builder/gateware/tutorial14_sram.init",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "snapshot_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "role": "design"
+    },
+    {
+      "file": "tutorial14_main_ram.init",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14-tang20k-parameters/builder/gateware/tutorial14_main_ram.init",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "snapshot_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "role": "design"
+    },
+    {
+      "file": "tutorial14_rom.init",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14-tang20k-parameters/builder/gateware/tutorial14_rom.init",
+      "source_sha256": "68fa613a46257f839b59caea6ff66bb613526b8d83c77660b7fdb175dbe544f0",
+      "snapshot_sha256": "68fa613a46257f839b59caea6ff66bb613526b8d83c77660b7fdb175dbe544f0",
+      "role": "design"
+    },
+    {
+      "file": "tutorial14_mem.init",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14-tang20k-parameters/builder/gateware/tutorial14_mem.init",
+      "source_sha256": "c7c999687ef2df3956f30c1fc262d25101b18decf92a2f937a91dba4dd1f3b5e",
+      "snapshot_sha256": "c7c999687ef2df3956f30c1fc262d25101b18decf92a2f937a91dba4dd1f3b5e",
+      "role": "design"
+    },
+    {
+      "file": "gowin_primitives.v",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/14-fpga-platform/gowin_primitives.v",
+      "source_sha256": "eac982447be0b616cf6ddc48488e7d1f5d4535cc114688eb1bf16194fbd13fc3",
+      "snapshot_sha256": "eac982447be0b616cf6ddc48488e7d1f5d4535cc114688eb1bf16194fbd13fc3",
+      "role": "primitive_library"
+    },
+    {
+      "file": "gowin_sim_primitives.v",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/14-fpga-platform/gowin_sim_primitives.v",
+      "source_sha256": "73a4cb173a435475cb2f1935eeedb983f53f0faef459ff3657279e1077f54b18",
+      "snapshot_sha256": "73a4cb173a435475cb2f1935eeedb983f53f0faef459ff3657279e1077f54b18",
+      "role": "simulation_source"
+    },
+    {
+      "file": "tang_tb.sv",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/14-fpga-platform/tang_tb.sv",
+      "source_sha256": "b964de2ff519a1207a4b575634ef72a7cf8f785465f61debe97c3b9e9b4c8c56",
+      "snapshot_sha256": "b964de2ff519a1207a4b575634ef72a7cf8f785465f61debe97c3b9e9b4c8c56",
+      "role": "simulation_source"
+    },
+    {
+      "file": "YOSYS_COPYING",
+      "origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/14-fpga-platform/YOSYS_COPYING",
+      "source_sha256": "6998b5724d4cb3f459d1c12b6bd0cdbfa9c949ef14d0fb6d7d97d97404e5b5f3",
+      "snapshot_sha256": "6998b5724d4cb3f459d1c12b6bd0cdbfa9c949ef14d0fb6d7d97d97404e5b5f3",
+      "role": "license"
+    }
+  ]
+}

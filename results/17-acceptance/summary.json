@@ -1,0 +1,688 @@
+{
+  "status": "PASS: executed digital tests only",
+  "cases": {
+    "17-counted-hardware": {
+      "status": "PASS: bounded hardware campaign",
+      "parameters": {
+        "input": "results/17-counted",
+        "output": "results/17-counted-hardware",
+        "serial": "/dev/serial/by-id/usb-SIPEED_JTAG_Debugger_FactoryAIOT_Pro-if01-port0",
+        "seconds": 600.0,
+        "warm_resets": 0,
+        "min_rounds": 100,
+        "min_irqs": 10,
+        "load": true,
+        "expect_fault": false,
+        "board_id": "Tang Primer 20K Dock; serial not recorded",
+        "ambient_c": null,
+        "supply_v": null,
+        "measurement_note": "No external thermometer/voltmeter connected"
+      },
+      "board": "Tang Primer 20K Dock",
+      "clock_hz": 54000000,
+      "warm_resets": 0,
+      "echoes": 1165,
+      "max_rounds": 388200,
+      "max_irqs": 599956,
+      "boots": 1,
+      "cold_boot": "NOT_RUN: requires physical power cycling",
+      "temperature_voltage": "NOT_MEASURED",
+      "fault_caught": false,
+      "epochs": [
+        {
+          "boot": 1,
+          "start_seconds": 0.0027181640034541488,
+          "rounds": 388200,
+          "irqs": 599956,
+          "ram_reads": 143384,
+          "ram_writes": 1006736447
+        }
+      ],
+      "ambient_c": null,
+      "supply_v": null,
+      "measurement_note": "No external thermometer/voltmeter connected",
+      "board_id": "Tang Primer 20K Dock; serial not recorded",
+      "ram_counter_scope": "completed main_ram Wishbone transfers, 32-bit modulo counters",
+      "total_rounds_lower_bound": 388200,
+      "total_irqs_lower_bound": 599956,
+      "total_ram_reads_lower_bound": 143384,
+      "total_ram_writes_lower_bound": 1006736447,
+      "bitstream_sha256": "d7eb36830468a1c8171cb5a672e06005477e55d816fd7ab0a545b8d3df11a460",
+      "elapsed_seconds": 600.0364795170026,
+      "pending_echoes_at_end": 0,
+      "longest_observed_epoch_seconds": 600.0337613529991
+    },
+    "17-counted-resets": {
+      "status": "PASS: bounded hardware campaign",
+      "parameters": {
+        "input": "results/17-counted",
+        "output": "results/17-counted-resets",
+        "serial": "/dev/serial/by-id/usb-SIPEED_JTAG_Debugger_FactoryAIOT_Pro-if01-port0",
+        "seconds": 60.0,
+        "warm_resets": 10,
+        "min_rounds": 100,
+        "min_irqs": 10,
+        "load": true,
+        "expect_fault": false,
+        "board_id": "Tang Primer 20K Dock; serial not recorded",
+        "ambient_c": null,
+        "supply_v": null,
+        "measurement_note": "No external thermometer/voltmeter connected"
+      },
+      "board": "Tang Primer 20K Dock",
+      "clock_hz": 54000000,
+      "warm_resets": 10,
+      "echoes": 117,
+      "max_rounds": 3500,
+      "max_irqs": 5404,
+      "boots": 11,
+      "cold_boot": "NOT_RUN: requires physical power cycling",
+      "temperature_voltage": "NOT_MEASURED",
+      "fault_caught": false,
+      "epochs": [
+        {
+          "boot": 1,
+          "start_seconds": 0.0026856149779632688,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1816,
+          "ram_writes": 9077236
+        },
+        {
+          "boot": 2,
+          "start_seconds": 5.5168993339757435,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1816,
+          "ram_writes": 9077236
+        },
+        {
+          "boot": 3,
+          "start_seconds": 10.930328746966552,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1800,
+          "ram_writes": 9077216
+        },
+        {
+          "boot": 4,
+          "start_seconds": 16.446429167001043,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1816,
+          "ram_writes": 9077236
+        },
+        {
+          "boot": 5,
+          "start_seconds": 21.859837127965875,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1800,
+          "ram_writes": 9077216
+        },
+        {
+          "boot": 6,
+          "start_seconds": 27.380415281979367,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1800,
+          "ram_writes": 9077216
+        },
+        {
+          "boot": 7,
+          "start_seconds": 32.79381042899331,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1800,
+          "ram_writes": 9077216
+        },
+        {
+          "boot": 8,
+          "start_seconds": 38.211796658986714,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1800,
+          "ram_writes": 9077216
+        },
+        {
+          "boot": 9,
+          "start_seconds": 43.727782072965056,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1816,
+          "ram_writes": 9077236
+        },
+        {
+          "boot": 10,
+          "start_seconds": 49.141168649017345,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1800,
+          "ram_writes": 9077216
+        },
+        {
+          "boot": 11,
+          "start_seconds": 54.55460174399195,
+          "rounds": 3500,
+          "irqs": 5404,
+          "ram_reads": 1816,
+          "ram_writes": 9077236
+        }
+      ],
+      "ambient_c": null,
+      "supply_v": null,
+      "measurement_note": "No external thermometer/voltmeter connected",
+      "board_id": "Tang Primer 20K Dock; serial not recorded",
+      "ram_counter_scope": "completed main_ram Wishbone transfers, 32-bit modulo counters",
+      "total_rounds_lower_bound": 38500,
+      "total_irqs_lower_bound": 59444,
+      "total_ram_reads_lower_bound": 19880,
+      "total_ram_writes_lower_bound": 99849476,
+      "bitstream_sha256": "d7eb36830468a1c8171cb5a672e06005477e55d816fd7ab0a545b8d3df11a460",
+      "elapsed_seconds": 60.014354075014126,
+      "pending_echoes_at_end": 0,
+      "longest_observed_epoch_seconds": 5.520578154013492
+    },
+    "17-counted-27mhz-hardware": {
+      "status": "PASS: bounded hardware campaign",
+      "parameters": {
+        "input": "results/17-counted-27mhz",
+        "output": "results/17-counted-27mhz-hardware",
+        "serial": "/dev/serial/by-id/usb-SIPEED_JTAG_Debugger_FactoryAIOT_Pro-if01-port0",
+        "seconds": 120.0,
+        "warm_resets": 0,
+        "min_rounds": 100,
+        "min_irqs": 10,
+        "load": true,
+        "expect_fault": false,
+        "board_id": "Tang Primer 20K Dock; serial not recorded",
+        "ambient_c": null,
+        "supply_v": null,
+        "measurement_note": "No external thermometer/voltmeter connected"
+      },
+      "board": "Tang Primer 20K Dock",
+      "clock_hz": 27000000,
+      "warm_resets": 0,
+      "echoes": 238,
+      "max_rounds": 39500,
+      "max_irqs": 119954,
+      "boots": 1,
+      "cold_boot": "NOT_RUN: requires physical power cycling",
+      "temperature_voltage": "NOT_MEASURED",
+      "fault_caught": false,
+      "epochs": [
+        {
+          "boot": 1,
+          "start_seconds": 0.0028323130100034177,
+          "rounds": 39500,
+          "irqs": 119954,
+          "ram_reads": 16952,
+          "ram_writes": 103441466
+        }
+      ],
+      "ambient_c": null,
+      "supply_v": null,
+      "measurement_note": "No external thermometer/voltmeter connected",
+      "board_id": "Tang Primer 20K Dock; serial not recorded",
+      "ram_counter_scope": "completed main_ram Wishbone transfers, 32-bit modulo counters",
+      "total_rounds_lower_bound": 39500,
+      "total_irqs_lower_bound": 119954,
+      "total_ram_reads_lower_bound": 16952,
+      "total_ram_writes_lower_bound": 103441466,
+      "bitstream_sha256": "8c0b993e99196f96cba0dc57c7e4fb4916191d0d4f4a521b04525d3a18020e2d",
+      "elapsed_seconds": 120.02150289597921,
+      "pending_echoes_at_end": 0,
+      "longest_observed_epoch_seconds": 120.01867058296921
+    },
+    "17a": {
+      "status": "PASS: real SMP RTL and independent mailbox checks",
+      "harts": 1,
+      "compile_seconds": 9.687229550967459,
+      "run_seconds": 0.16455050802323967,
+      "work_per_hart": 1000,
+      "delay_hart_loop_iterations": 0,
+      "fault_stop": false,
+      "fault_mailbox": false,
+      "checks": [
+        "per-hart RAM pattern and byte write",
+        "CLINT software and timer IRQ",
+        "atomic shared counter",
+        "independent mailboxes",
+        "system reset and repeated boot"
+      ],
+      "reset_runs": 2,
+      "isa": "rv32ima",
+      "memory": "Wishbone integrated RAM",
+      "fpga": "NOT_RUN",
+      "clock": "ideal 1 MHz simulation, not a measured FPGA clock",
+      "temperature_voltage": "NOT_APPLICABLE: simulation",
+      "sources": [
+        {
+          "file": "Ram_1w_1rs_Generic.v",
+          "sha256": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d"
+        },
+        {
+          "file": "VexRiscvLitexSmpCluster_Cc1_Iw32Is4096Iy1_Dw32Ds4096Dy1_ITs4DTs4_Ood_Wm.v",
+          "sha256": "9ab070658056f1ffb34c8d46e488782805fde47fdfb376469e850e27a7436db5"
+        },
+        {
+          "file": "sim.v",
+          "sha256": "e30afc5978cc27e70eb39535376b96eb1950c1e2acde080cf0025bd8aab8fc78"
+        },
+        {
+          "file": "sim_main_ram.init",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "sim_mem.init",
+          "sha256": "d1a1380bc510940206da18aad7f35bf3bf4a185dbff7637b428ed7590c5e3a24"
+        },
+        {
+          "file": "sim_rom.init",
+          "sha256": "ddbd1a6932616f360f29c1e8cb195241f86229b61a5c4d6cc53344e9e822b47b"
+        },
+        {
+          "file": "sim_sram.init",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "tb.sv",
+          "sha256": "7b6ced2b1371450945808aaf5ae9d59940e7b8cfdb92c182c517d5012c62d70e"
+        }
+      ]
+    },
+    "17a-parameters": {
+      "status": "PASS: real SMP RTL and independent mailbox checks",
+      "harts": 1,
+      "compile_seconds": 8.486999542976264,
+      "run_seconds": 0.2653543569613248,
+      "work_per_hart": 257,
+      "delay_hart_loop_iterations": 0,
+      "fault_stop": false,
+      "fault_mailbox": false,
+      "checks": [
+        "per-hart RAM pattern and byte write",
+        "CLINT software and timer IRQ",
+        "atomic shared counter",
+        "independent mailboxes",
+        "system reset and repeated boot"
+      ],
+      "reset_runs": 3,
+      "isa": "rv32ima",
+      "memory": "Wishbone integrated RAM",
+      "fpga": "NOT_RUN",
+      "clock": "ideal 1 MHz simulation, not a measured FPGA clock",
+      "temperature_voltage": "NOT_APPLICABLE: simulation",
+      "sources": [
+        {
+          "file": "Ram_1w_1rs_Generic.v",
+          "sha256": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d"
+        },
+        {
+          "file": "VexRiscvLitexSmpCluster_Cc1_Iw32Is4096Iy1_Dw32Ds4096Dy1_ITs4DTs4_Ood_Wm.v",
+          "sha256": "9ab070658056f1ffb34c8d46e488782805fde47fdfb376469e850e27a7436db5"
+        },
+        {
+          "file": "sim.v",
+          "sha256": "c821f9fafd6049cf06c38e55722900a036e6f9572a8898643c09a1035ab307a9"
+        },
+        {
+          "file": "sim_main_ram.init",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "sim_mem.init",
+          "sha256": "d1a1380bc510940206da18aad7f35bf3bf4a185dbff7637b428ed7590c5e3a24"
+        },
+        {
+          "file": "sim_rom.init",
+          "sha256": "b865b8d3f708fbf3ffff2b75e08c8f76778d5dbfb6626199093351175c544dcf"
+        },
+        {
+          "file": "sim_sram.init",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "tb.sv",
+          "sha256": "9e47a12296ba52804d9b80748cd02a1078d46534f808974e4d4ecddebe3b0c2f"
+        }
+      ]
+    },
+    "17b": {
+      "status": "PASS: real SMP RTL and independent mailbox checks",
+      "harts": 2,
+      "compile_seconds": 18.05691379297059,
+      "run_seconds": 0.7659094500122592,
+      "work_per_hart": 1000,
+      "delay_hart_loop_iterations": 0,
+      "fault_stop": false,
+      "fault_mailbox": false,
+      "checks": [
+        "per-hart RAM pattern and byte write",
+        "CLINT software and timer IRQ",
+        "atomic shared counter",
+        "independent mailboxes",
+        "system reset and repeated boot"
+      ],
+      "reset_runs": 2,
+      "isa": "rv32ima",
+      "memory": "native shared 128-bit model, cached coherent CPU accesses",
+      "fpga": "NOT_RUN",
+      "clock": "ideal 1 MHz simulation, not a measured FPGA clock",
+      "temperature_voltage": "NOT_APPLICABLE: simulation",
+      "sources": [
+        {
+          "file": "Ram_1w_1rs_Generic.v",
+          "sha256": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d"
+        },
+        {
+          "file": "VexRiscvLitexSmpCluster_Cc2_Iw64Is8192Iy2_Dw64Ds8192Dy2_ITs4DTs4_Ldw128_Cdma_Ood.v",
+          "sha256": "87c8b5d733ac098d0c6d08a36938ca434afe9eb8d6ac195bf8148d4b249962e8"
+        },
+        {
+          "file": "sim.v",
+          "sha256": "e34317a45d9d71ee98b262171ed3204b0dd982539cd9f413a1942be1208858ae"
+        },
+        {
+          "file": "sim_mem.init",
+          "sha256": "bc4f4bd5009ca85c8cfc0b31760c96ac91d895dce1fe68edf7857766157a7c06"
+        },
+        {
+          "file": "sim_mem_3.init",
+          "sha256": "800d7cba121ce823a04851e557c4b151a54c5ae98e2646d06815551720152ae1"
+        },
+        {
+          "file": "sim_rom.init",
+          "sha256": "8c9b9791813d99b7370bc2b874077af6ccae149db1068a8ab7bf2cc77ec46123"
+        },
+        {
+          "file": "sim_shared_ram.init",
+          "sha256": "800d7cba121ce823a04851e557c4b151a54c5ae98e2646d06815551720152ae1"
+        },
+        {
+          "file": "sim_sram_1.init",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "tb.sv",
+          "sha256": "994d6c1925471fd327e291742d6e7786d53c9d183d0b31c9798d4a46382d04ab"
+        }
+      ]
+    },
+    "17b-delayed": {
+      "status": "PASS: real SMP RTL and independent mailbox checks",
+      "harts": 2,
+      "compile_seconds": 23.828198367962614,
+      "run_seconds": 1.0666675699758343,
+      "work_per_hart": 257,
+      "delay_hart_loop_iterations": 3000,
+      "fault_stop": false,
+      "fault_mailbox": false,
+      "checks": [
+        "per-hart RAM pattern and byte write",
+        "CLINT software and timer IRQ",
+        "atomic shared counter",
+        "independent mailboxes",
+        "system reset and repeated boot"
+      ],
+      "reset_runs": 3,
+      "isa": "rv32ima",
+      "memory": "native shared 128-bit model, cached coherent CPU accesses",
+      "fpga": "NOT_RUN",
+      "clock": "ideal 1 MHz simulation, not a measured FPGA clock",
+      "temperature_voltage": "NOT_APPLICABLE: simulation",
+      "sources": [
+        {
+          "file": "Ram_1w_1rs_Generic.v",
+          "sha256": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d"
+        },
+        {
+          "file": "VexRiscvLitexSmpCluster_Cc2_Iw64Is8192Iy2_Dw64Ds8192Dy2_ITs4DTs4_Ldw128_Cdma_Ood.v",
+          "sha256": "87c8b5d733ac098d0c6d08a36938ca434afe9eb8d6ac195bf8148d4b249962e8"
+        },
+        {
+          "file": "sim.v",
+          "sha256": "c8036e24189a2408b633309496d790d6382afaca3464f83cc9622b9fe7f9b91e"
+        },
+        {
+          "file": "sim_mem.init",
+          "sha256": "bc4f4bd5009ca85c8cfc0b31760c96ac91d895dce1fe68edf7857766157a7c06"
+        },
+        {
+          "file": "sim_rom.init",
+          "sha256": "2ebb01d47aaca58f740ea514fb262adbf795ec580de2cc017aa7a2b5e0d499de"
+        },
+        {
+          "file": "sim_shared_ram.init",
+          "sha256": "800d7cba121ce823a04851e557c4b151a54c5ae98e2646d06815551720152ae1"
+        },
+        {
+          "file": "sim_sram_1.init",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "tb.sv",
+          "sha256": "01abbaad2b9a4ae4212aad082087ffac950f7fb82fcdd1e3fe7cc32f06117033"
+        }
+      ]
+    },
+    "17b-stop-hart": {
+      "status": "PASS: expected fault captured",
+      "harts": 2,
+      "compile_seconds": 23.882075372035615,
+      "run_seconds": 22.916124659008346,
+      "work_per_hart": 1000,
+      "delay_hart_loop_iterations": 0,
+      "fault_stop": true,
+      "fault_mailbox": false,
+      "checks": [
+        "exact expected UART fault and repeated reset"
+      ],
+      "reset_runs": 2,
+      "isa": "rv32ima",
+      "memory": "native shared 128-bit model, cached coherent CPU accesses",
+      "fpga": "NOT_RUN",
+      "clock": "ideal 1 MHz simulation, not a measured FPGA clock",
+      "temperature_voltage": "NOT_APPLICABLE: simulation",
+      "sources": [
+        {
+          "file": "Ram_1w_1rs_Generic.v",
+          "sha256": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d"
+        },
+        {
+          "file": "VexRiscvLitexSmpCluster_Cc2_Iw64Is8192Iy2_Dw64Ds8192Dy2_ITs4DTs4_Ldw128_Cdma_Ood.v",
+          "sha256": "87c8b5d733ac098d0c6d08a36938ca434afe9eb8d6ac195bf8148d4b249962e8"
+        },
+        {
+          "file": "sim.v",
+          "sha256": "c8036e24189a2408b633309496d790d6382afaca3464f83cc9622b9fe7f9b91e"
+        },
+        {
+          "file": "sim_mem.init",
+          "sha256": "bc4f4bd5009ca85c8cfc0b31760c96ac91d895dce1fe68edf7857766157a7c06"
+        },
+        {
+          "file": "sim_rom.init",
+          "sha256": "a0e74a39426e80a133ffbd0a84a50b2408729ff35a2192c47aa139036cf7022f"
+        },
+        {
+          "file": "sim_shared_ram.init",
+          "sha256": "800d7cba121ce823a04851e557c4b151a54c5ae98e2646d06815551720152ae1"
+        },
+        {
+          "file": "sim_sram_1.init",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "tb.sv",
+          "sha256": "a1f46d0316bd279f6727286d10a4090241bb478d12e88c90e9b2637a3b691e80"
+        }
+      ]
+    },
+    "17b-bad-mailbox": {
+      "status": "PASS: expected fault captured",
+      "harts": 2,
+      "compile_seconds": 23.87994453799911,
+      "run_seconds": 0.7160692460020073,
+      "work_per_hart": 1000,
+      "delay_hart_loop_iterations": 0,
+      "fault_stop": false,
+      "fault_mailbox": true,
+      "checks": [
+        "exact expected UART fault and repeated reset"
+      ],
+      "reset_runs": 2,
+      "isa": "rv32ima",
+      "memory": "native shared 128-bit model, cached coherent CPU accesses",
+      "fpga": "NOT_RUN",
+      "clock": "ideal 1 MHz simulation, not a measured FPGA clock",
+      "temperature_voltage": "NOT_APPLICABLE: simulation",
+      "sources": [
+        {
+          "file": "Ram_1w_1rs_Generic.v",
+          "sha256": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d"
+        },
+        {
+          "file": "VexRiscvLitexSmpCluster_Cc2_Iw64Is8192Iy2_Dw64Ds8192Dy2_ITs4DTs4_Ldw128_Cdma_Ood.v",
+          "sha256": "87c8b5d733ac098d0c6d08a36938ca434afe9eb8d6ac195bf8148d4b249962e8"
+        },
+        {
+          "file": "sim.v",
+          "sha256": "c8036e24189a2408b633309496d790d6382afaca3464f83cc9622b9fe7f9b91e"
+        },
+        {
+          "file": "sim_mem.init",
+          "sha256": "bc4f4bd5009ca85c8cfc0b31760c96ac91d895dce1fe68edf7857766157a7c06"
+        },
+        {
+          "file": "sim_rom.init",
+          "sha256": "ac9b47e2b4af3a2b6a52b6863d84af584fc8584c7ec3a299a7f40326eda2393b"
+        },
+        {
+          "file": "sim_shared_ram.init",
+          "sha256": "800d7cba121ce823a04851e557c4b151a54c5ae98e2646d06815551720152ae1"
+        },
+        {
+          "file": "sim_sram_1.init",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "tb.sv",
+          "sha256": "05e12ea8700ebffc05e611db0e771a724154804973329df9a1ee091157ad850e"
+        }
+      ]
+    }
+  },
+  "freeze": {
+    "17-counted": {
+      "rtl": {
+        "VexRiscv.v": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+        "gowin_primitives.v": "eac982447be0b616cf6ddc48488e7d1f5d4535cc114688eb1bf16194fbd13fc3",
+        "tutorial17.v": "23b749bdf9184c727367bfa0ffeee70f6cab67ca16270d76aba674aff7aed791",
+        "tutorial17_main_ram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "tutorial17_mem.init": "491f187970c0cc549d30439b458e23faa1a019c7ea1beaa6decd50cfa00fb071",
+        "tutorial17_rom.init": "f670bcb286eee17b229f749055193848b32e8e1690ec3ae7103a24defe1c35a5",
+        "tutorial17_sram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      "bitstream_sha256": "d7eb36830468a1c8171cb5a672e06005477e55d816fd7ab0a545b8d3df11a460",
+      "fmax": {
+        "VexRiscv.clk": {
+          "achieved": 131.47515869140625,
+          "constraint": 54
+        },
+        "boardsoc_crg_gw2apll2": {
+          "achieved": 506.0728759765625,
+          "constraint": 54
+        }
+      },
+      "config": {
+        "reference_clk_hz": 27000000,
+        "sys_clk_hz": 54000000,
+        "baud": 115200,
+        "led_count": 1,
+        "button_count": 1,
+        "blink_hz": 1,
+        "rom_size": 8192,
+        "sram_size": 4096,
+        "main_ram_size": 16384,
+        "stack_size": 1024,
+        "por_cycles": 65536,
+        "stress_words": 512,
+        "seed": 1,
+        "inject_fault": false
+      }
+    },
+    "17-counted-27mhz": {
+      "rtl": {
+        "VexRiscv.v": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+        "gowin_primitives.v": "eac982447be0b616cf6ddc48488e7d1f5d4535cc114688eb1bf16194fbd13fc3",
+        "tutorial17.v": "aa07df2692edb6da27606758275823974cb0679e94ea9bfb63e926bfc7511027",
+        "tutorial17_main_ram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "tutorial17_mem.init": "491f187970c0cc549d30439b458e23faa1a019c7ea1beaa6decd50cfa00fb071",
+        "tutorial17_rom.init": "fde1961719d7761ae78b5948a98268384c34f7e16ec03048cc2a15bfffeac3d3",
+        "tutorial17_sram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      "bitstream_sha256": "8c0b993e99196f96cba0dc57c7e4fb4916191d0d4f4a521b04525d3a18020e2d",
+      "fmax": {
+        "VexRiscv.clk": {
+          "achieved": 127.7791976928711,
+          "constraint": 27
+        },
+        "boardsoc_crg_gw2apll2": {
+          "achieved": 499.2511291503906,
+          "constraint": 27
+        }
+      },
+      "config": {
+        "reference_clk_hz": 27000000,
+        "sys_clk_hz": 27000000,
+        "baud": 115200,
+        "led_count": 1,
+        "button_count": 1,
+        "blink_hz": 1,
+        "rom_size": 8192,
+        "sram_size": 4096,
+        "main_ram_size": 16384,
+        "stack_size": 1024,
+        "por_cycles": 65536,
+        "stress_words": 512,
+        "seed": 1,
+        "inject_fault": false
+      }
+    },
+    "17a": {
+      "rtl": {
+        "Ram_1w_1rs_Generic.v": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d",
+        "VexRiscvLitexSmpCluster_Cc1_Iw32Is4096Iy1_Dw32Ds4096Dy1_ITs4DTs4_Ood_Wm.v": "9ab070658056f1ffb34c8d46e488782805fde47fdfb376469e850e27a7436db5",
+        "sim.v": "e30afc5978cc27e70eb39535376b96eb1950c1e2acde080cf0025bd8aab8fc78",
+        "sim_main_ram.init": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sim_mem.init": "d1a1380bc510940206da18aad7f35bf3bf4a185dbff7637b428ed7590c5e3a24",
+        "sim_rom.init": "ddbd1a6932616f360f29c1e8cb195241f86229b61a5c4d6cc53344e9e822b47b",
+        "sim_sram.init": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tb.sv": "7b6ced2b1371450945808aaf5ae9d59940e7b8cfdb92c182c517d5012c62d70e"
+      }
+    },
+    "17b": {
+      "rtl": {
+        "Ram_1w_1rs_Generic.v": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d",
+        "VexRiscvLitexSmpCluster_Cc2_Iw64Is8192Iy2_Dw64Ds8192Dy2_ITs4DTs4_Ldw128_Cdma_Ood.v": "87c8b5d733ac098d0c6d08a36938ca434afe9eb8d6ac195bf8148d4b249962e8",
+        "sim.v": "e34317a45d9d71ee98b262171ed3204b0dd982539cd9f413a1942be1208858ae",
+        "sim_mem.init": "bc4f4bd5009ca85c8cfc0b31760c96ac91d895dce1fe68edf7857766157a7c06",
+        "sim_mem_3.init": "800d7cba121ce823a04851e557c4b151a54c5ae98e2646d06815551720152ae1",
+        "sim_rom.init": "8c9b9791813d99b7370bc2b874077af6ccae149db1068a8ab7bf2cc77ec46123",
+        "sim_shared_ram.init": "800d7cba121ce823a04851e557c4b151a54c5ae98e2646d06815551720152ae1",
+        "sim_sram_1.init": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tb.sv": "994d6c1925471fd327e291742d6e7786d53c9d183d0b31c9798d4a46382d04ab"
+      }
+    }
+  },
+  "pending": {
+    "hour_continuous": "NOT_RUN; executable campaign provided",
+    "physical_cold_start": "NOT_RUN",
+    "temperature_range": "NOT_MEASURED",
+    "voltage_range": "NOT_MEASURED",
+    "smp_fpga": "NOT_RUN",
+    "plic_external_irq": "NOT_RUN",
+    "smp_random_long_run": "NOT_RUN"
+  }
+}

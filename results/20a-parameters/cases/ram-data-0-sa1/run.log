@@ -1,0 +1,2 @@
+RAM_RESULT kind=1 bit=0 value=1 steps=160 mismatches=48
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20a-parameters/rtl/tb_ram.sv:41: $finish called at 1600000 (1ps)

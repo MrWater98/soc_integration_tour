@@ -1,0 +1,18 @@
+{
+  "tag": "v1.10.102",
+  "commit": "ebc3f7e5d22a67f9423e0d980cd056291a58f307",
+  "assets": [
+    {
+      "name": "ics55_LLSC_H7CR_liberty.tar.bz2",
+      "bytes": 76996026,
+      "sha256": "ef33eec4cd5f617d3dd0073122e556df06560dd65eebf805648640038dedc2b7",
+      "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CR_liberty.tar.bz2"
+    },
+    {
+      "name": "ics55_LLSC_H7CR_gds.tar.bz2",
+      "bytes": 1489081,
+      "sha256": "525a7a486e15e36888e4ce08887c946cd16c60dc2c90819fb493d865ed38cc2b",
+      "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CR_gds.tar.bz2"
+    }
+  ]
+}

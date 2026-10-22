@@ -1,0 +1,41 @@
+{
+  "repository": "https://github.com/google/CFU-Playground.git",
+  "commit": "7f8ec4147b39db98534f8a10f9ddb1c26aca5648",
+  "files": [
+    {
+      "file": "cfu_mac.v",
+      "upstream_path": "proj/dse_template/cfu.v",
+      "sha256": "a4e4b294c3fcc40500c947d745ce63b865054831cf597896da657cc31abcdd01"
+    },
+    {
+      "file": "cfu_passthrough.v",
+      "upstream_path": "proj/proj_template_v/cfu.v",
+      "sha256": "acd281d3d4e561faa02c681fa0c3395836efa6d2446b595dd219c98249bc6162"
+    },
+    {
+      "file": "cfu.h",
+      "upstream_path": "common/src/cfu.h",
+      "sha256": "02902bd3dc824dbeaf67f4ea143ed7d1c9b935abc1575e5d69b274e922db94de"
+    },
+    {
+      "file": "software_cfu.h",
+      "upstream_path": "common/src/software_cfu.h",
+      "sha256": "50cbbdd8a917a8a2918a3dcb40f09a6d93b167387b1c5b94b601b2a3f7be6a7f"
+    },
+    {
+      "file": "riscv.h",
+      "upstream_path": "third_party/SaxonSoc/riscv.h",
+      "sha256": "23f03e11078e1c9fa329b21335d2b5d1d28b91ac940a23049a6479017e06aca4"
+    },
+    {
+      "file": "LICENSE.apache2",
+      "upstream_path": "LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "file": "LICENSE.saxon-mit",
+      "upstream_path": "third_party/SaxonSoc/LICENSE",
+      "sha256": "2b2898b65684b1c46114463ea3690ecf44c93e8e236f96bbd8554b564c8a5742"
+    }
+  ]
+}

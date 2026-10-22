@@ -1,0 +1,10 @@
+{
+  "seed": 2,
+  "elapsed_seconds": 107.3026861990802,
+  "exit_code": -6,
+  "status": "TOOL_ERROR",
+  "error_details": [
+    "terminate called after throwing an instance of 'nextpnr_himbaechel::assertion_failure'",
+    "  what():  Assertion failure: w2n_entry == nullptr (/work/_builds/linux-x64/nextpnr-himbaechel/nextpnr/common/kernel/base_arch.h:259)"
+  ]
+}

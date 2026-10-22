@@ -1,0 +1,34 @@
+Breakpoint 1 at 0x1158: file fact.c, line 3.
+
+Breakpoint 1, fact (n=3) at fact.c:3
+3	    if (n <= 1) return 1;
+FRAME_N=3
+$1 = 0x555555555158
+SP_VALUE=0x7fffffffd430
+4	    int child = fact(n - 1);
+
+Breakpoint 1, fact (n=2) at fact.c:3
+3	    if (n <= 1) return 1;
+FRAME_N=2
+SP_VALUE=0x7fffffffd400
+
+Breakpoint 1, fact (n=1) at fact.c:3
+3	    if (n <= 1) return 1;
+FRAME_N=1
+SP_VALUE=0x7fffffffd3d0
+#0  fact (n=1) at fact.c:3
+#1  0x0000555555555172 in fact (n=2) at fact.c:4
+#2  0x0000555555555172 in fact (n=3) at fact.c:4
+#3  0x0000555555555194 in main () at fact.c:8
+0x0000555555555172 in fact (n=2) at fact.c:4
+4	    int child = fact(n - 1);
+Value returned is $2 = 1
+BACK_IN_N=2
+SP_VALUE=0x7fffffffd400
+0x0000555555555172 in fact (n=3) at fact.c:4
+4	    int child = fact(n - 1);
+Value returned is $3 = 2
+BACK_IN_N=3
+SP_VALUE=0x7fffffffd430
+fact(3)=6
+[Inferior 1 (process 1844486) exited normally]

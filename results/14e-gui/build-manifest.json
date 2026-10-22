@@ -1,0 +1,32 @@
+{
+  "source_revision": "861c57be9c9a0c38ab60b0eabd19903db37efa22",
+  "patch_sha256": "903072a1fb899a393aa0287e91daf10b4df2592226f1c5d7f1a1b1f788c81c5d",
+  "purpose": "view saved placement/routing; original frequency experiments use unmodified OSS CAD Suite",
+  "binary": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/build/nextpnr-himbaechel",
+  "binary_sha256": "473c13d56721002fa7320ca6cc0ed4da446e90f834238fe926a98e79bee19163",
+  "configure_command": [
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-viewer-deps/cmake/data/bin/cmake",
+    "-S",
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer",
+    "-B",
+    "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/build",
+    "-G",
+    "Ninja",
+    "-DARCH=himbaechel",
+    "-DHIMBAECHEL_UARCH=gowin",
+    "-DHIMBAECHEL_GOWIN_DEVICES=",
+    "-DBUILD_GUI=ON",
+    "-DBUILD_TESTS=OFF",
+    "-DUSE_IPO=OFF",
+    "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+    "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=-O1 -g1 -DNDEBUG",
+    "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+    "-DEigen3_DIR=/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-viewer-deps/usr/lib/cmake/eigen3",
+    "-DPython3_EXECUTABLE=/usr/bin/python3",
+    "-DPYTHON_EXECUTABLE=/usr/bin/python3",
+    "-DEXTERNAL_CHIPDB=ON",
+    "-DEXTERNAL_CHIPDB_ROOT=/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/share/nextpnr",
+    "-DIMPORT_BBA_FILES=/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/share/nextpnr"
+  ],
+  "tool_version": "\"nextpnr-himbaechel\" -- Next Generation Place and Route (Version nextpnr-0.11.1-54-g861c57be)"
+}

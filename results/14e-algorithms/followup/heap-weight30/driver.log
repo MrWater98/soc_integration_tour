@@ -1,0 +1,4 @@
+seed=5 status=TIMING_FAIL fmax=140.134521484375 MHz elapsed=106.30s
+seed=2 status=TIMING_FAIL fmax=140.134521484375 MHz elapsed=110.26s
+seed=8 status=TIMING_FAIL fmax=138.00718688964844 MHz elapsed=90.45s
+BEST 2 140.134521484375 MHz

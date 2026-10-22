@@ -1,0 +1,17 @@
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19-small-ram/rtl/asic_soc.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19-small-ram/rtl/VexRiscv_Min.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19-small-ram/rtl/reset_sync.v
+read_verilog /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19-small-ram/rtl/peripheral.v
+hierarchy -check -top asic_soc
+proc
+opt
+memory_collect
+memory_map
+opt
+synth -top asic_soc -flatten
+delete t:$scopeinfo
+setattr -unset init w:*
+check -assert
+write_json /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19-small-ram/generic.json
+write_verilog -noattr /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/19-small-ram/rtl/generic.v
+stat

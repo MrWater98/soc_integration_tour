@@ -1,0 +1,64 @@
+
+Discarded input sections
+
+ .comment       0x0000000000000000        0xf /tmp/ccfr4PhH.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x0000000000000000 0x0000000000002000 xr
+main_ram         0x0000000040000000 0x0000000000001000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+
+.text           0x0000000000000000      0x1fd
+ *(.text.init)
+ .text.init     0x0000000000000000       0x68 /tmp/ccPHIgdH.o
+                0x0000000000000000                _start
+ *(.text .text.*)
+ .text          0x0000000000000068        0x0 /tmp/ccPHIgdH.o
+ .text          0x0000000000000068      0x11c /tmp/ccfr4PhH.o
+                0x0000000000000090                main
+ *(.rodata .rodata.*)
+ .rodata.str1.4
+                0x0000000000000184       0x79 /tmp/ccfr4PhH.o
+
+.rela.dyn       0x0000000000000200        0x0
+ .rela.text.init
+                0x0000000000000200        0x0 /tmp/ccPHIgdH.o
+
+.data           0x0000000040000000        0x0 load address 0x0000000000000200
+                0x0000000040000000                __data_start = .
+ *(.data .data.* .sdata .sdata.*)
+ .data          0x0000000040000000        0x0 /tmp/ccPHIgdH.o
+ .data          0x0000000040000000        0x0 /tmp/ccfr4PhH.o
+                0x0000000040000000                . = ALIGN (0x4)
+                0x0000000040000000                __data_end = .
+                0x0000000000000200                __data_load_start = LOADADDR (.data)
+
+.bss            0x0000000040000000        0x0 load address 0x0000000000000200
+                0x0000000040000000                __bss_start = .
+ *(.bss .bss.* .sbss .sbss.* COMMON)
+ .bss           0x0000000040000000        0x0 /tmp/ccPHIgdH.o
+ .bss           0x0000000040000000        0x0 /tmp/ccfr4PhH.o
+                0x0000000040000000                . = ALIGN (0x4)
+                0x0000000040000000                __bss_end = .
+                0x0000000040001000                __stack_top = (ORIGIN (main_ram) + LENGTH (main_ram))
+                0x0000000040000c00                __stack_bottom = (__stack_top - 0x400)
+                0x0000000000000001                ASSERT ((__bss_end <= __stack_bottom), data overlaps stack)
+
+/DISCARD/
+ *(.comment)
+ *(.eh_frame*)
+LOAD /tmp/ccPHIgdH.o
+LOAD /tmp/ccfr4PhH.o
+OUTPUT(/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-small-ram/platform/firmware/program.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x0000000000000000       0x21
+ .riscv.attributes
+                0x0000000000000000       0x1f /tmp/ccPHIgdH.o
+ .riscv.attributes
+                0x000000000000001f       0x21 /tmp/ccfr4PhH.o

@@ -1,0 +1,57 @@
+{
+  "status": "PASS: real SMP RTL and independent mailbox checks",
+  "harts": 1,
+  "compile_seconds": 8.486999542976264,
+  "run_seconds": 0.2653543569613248,
+  "work_per_hart": 257,
+  "delay_hart_loop_iterations": 0,
+  "fault_stop": false,
+  "fault_mailbox": false,
+  "checks": [
+    "per-hart RAM pattern and byte write",
+    "CLINT software and timer IRQ",
+    "atomic shared counter",
+    "independent mailboxes",
+    "system reset and repeated boot"
+  ],
+  "reset_runs": 3,
+  "isa": "rv32ima",
+  "memory": "Wishbone integrated RAM",
+  "fpga": "NOT_RUN",
+  "clock": "ideal 1 MHz simulation, not a measured FPGA clock",
+  "temperature_voltage": "NOT_APPLICABLE: simulation",
+  "sources": [
+    {
+      "file": "Ram_1w_1rs_Generic.v",
+      "sha256": "6b08c2bffbbea32a16394e930fe227320aa5709bb825953d3740a58e4d854c4d"
+    },
+    {
+      "file": "VexRiscvLitexSmpCluster_Cc1_Iw32Is4096Iy1_Dw32Ds4096Dy1_ITs4DTs4_Ood_Wm.v",
+      "sha256": "9ab070658056f1ffb34c8d46e488782805fde47fdfb376469e850e27a7436db5"
+    },
+    {
+      "file": "sim.v",
+      "sha256": "c821f9fafd6049cf06c38e55722900a036e6f9572a8898643c09a1035ab307a9"
+    },
+    {
+      "file": "sim_main_ram.init",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "sim_mem.init",
+      "sha256": "d1a1380bc510940206da18aad7f35bf3bf4a185dbff7637b428ed7590c5e3a24"
+    },
+    {
+      "file": "sim_rom.init",
+      "sha256": "b865b8d3f708fbf3ffff2b75e08c8f76778d5dbfb6626199093351175c544dcf"
+    },
+    {
+      "file": "sim_sram.init",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "tb.sv",
+      "sha256": "9e47a12296ba52804d9b80748cd02a1078d46534f808974e4d4ecddebe3b0c2f"
+    }
+  ]
+}

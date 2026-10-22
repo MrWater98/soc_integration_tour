@@ -1,0 +1,71 @@
+ninja: Entering directory `soc_integration_tutorial/external/nextpnr-gui-viewer/build'
+[1/9] Automatic MOC for target QtPropertyBrowser
+[2/7] Automatic MOC for target nextpnr-himbaechel-gui
+[3/6] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o
+FAILED: himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o 
+/usr/bin/c++ -DARCHNAME=himbaechel -DARCH_HIMBAECHEL -DBOOST_ALL_NO_LIB -DBOOST_ATOMIC_DYN_LINK -DBOOST_IOSTREAMS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_THREAD_DYN_LINK -DEXTERNAL_CHIPDB_ROOT=\"/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/fpga-tools/oss-cad-suite/share/nextpnr\" -DNEXTPNR_NAMESPACE=nextpnr_himbaechel -DNO_RUST -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_NO_KEYWORDS -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/build/himbaechel/gui -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/build/himbaechel/gui/nextpnr-himbaechel-gui_autogen/include -I/usr/include/python3.8 -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/himbaechel -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/frontend -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/json -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/3rdparty/QtPropertyBrowser/src -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/3rdparty/imgui -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/3rdparty/qtimgui -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/Boost::headers -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/../3rdparty/python-console -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/../3rdparty/python-console/modified -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/common/kernel -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/himbaechel -I/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/build/common -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -isystem /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -isystem /usr/include/x86_64-linux-gnu/qt5/QtOpenGL -isystem /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/3rdparty/pybind11/include -O1 -g1 -DNDEBUG -std=gnu++17 -fPIC -MD -MT himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o -MF himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o.d -o himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o -c /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/basewindow.cc
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/basewindow.cc: In constructor ‘nextpnr_himbaechel::BaseMainWindow::BaseMainWindow(std::unique_ptr<nextpnr_himbaechel::Context>, nextpnr_himbaechel::CommandHandler*, QWidget*)’:
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/basewindow.cc:73:106: error: invalid use of incomplete type ‘class QLabel’
+   73 |         "<span style='color:#dc4444'>IO</span> &nbsp; | Select a net to inspect its route", centralWidget);
+      |                                                                                                          ^
+In file included from /usr/include/x86_64-linux-gnu/qt5/QtWidgets/QMessageBox:1,
+                 from /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/basewindow.cc:28:
+/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qmessagebox.h:51:7: note: forward declaration of ‘class QLabel’
+   51 | class QLabel;
+      |       ^~~~~~
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/basewindow.cc:74:39: error: no matching function for call to ‘QGridLayout::addWidget(QLabel*&, int, int)’
+   74 |     gridLayout->addWidget(legend, 0, 0);
+      |                                       ^
+In file included from /usr/include/x86_64-linux-gnu/qt5/QtWidgets/QGridLayout:1,
+                 from /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/external/nextpnr-gui-viewer/gui/basewindow.cc:24:
+/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qgridlayout.h:102:17: note: candidate: ‘void QGridLayout::addWidget(QWidget*)’
+  102 |     inline void addWidget(QWidget *w) { QLayout::addWidget(w); }
+      |                 ^~~~~~~~~
+/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qgridlayout.h:102:17: note:   candidate expects 1 argument, 3 provided
+/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qgridlayout.h:103:10: note: candidate: ‘void QGridLayout::addWidget(QWidget*, int, int, Qt::Alignment)’
+  103 |     void addWidget(QWidget *, int row, int column, Qt::Alignment = Qt::Alignment());
+      |          ^~~~~~~~~
+/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qgridlayout.h:103:20: note:   no known conversion for argument 1 from ‘QLabel*’ to ‘QWidget*’
+  103 |     void addWidget(QWidget *, int row, int column, Qt::Alignment = Qt::Alignment());
+      |                    ^~~~~~~~~
+/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qgridlayout.h:104:10: note: candidate: ‘void QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)’
+  104 |     void addWidget(QWidget *, int row, int column, int rowSpan, int columnSpan, Qt::Alignment = Qt::Alignment());
+      |          ^~~~~~~~~
+/usr/include/x86_64-linux-gnu/qt5/QtWidgets/qgridlayout.h:104:10: note:   candidate expects 6 arguments, 3 provided
+[4/6] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/fpgaviewwidget.cc.o
+[5/6] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/designwidget.cc.o
+ninja: build stopped: subcommand failed.
+ninja: Entering directory `soc_integration_tutorial/external/nextpnr-gui-viewer/build'
+[1/7] Automatic MOC for target QtPropertyBrowser
+[2/5] Automatic MOC for target nextpnr-himbaechel-gui
+[3/4] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o
+[4/4] Linking CXX executable nextpnr-himbaechel
+ninja: Entering directory `soc_integration_tutorial/external/nextpnr-gui-viewer/build'
+[1/7] Automatic MOC for target QtPropertyBrowser
+[2/5] Automatic MOC for target nextpnr-himbaechel-gui
+[3/4] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/designwidget.cc.o
+[4/4] Linking CXX executable nextpnr-himbaechel
+ninja: Entering directory `soc_integration_tutorial/external/nextpnr-gui-viewer/build'
+[1/9] Automatic MOC for target QtPropertyBrowser
+[2/7] Automatic MOC for target nextpnr-himbaechel-gui
+[3/6] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/fpgaviewwidget.cc.o
+[4/6] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o
+[5/6] Building CXX object himbaechel/CMakeFiles/nextpnr-himbaechel.dir/uarch/gowin/gowin.cc.o
+[6/6] Linking CXX executable nextpnr-himbaechel
+ninja: Entering directory `soc_integration_tutorial/external/nextpnr-gui-viewer/build'
+[1/7] Automatic MOC for target QtPropertyBrowser
+[2/5] Automatic MOC for target nextpnr-himbaechel-gui
+[3/4] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o
+[4/4] Linking CXX executable nextpnr-himbaechel
+ninja: Entering directory `soc_integration_tutorial/external/nextpnr-gui-viewer/build'
+[1/7] Automatic MOC for target QtPropertyBrowser
+[2/5] Automatic MOC for target nextpnr-himbaechel-gui
+[3/4] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o
+[4/4] Linking CXX executable nextpnr-himbaechel
+ninja: Entering directory `soc_integration_tutorial/external/nextpnr-gui-viewer/build'
+[1/9] Automatic MOC for target QtPropertyBrowser
+[2/7] Automatic MOC for target nextpnr-himbaechel-gui
+[3/6] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/basewindow.cc.o
+[4/6] Building CXX object himbaechel/gui/CMakeFiles/nextpnr-himbaechel-gui.dir/designwidget.cc.o
+[5/6] Building CXX object himbaechel/CMakeFiles/nextpnr-himbaechel.dir/uarch/gowin/gowin.cc.o
+[6/6] Linking CXX executable nextpnr-himbaechel

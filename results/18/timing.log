@@ -1,0 +1,65 @@
+OpenSTA 2.0.17 GITDIR-NOT Copyright (c) 2019, Parallax Software, Inc.
+License GPLv3: GNU GPL version 3 <http://gnu.org/licenses/gpl.html>
+
+This is free software, and you are free to change and redistribute it
+under certain conditions; type `show_copying' for details. 
+This program comes with ABSOLUTELY NO WARRANTY; for details type `show_warranty'.
+Startpoint: reset (input port clocked by core)
+Endpoint: _85_ (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock core (rise edge)
+   0.00    0.00   clock network delay (ideal)
+   1.00    1.00 v input external delay
+   0.00    1.00 v reset (in)
+   0.07    1.07 ^ _41_/Y (INVX0P5H7R)
+   0.07    1.14 v _56_/Y (AOAI211X0P5H7R)
+   0.06    1.20 ^ _57_/Y (AOI31X0P5H7R)
+   0.00    1.20 ^ _85_/D (DFFQX1H7R)
+           1.20   data arrival time
+
+  20.00   20.00   clock core (rise edge)
+   0.00   20.00   clock network delay (ideal)
+   0.00   20.00   clock reconvergence pessimism
+          20.00 ^ _85_/CK (DFFQX1H7R)
+  -0.04   19.96   library setup time
+          19.96   data required time
+---------------------------------------------------------
+          19.96   data required time
+          -1.20   data arrival time
+---------------------------------------------------------
+          18.77   slack (MET)
+
+
+Startpoint: _90_ (rising edge-triggered flip-flop clocked by core)
+Endpoint: _90_ (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock core (rise edge)
+   0.00    0.00   clock network delay (ideal)
+   0.00    0.00 ^ _90_/CK (DFFQX1H7R)
+   0.07    0.07 v _90_/Q (DFFQX1H7R)
+   0.02    0.10 ^ _66_/Y (AOI31X0P5H7R)
+   0.02    0.12 v _67_/Y (NOR3X0P5H7R)
+   0.00    0.12 v _90_/D (DFFQX1H7R)
+           0.12   data arrival time
+
+   0.00    0.00   clock core (rise edge)
+   0.00    0.00   clock network delay (ideal)
+   0.00    0.00   clock reconvergence pessimism
+           0.00 ^ _90_/CK (DFFQX1H7R)
+   0.00    0.00   library hold time
+           0.00   data required time
+---------------------------------------------------------
+           0.00   data required time
+          -0.12   data arrival time
+---------------------------------------------------------
+           0.12   slack (MET)
+
+

@@ -1,0 +1,11 @@
+{
+  "board_id": "Tang Primer 20K Dock; fill in your board serial",
+  "ambient_c": null,
+  "supply_v": null,
+  "measurement_note": "No external voltage or temperature measurement",
+  "cases": [
+    {"name": "continuous-54mhz", "input": "results/17-counted", "seconds": 3600, "warm_resets": 0},
+    {"name": "warm-reset-54mhz", "input": "results/17-counted", "seconds": 120, "warm_resets": 10},
+    {"name": "continuous-27mhz", "input": "results/17-counted-27mhz", "seconds": 600, "warm_resets": 0}
+  ]
+}

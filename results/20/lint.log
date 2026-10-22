@@ -1,0 +1,93 @@
+- V e r i l a t i o n   R e p o r t: Verilator 5.034 2025-02-24 rev v5.034
+- Verilator: Built from 0.827 MB sources in 7 modules, into 0.259 MB in 13 C++ files needing 0.000 MB
+- Verilator: Walltime 0.062 s (elab=0.010, cvt=0.028, bld=0.000); cpu 0.062 s on 1 threads; alloced 28.680 MB
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/peripheral.v:27:22: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'gpio_sync' generates 4 bits.
+                                                                                                                              : ... note: In instance 'asic_soc.peripheral'
+   27 |             0: dat_r = gpio_sync;
+      |                      ^
+                      ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.034
+                      ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/peripheral.v:28:22: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'gpio_out' generates 4 bits.
+                                                                                                                              : ... note: In instance 'asic_soc.peripheral'
+   28 |             1: dat_r = gpio_out;
+      |                      ^
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/peripheral.v:31:22: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'timer_pending' generates 1 bits.
+                                                                                                                              : ... note: In instance 'asic_soc.peripheral'
+   31 |             5: dat_r = timer_pending;
+      |                      ^
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/peripheral.v:33:22: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'stage' generates 8 bits.
+                                                                                                                              : ... note: In instance 'asic_soc.peripheral'
+   33 |             7: dat_r = stage;
+      |                      ^
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/peripheral.v:56:39: Operator SUB expects 32 or 16 bits on the LHS, but LHS's VARREF 'UART_DIV' generates 4 bits.
+                                                                                                                              : ... note: In instance 'asic_soc.peripheral'
+   56 |                     tx_div <= UART_DIV-1;
+      |                                       ^
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/peripheral.v:63:54: Operator SUB expects 32 or 16 bits on the LHS, but LHS's VARREF 'UART_DIV' generates 4 bits.
+                                                                                                                              : ... note: In instance 'asic_soc.peripheral'
+   63 |                     tx_bits <= 10; tx_div <= UART_DIV-1;
+      |                                                      ^
+%Warning-WIDTHTRUNC: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/VexRiscv_Min.v:1003:57: Operator ASSIGNW expects 32 bits on the Assign RHS, but Assign RHS's SHIFTR generates 33 bits.
+                                                                                                                                 : ... note: In instance 'asic_soc.VexRiscv'
+ 1003 |   assign _zz__zz_execute_to_memory_REGFILE_WRITE_DATA_1 = (_zz__zz_execute_to_memory_REGFILE_WRITE_DATA_1_1 >>> 1'd1);
+      |                                                         ^
+%Warning-WIDTHTRUNC: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/VexRiscv_Min.v:3235:27: Operator ASSIGNW expects 30 bits on the Assign RHS, but Assign RHS's SHIFTR generates 32 bits.
+                                                                                                                                 : ... note: In instance 'asic_soc.VexRiscv'
+ 3235 |   assign iBusWishbone_ADR = (iBus_cmd_m2sPipe_payload_pc >>> 2'd2);
+      |                           ^
+%Warning-WIDTHTRUNC: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/VexRiscv_Min.v:3254:27: Operator ASSIGNW expects 30 bits on the Assign RHS, but Assign RHS's SHIFTR generates 32 bits.
+                                                                                                                                 : ... note: In instance 'asic_soc.VexRiscv'
+ 3254 |   assign dBusWishbone_ADR = (dBus_cmd_halfPipe_payload_address >>> 2'd2);
+      |                           ^
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:353:18: Operator ASSIGNW expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'registers' generates 1 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  353 | assign vexriscv1 = registers;
+      |                  ^
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:356:52: Operator EQ expects 20 bits on the RHS, but RHS's CONST '1'h0' generates 1 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  356 |     decoder00[0] = (vexriscv_interface0_adr[29:10] == 1'd0);
+      |                                                    ^~
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:357:51: Operator EQ expects 24 bits on the RHS, but RHS's CONST '21'h100000' generates 21 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  357 |     decoder00[1] = (vexriscv_interface0_adr[29:6] == 21'h100000);
+      |                                                   ^~
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:358:51: Operator EQ expects 21 bits on the RHS, but RHS's CONST '20'h80000' generates 20 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  358 |     decoder00[2] = (vexriscv_interface0_adr[29:9] == 20'h80000);
+      |                                                   ^~
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:407:52: Operator EQ expects 20 bits on the RHS, but RHS's CONST '1'h0' generates 1 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  407 |     decoder10[0] = (vexriscv_interface1_adr[29:10] == 1'd0);
+      |                                                    ^~
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:408:51: Operator EQ expects 24 bits on the RHS, but RHS's CONST '21'h100000' generates 21 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  408 |     decoder10[1] = (vexriscv_interface1_adr[29:6] == 21'h100000);
+      |                                                   ^~
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:409:51: Operator EQ expects 21 bits on the RHS, but RHS's CONST '20'h80000' generates 20 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  409 |     decoder10[2] = (vexriscv_interface1_adr[29:9] == 20'h80000);
+      |                                                   ^~
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:558:26: Operator NEQ expects 4 bits on the RHS, but RHS's CONST '1'h0' generates 1 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  558 |     if ((interface0_sel0 != 1'd0)) begin
+      |                          ^~
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:574:31: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's CONST '1'h0' generates 1 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  574 |             interface0_dat_r0 = 1'd0;
+      |                               ^
+%Warning-WIDTHTRUNC: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:585:33: Operator ASSIGN expects 14 bits on the Assign RHS, but Assign RHS's VARREF 'interface0_adr0' generates 30 bits.
+                                                                                                                            : ... note: In instance 'asic_soc'
+  585 |                 interface1_adr0 = interface0_adr0;
+      |                                 ^
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:586:71: Operator NEQ expects 4 bits on the RHS, but RHS's CONST '1'h0' generates 1 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  586 |                 interface1_re = ((~interface0_we0) & (interface0_sel0 != 1'd0));
+      |                                                                       ^~
+%Warning-WIDTHEXPAND: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:587:69: Operator NEQ expects 4 bits on the RHS, but RHS's CONST '1'h0' generates 1 bits.
+                                                                                                                             : ... note: In instance 'asic_soc'
+  587 |                 interface1_we0 = (interface0_we0 & (interface0_sel0 != 1'd0));
+      |                                                                     ^~
+%Warning-CASEINCOMPLETE: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/20/rtl/asic_soc.v:575:13: Case values incompletely covered (example pattern 0x1)
+                                                                                                                                : ... note: In instance 'asic_soc'
+  575 |             case (wishbone2csr)
+      |             ^~~~

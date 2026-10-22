@@ -1,0 +1,20 @@
+{
+  "netlist_sha256": "7e989468638cac2503dac4cdb1011a3092e7ab68476bc47aaa838c3e1f47a26a",
+  "constraints_sha256": "108fa280f05d634f3d295cb9d21fe313d71e21e9df4c316b2bd0802e8a337dd3",
+  "netlist_origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-small-ram/synthesis/netlist.json",
+  "constraints_origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-small-ram/platform/constraints/tutorial14.cst",
+  "rtl_origin": "/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/results/14e-small-ram/synthesis/rtl",
+  "hardware_configuration": "150 MHz chapter 14 target; fixed for all seeds",
+  "rtl_files": {
+    "VexRiscv.v": "29be0fd1072159749ada7bd16c410456830a302bec39480f1f4fe1a07da3372b",
+    "gowin_primitives.v": "eac982447be0b616cf6ddc48488e7d1f5d4535cc114688eb1bf16194fbd13fc3",
+    "gowin_sim_primitives.v": "73a4cb173a435475cb2f1935eeedb983f53f0faef459ff3657279e1077f54b18",
+    "tang_tb.sv": "b964de2ff519a1207a4b575634ef72a7cf8f785465f61debe97c3b9e9b4c8c56",
+    "tutorial14.v": "5aac60bc59b3221039ff81d23e052c5c3575b98dd403a77560447df4531159e3",
+    "tutorial14_main_ram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "tutorial14_mem.init": "c7c999687ef2df3956f30c1fc262d25101b18decf92a2f937a91dba4dd1f3b5e",
+    "tutorial14_rom.init": "666e2514dc6bbbf4b15ee64fa278eb6fc61b4a3a4f11bcb52db24ba8b05a8448",
+    "tutorial14_sram.init": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "platform_manifest_sha256": "3b1fda0aca0ea9da23dfedd3f1e2e35d5bbf0cc276661ff2c420c38c5b70c8f8"
+}

@@ -1,0 +1,2 @@
+PASS_PASSTHROUGH cases=8
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/13f-cfu-ml/tb_passthrough.sv:18: $finish called at 8000 (1ps)

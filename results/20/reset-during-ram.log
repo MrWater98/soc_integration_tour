@@ -1,0 +1,6 @@
+RESET_INJECT stage=2
+UART_BYTE value=4f
+UART_BYTE value=4b
+PASS19 cycles=4916 UART=2 GPIO=9 reset_injected=1
+PASS20 boots=1 cycles=4916
+/home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/tb.sv:62: $finish called at 49180000 (1ps)

@@ -1,0 +1,2 @@
+FATAL: /home/ziyue/researchlib/Micro_Eletronic/litex/soc_integration_tutorial/chapters/20-asic-verification/tb.sv:38: WATCHDOG stage=  2
+       Time: 1000010000  Scope: tb

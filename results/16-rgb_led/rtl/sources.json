@@ -1,0 +1,7 @@
+[
+  {
+    "file": "rgb_led.v",
+    "sha256": "bb2b0d8c38aeeb5f64a10fdea60fa28e529bc27868604b4871eeb42e68d7e243",
+    "upstream": "twied/TangPrimer-20K-example@7f26660abc25e1b79f6709bd00ca9cead8706494"
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "experiments": {
+    "mac": [
+      "cfu_mac.v",
+      "tb_mac.sv"
+    ],
+    "passthrough": [
+      "cfu_passthrough.v",
+      "tb_passthrough.sv"
+    ],
+    "bad_offset": [
+      "bad_offset.v",
+      "tb_mac.sv"
+    ]
+  },
+  "files": [
+    {
+      "file": "cfu_mac.v",
+      "sha256": "a4e4b294c3fcc40500c947d745ce63b865054831cf597896da657cc31abcdd01"
+    },
+    {
+      "file": "cfu_passthrough.v",
+      "sha256": "acd281d3d4e561faa02c681fa0c3395836efa6d2446b595dd219c98249bc6162"
+    },
+    {
+      "file": "tb_mac.sv",
+      "sha256": "dac1d6a8ba825a6e29d8392bcd9ee3785640daf23615ea4742c95672fe83f1c8"
+    },
+    {
+      "file": "tb_passthrough.sv",
+      "sha256": "256280fd1c3e58420baae2213195c0e55b0adb775c272f307203367347c52ff6"
+    },
+    {
+      "file": "bad_offset.v",
+      "sha256": "8b5c33b3735cc1449dc3b2318777f764816d8b88e1a90f992968a45a42b092f4"
+    }
+  ]
+}

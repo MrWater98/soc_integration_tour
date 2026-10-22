@@ -1,0 +1,9 @@
+{
+  "seed": 2,
+  "elapsed_seconds": 12.196687420946546,
+  "exit_code": 125,
+  "status": "TOOL_ERROR",
+  "error_details": [
+    "ERROR: This uarch does not support the 'static' placer."
+  ]
+}
