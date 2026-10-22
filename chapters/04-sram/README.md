@@ -2,29 +2,29 @@
 
 Stage 03 had read-only firmware storage. This stage adds a 4 KiB Wishbone SRAM at byte address `0x00010000`. Firmware tests the first and last word, updates individual bytes, and calls a function that saves and restores its return address in SRAM.
 
-## What kind of SRAM is this?
+## SRAM implementation in this experiment
 
 The design uses LiteX's `wishbone.SRAM`, a Migen-described behavioral memory with a Wishbone port. In this simulation, it is part of the generated SoC hardware. There is no separate SystemVerilog `tb.sv` that reimplements the SRAM. The CPU issues bus transactions; LiteX's SRAM module responds to them. This keeps the memory behavior and the interface being tested in the same design.
 
 That model is enough to test address decoding, read/write behavior, byte enables, initialization assumptions, and firmware use of RAM. It does not model a particular chip's analog behavior, setup/hold limits, retention, power, or proprietary timing corners.
 
-## How does LiteX place this SRAM in the SoC?
+## Integrating SRAM with LiteX
 
 This chapter does not use `integrated_sram_size`. It explicitly creates `wishbone.SRAM(sram_size)` and attaches it to the Wishbone main bus with `bus.add_slave`. `SoCRegion(origin=0x10000, size=sram_size, mode="rw", cached=True)` declares its base, capacity, access mode, and cacheability hint. The selected VexRiscv `minimal` core has no cache, so this flag does not create a cache or hide SRAM transactions. The nominal 4 KiB setting matches the firmware's first and last addresses, `0x10000` and `0x10ffc`. The negative run changes the size to 256 bytes but keeps the firmware access at `0x10ffc`, outside the range. The stack remains inside the smaller RAM so the test reaches that intended access.
 
 `mode="rw"` declares region permissions; it does not create a different SRAM circuit. The simulated response comes from `wishbone.SRAM`. `cached=True` is region metadata for the CPU/interconnect, appropriate for ordinary RAM. The completion register uses `cached=False` because each access can have an externally visible side effect. A real BRAM or SRAM macro also needs a wrapper whose latency, byte enables, and response timing match that memory's interface.
 
-### How would this become real FPGA or ASIC SRAM?
+### FPGA and ASIC memory implementations
 
 An FPGA implementation generally maps an inferred memory or vendor block-RAM primitive into the device's memory resources. The synthesis result and timing report determine whether the memory really became a BRAM and what read latency and write-mask behavior it has. A LiteX simulation memory is not by itself proof of FPGA mapping.
 
 An ASIC SRAM macro is usually a hard memory block supplied by a memory compiler or foundry library. Its pins are typically clock/enable, address, data, write enable or byte mask, and read data. It does not normally speak Wishbone. A wrapper translates Wishbone requests into those pins, handles the macro's latency, and returns ACK or ERR at the right cycle. In a chip verification environment, engineers may use a functional macro model for normal tests and separate timing, power, or physical checks for other properties.
 
-### Why not put the SRAM behavior in a testbench?
+### Memory hardware and the testbench
 
 This chapter tests the complete LiteX-side path from CPU bus to the SRAM module. Putting the only memory implementation in an external testbench would leave the SoC design without an integrated memory block and could hide a mismatch between the design's memory interface and the test model. A separate testbench model is useful when verifying a wrapper against a vendor macro interface, but it serves a different test boundary. Here LiteX's SRAM module is the target under test.
 
-## Why does the firmware set `sp`?
+## Stack pointer initialization
 
 The stack is ordinary writable RAM reserved for function calls and temporary saved state. The processor does not automatically create a stack frame on a `jal`. Software convention uses register `sp` (`x2`) to mark the current stack allocation. In this test, the stack grows toward lower addresses.
 
@@ -40,7 +40,7 @@ Lower SRAM addresses
 
 At entry, `_start` sets `sp` to `0x10f00`. In `work`, `addi sp,sp,-16` reserves a 16-byte frame. `sw ra,12(sp)` saves the caller's return address. Then `jal ra,exercise_sram` writes a new return address into `ra`. When the nested function returns, `lw ra,12(sp)` restores the address that `work` must return to, and `addi sp,sp,16` releases the frame.
 
-### What do `sp` and `ra` point to?
+### Stack pointer and return address
 
 `ra` is register `x1`; `jal ra,target` writes the address of the next instruction into it and jumps to `target`. `jalr zero,0(ra)` jumps back to the address in `ra`. A second nested `jal ra,...` overwrites `ra`, so a function that still needs its earlier return address must save it first.
 
@@ -91,17 +91,17 @@ The key point is that `sp` is not a function address. While `fact(2)` runs, `fac
 
 At the hardware level, `jal ra, fact` only writes the next instruction address into the general-purpose `ra` register and changes `pc` to `fact`. `addi sp,sp,-8` is ordinary register arithmetic. The `sw` instructions that save `n` and `ra` are ordinary CPU data-bus writes. The processor has no hidden “push stack frame” operation; software defines the convention and hardware executes the instructions.
 
-## Questions and answers
+## Implementation notes
 
-### Why use a stack if this test has only a small function?
+### Stack use in the firmware
 
 The nested call makes the lifetime of the return address visible. `_start` calls `work`, and `work` calls `exercise_sram`. The second call writes a new value to `ra`; saving the first value in SRAM is what lets `work` return to `_start`. The same rule matters in recursion, interrupts, and any non-leaf function that makes another call.
 
-### What does this test do to SRAM?
+### SRAM access checks
 
 It writes `0x11223344` to the first word, replaces the low byte with `0xaa`, replaces the upper two bytes with `0xbbcc`, then expects `0xbbcc33aa`. It also writes and reads the final word at `0x00010ffc`. The firmware's function call uses a separate stack area.
 
-### How is an undersized SRAM failure captured?
+### Capture an undersized-SRAM failure
 
 The runner repeats the program with only 256 bytes of SRAM. The stack is kept inside that range; the final test store to byte address `0x10ffc` is outside it. The request stays active without ACK. This VexRiscv `minimal` RTL exposes Wishbone ERR as an input but does not turn the missing response into the architectural store-access trap this test originally expected, so the chapter records the bus-level wait instead of claiming an `mcause` result.
 
@@ -114,6 +114,6 @@ PYTHONHASHSEED=0 python3 chapters/04-sram/run.py
 
 The nominal 4 KiB run must report the expected readback; the 256-byte run must report the expected out-of-range Wishbone request waiting without ACK. Inspect `results/04/` and `results/04-small-ram/` for firmware images, maps, logs, and VCD traces. On this 32-bit word-addressed Wishbone interface, byte address `0x10000` is word address `0x4000`.
 
-## What does a PASS prove?
+## Verified behavior and scope
 
 The normal PASS checks the simulated SRAM's first/last locations, byte lanes, and stack use. The negative PASS checks that the CPU requests the deliberately out-of-range address and the target does not acknowledge it. It does not prove timing or physical properties of a particular FPGA BRAM or ASIC macro; those require the implementation-specific memory and its own verification flow.

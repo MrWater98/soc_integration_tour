@@ -47,3 +47,7 @@ python3 tools/verify_import.py
 当前 PATH 有 Icarus、Verilator、Yosys、RISC-V GCC、OpenOCD、GDB。tour 自己的 external 下尚未安装 OSS CAD Suite、OpenSTA 或 ICS55 PDK；nextpnr、Apicula 和下载器在此环境的普通 PATH 中也不可用。重建 FPGA、重新工艺映射时应按章节准备依赖。
 
 本次没有连接开发板、重新下载 FPGA、执行 FPGA 布局布线或 ASIC 物理设计。导入的板上记录和静态时序结果保留原测量范围。
+
+## 后续文档整理
+
+首页已补充至 20A。各章移除课堂测验，教师目录及 CFU 的独立答案文件已删除；00–12 的中英文问答段落改为按主题连续讲解，保留原技术内容和运行命令。PLAN 与同步工具采用同一写作方式，导入清单相应更新。最新完整性计数见 check.json。

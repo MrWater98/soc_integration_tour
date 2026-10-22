@@ -1,4 +1,4 @@
-# 01 —— VexRiscv 能取指并写数据吗？
+# 01 —— VexRiscv 取指与数据写入
 
 这是第一个 CPU 级实验。使用 LiteX 原生 VexRiscv 封装、64 字节初始化 ROM 和一个内存映射写入端点。程序尽量短，方便直接从日志理解发生了什么。
 
@@ -53,7 +53,7 @@ CRG 提供 sys 时钟与复位，供 CPU、互连、ROM、端点和桥使用
 
 图中的 `interface0/1` 是 **CPU Wishbone 信号名的尾部编号**；CSR 桥附近也有名为 `interface0/1` 的另一组信号，读 RTL 时要带上完整前缀。本章 ROM 在树里显示为 `SRAM`，因为 LiteX 用同一个存储器包装类构造只读 ROM；本章没有可写 SRAM。
 
-### 管理对象怎样变成这些连接？
+### 管理对象与实际连接
 
 `sim.v` 开头的树是模块层次图。`bus`、`csr`、`irq` 是 SoC 下的同级对象；缩进表达归属，信号连线由生成的 RTL 决定。
 
@@ -69,7 +69,7 @@ CRG 提供 sys 时钟与复位，供 CPU、互连、ROM、端点和桥使用
 
 后面章节里的 `registers / RegisterSlave` 与本章 `write_target` 位于同一种位置：它们直接接 Wishbone。`RegisterSlave` 保存写入值并支持读回；本章 `WriteTarget` 只观察完成写入，读数据固定为 0。这些都是外设端点，不是 CPU 的 `x0–x31` 寄存器。
 
-### 一次请求发出去，又怎样回来？
+### 请求与应答路径
 
 ```text
 取指：iBus 发出地址 0 的读请求
@@ -114,7 +114,7 @@ Timer → IRQ 信号 → CPU：事件发生，请求进入 ISR
 
 `irq` 管理器在构建时安排源编号，运行时由硬件信号通知 CPU；ISR 再通过总线访问寄存器处理事件。
 
-## 第一次用 `SoCCore`：这些参数在配置什么？
+## 首次使用 SoCCore 及其参数
 
 本章的 `ProjectSoC` 继承 LiteX 的 `SoCCore`。`super().__init__(...)` 让 LiteX 按参数建立 CPU、主总线和集成存储器；之后代码再自己添加 `WriteTarget`，作为 CPU store 的目标。`SoCCore` 不会自动生成这个实验端点。
 
@@ -133,13 +133,13 @@ Timer → IRQ 信号 → CPU：事件发生，请求进入 ISR
 
 `bus_standard` 没有显式传入，因此主总线使用 LiteX 默认的 Wishbone。`bus_arbiter="transaction"` 让仲裁器在 ACK/ERR 到来前保持当前 master，适合同时存在的取指和数据 Wishbone 请求。
 
-### 本章怎样把自定义模块接进 LiteX？
+### 接入自定义 LiteX 模块
 
 `SoCCore` 创建的是通用 SoC 结构；自定义端点要由项目明确注册。`add_module("write_target", ...)` 把 Migen 模块纳入设计层次，`bus.add_slave(...)` 把它的 Wishbone 接口接到 LiteX 主总线，`SoCRegion(origin=0x40, size=0x40, ...)` 告诉地址译码器它响应哪段地址。`SoCIORegion` 还把这段低地址登记为 CPU 可访问的 I/O 区域。只创建模块而不 `add_slave`，CPU 的总线访问就到不了它。
 
 端点基址 `0x40` 和 `0x40` 字节的区域大小是这个小实验的选择。程序的 `sw` 地址必须落在区域内；改基址或范围时，要同步改指令/数据检查和 `SoCRegion`。同理，64 字节 ROM 来自当前镜像深度，并且必须覆盖地址 0 的复位指令。
 
-## 这些 Python 调用怎样变成 RTL？
+## 从 Python 调用到 RTL
 
 Python 在构建阶段描述硬件，不是 CPU 运行时调用的函数。看这段连接：
 
@@ -169,7 +169,7 @@ projectsoc_writetarget_dat_w = dat_w;
 
 这些参数要一起看：CPU 复位向量是 `0`，集成 ROM 也从 `0` 开始，ROM 初始化内容必须对应这个起点；端点从 `0x40` 开始，不能与 ROM 的 `0x00–0x3f` 重叠。`integrated_rom_size` 的单位是字节，而 `integrated_rom_init` 每项是一个 32 位字，本章 16 字正好是 64 字节。若只扩大 ROM 却不移动端点，`0x40` 会被 ROM 占用；若只改 reset address 而不重链或重排 ROM 镜像，CPU 会从错误位置取指。
 
-### 复位时 PC 为什么回到 0？
+### 复位向量配置
 
 `cpu_reset_address=0` 是构建配置，不是 Python 在每个时钟周期写 PC。LiteX 调用 CPU 封装的 `set_reset_address(0)`，将常量 0 接到预生成核心的 `externalResetVector` 输入。复位信号作用于 CPU 后，RTL 把 PC 复位为 0；复位释放后，CPU 从地址 0 取指。SoCCore 同时把集成 ROM 映射在 reset address 上，因此地址 0 正好有 ROM 内容。
 
@@ -185,7 +185,7 @@ SoCCore: cpu_reset_address=0
 
 ## 常见问题
 
-### 缓存能选吗？为什么 CPU 有两条总线？
+### CPU 变体、缓存与总线端口
 
 LiteX 的 VexRiscv wrapper 提供多个预生成变体。本章选 `minimal`，省去缓存和 M 扩展，先观察最直接的存储器访问。取指和 load/store 仍然是两个 Wishbone master：取指走 `ibus`，数据读写走 `dbus`。
 
@@ -207,23 +207,23 @@ VexRiscv/minimal
 
 为什么指定 `bus_arbiter="transaction"`？`ibus` 会连续取指，`dbus` 也可能同时等待访问。如果按周期轮换 grant，事务中的地址、控制信号和应答可能分属不同 master。事务仲裁会保持当前 master，直到 ACK/ERR 完成；这是本章共享总线需要的协议边界。
 
-### 为什么只用两条指令？
+### 两条指令的启动程序
 
 `addi` 产生一个确定的数值，`sw` 把它变成总线上可观察的事务。如果端点收到预期地址和数据，就说明 CPU 已退出复位、取到指令、执行了指令并发出了 store。此时不需要 C 运行库、栈或其他外设来增加干扰。
 
-### 第一次 `FETCH` 能证明指令执行了吗？
+### 取指证据与执行证据
 
 它证明复位地址处的一次 ROM 读取完成。VexRiscv 可能预取指令，因此一条 fetch 日志不能证明某条指令已经执行。端点收到 `0x40` 写入是更强的证据：只有程序执行到 `sw` 才会发出这个写操作。
 
-### 为什么 `0x40` 会变成 Wishbone 地址 `0x10`？
+### 字节地址与 Wishbone 字地址
 
 固件和 LiteX 地址图使用字节地址。这里的 32 位 Wishbone 端点按字寻址，每个地址单位代表 4 字节，所以字节地址 `0x40` 对应 Wishbone 字地址 `0x40 / 4 = 0x10`。转换的是地址单位，写入的数据仍然是 `0x40`。
 
-### Python 文件里为什么找不到 `Wishbone`？
+### Python 中的 Wishbone 连接
 
 本章的两个 CPU master 本来就是 Wishbone。`cpu_bus0` 和 `cpu_bus1` 分别接取指与数据端口；LiteX 的 `SoCBusHandler` 负责仲裁、地址译码及应答返回。
 
-### no-ACK 实验具体捕获了什么？
+### 无 ACK 的失效记录
 
 测试配置成不让端点应答 store。CPU 请求因此一直挂起：日志先记录字节地址 `0x40`、数据 `0x40` 的 `DATA_WAIT`，到限定周期后仿真超时。测试通过是因为它抓到了一个一直有效、却没有完成的请求；它不能打印正常写入完成标志。这把“CPU 发起请求”和“目标完成事务”区分开。
 
@@ -238,6 +238,6 @@ python3 chapters/01-cpu-bringup/tiny_bus.py
 
 查看 `results/01/`、`results/01-no-ack/` 中的构建日志、运行日志、地址图和 VCD 波形。波形里可以依次看复位、取指 `ibus`、数据 `dbus`、共享 Wishbone 请求和端点 `ack`。`cyc`、`stb` 同时有效表示请求有效；只有目标应答时事务才完成。
 
-## PASS 能证明什么？
+## 已验证行为与范围
 
 正常 PASS 表示 VexRiscv 从复位地址取指，并让端点观察到预期写入。`PASS 01-NO-ACK` 表示检查器发现请求没有 ACK；它不代表写入成功。第 02 章会单独验证从设备应答规则，让各种错误更容易定位。

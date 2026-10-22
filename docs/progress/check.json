@@ -1,6 +1,6 @@
 {
   "status": "PASS file integrity and Python syntax",
-  "files_checked": 1841,
+  "files_checked": 1836,
   "python_files_checked": 62,
   "literal_memory_initialization_references": 171,
   "tools": {

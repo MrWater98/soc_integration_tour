@@ -24,27 +24,52 @@ def stage(name: str) -> int | None:
 
 def selected(path: Path) -> bool:
     parts = path.parts
+    if parts[0] == 'instructor' or path.stem.lower() in ('review', 'small_quiz', 'quiz', 'questions', 'answers'):
+        return False
     if parts[0] in ('chapters', 'results') and len(parts) > 1:
         number = stage(parts[1])
         return number is not None and 13 <= number <= 20
     if parts[0] == 'docs':
         return True
-    if parts[0] == 'instructor' and len(parts) > 2:
-        number = stage(path.stem)
-        return number is not None and 13 <= number <= 20
     return str(path) in ('PLAN.md', 'tutorial_paths.py')
+
+
+def tour_markdown(text: str) -> str:
+    """Adapt course material to a continuous, self-contained project guide."""
+    original = text
+    text = re.sub(r'^## 课堂回顾\n.*?(?=^## |\Z)', '', text, flags=re.M | re.S)
+    if text != original:
+        text = text.rstrip() + '\n'
+    text = text.replace('## Questions and answers', '## Implementation notes')
+    text = text.replace('## 问答', '## 实现说明')
+    text = text.replace('正文回答当前问题，用具体动作解释因果；必要的问答放在本章合适位置。',
+                        '正文按实现流程展开，用具体动作解释因果，把必要的概念说明放在对应代码和实验附近。')
+    replacements = {
+        '- 第一次用到位（bit）': '- 第一次用到位（bit）、字节（byte）、字（word）和十六进制（hex）换算时，用真实文件中的数值和从 0 开始的地址表逐步解释；明确字宽取决于上下文，直接展示容量、末字节地址与末字首地址的换算过程。',
+        '- 每章固定包含：': '- 每章固定包含输入清单、目标、概念速查、结构图、最小代码、参数及选值理由、运行命令、输出清单、正常/边界/故障验证、排查步骤、本章速记和下一阶段入口。首次出现的缩写要解释。',
+        '- 每章 README 的“课堂回顾”': '- tour 按实现流程连续讲解：先给结构和数据流，再读代码、运行命令与实际结果。概念直接在正文解释，计算过程和失效定位紧贴对应实验。',
+        '- 图和表要能拿着日志核对：': '- 图和表要能拿着日志核对：标出数据方向、地址单位、一次事务的等待与完成、字节通道和关键字段。用真实输出逐步解释现象，说明哪些数值来自协议、哪些来自当前配置或一次观测。',
+        '2. **读者能解释现象**': '2. **读者能解释现象**：第一次出现的总线或外设接口先给需求、数据方向和最小交互图，再拿真实日志/CSV/VCD 逐项对照，直接展示地址、数据与握手结果的推导过程。',
+        '3. **读者能记住并复述**': '3. **主线连续清楚**：章节正文完整说明输入、输出、完成条件及下一阶段的需要；关键结论可从当前代码、生成文件和运行记录核对。',
+    }
+    lines = []
+    for line in text.splitlines():
+        line = next((replacement for prefix, replacement in replacements.items()
+                     if line.startswith(prefix)), line)
+        lines.append(line)
+    return '\n'.join(lines) + '\n'
 
 
 def content(source: Path, relative: Path) -> bytes:
     data = (source / relative).read_bytes()
     # Source/docs get local paths. Historical logs, manifests and RTL remain exact.
     if relative.suffix == '.md' and relative.parts[0] != 'results':
-        text = data.decode('utf-8').replace('soc_integration_tutorial/', 'soc_integration_tour/')
+        text = tour_markdown(data.decode('utf-8')).replace('soc_integration_tutorial/', 'soc_integration_tour/')
         for old, new in RENAMES.items():
             text = text.replace(f'chapters/{old}', f'chapters/{new}')
         if str(relative) == 'PLAN.md':
             text = ('> tour 同步说明：本计划引入 tutorial 的完整路线与进度。'
-                    'tour 原有 00–12 章保持原样，表中这些章节的历史验收尚未逐项重跑；'
+                    'tour 的章节按连续讲解组织，00–12 的历史验收尚未逐项重跑；'
                     '13–20A 的同步范围及本地验收见 [进度说明](docs/progress/README.md)。\n\n' + text)
         return text.encode('utf-8')
     return data

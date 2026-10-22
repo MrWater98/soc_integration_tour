@@ -7,13 +7,13 @@
   "files": [
     {
       "path": "PLAN.md",
-      "bytes": 100880,
-      "sha256": "3eae0467b59c4550a01abe12c050aee8882f4803c63777d5d6888ceedd869202"
+      "bytes": 99670,
+      "sha256": "91c49cd3c9fefec20e4a36d845da6593e9a1d76ad5bbdb2eda1be28c1bbf5792"
     },
     {
       "path": "chapters/13-integration/README.md",
-      "bytes": 31957,
-      "sha256": "e08cd369d357757e01f9d4e56763d597b64b9039cd680354dd43f40a93d86a4a"
+      "bytes": 30475,
+      "sha256": "d30bf312ff660edfcdc51de601c7f157898ed4aed2a37f5209a4a77020058266"
     },
     {
       "path": "chapters/13-integration/bus_monitor.v",
@@ -197,13 +197,8 @@
     },
     {
       "path": "chapters/13f-cfu-ml/README.md",
-      "bytes": 8078,
-      "sha256": "819be2f5db7f3a115fc4f57765c96b6fc80b1ceda8c539dc8882eb18775df7b0"
-    },
-    {
-      "path": "chapters/13f-cfu-ml/REVIEW.md",
-      "bytes": 2202,
-      "sha256": "113b614b56b9c697b4d199b16449f754da31858c02bfe37f4390427305a38978"
+      "bytes": 7428,
+      "sha256": "86dcb639f7f57b683886629c5450a681bb2bf7c9b869e415cb59594432839ce5"
     },
     {
       "path": "chapters/13f-cfu-ml/fetch_upstream.py",
@@ -822,8 +817,8 @@
     },
     {
       "path": "chapters/19-asic-rtl/README.md",
-      "bytes": 10484,
-      "sha256": "4cd613a368d676538488d30d9b8bfc3503bd4df7386ed0dfde179f4aaf2ef27c"
+      "bytes": 10091,
+      "sha256": "f959bc9f901fb5a6e22f213577430e1375186151d586be0dc27c1045da3bd06e"
     },
     {
       "path": "chapters/19-asic-rtl/RESULTS.md",
@@ -877,8 +872,8 @@
     },
     {
       "path": "chapters/20-asic-verification/README.md",
-      "bytes": 16204,
-      "sha256": "860cea38e1634f6827c38f32f144890aea22c67389ea01528d7f42498a41dd28"
+      "bytes": 15814,
+      "sha256": "d0280abd759e28bcc9837f80a816660a4375fa0436b1ffbbfc70366ad77c343b"
     },
     {
       "path": "chapters/20-asic-verification/WAIVERS.md",
@@ -927,8 +922,8 @@
     },
     {
       "path": "chapters/20a-dft-basics/README.md",
-      "bytes": 11256,
-      "sha256": "5da9353fc7218fdcdedf80576bcb75d3f7d2f2695423778b6906706c8f844df6"
+      "bytes": 10810,
+      "sha256": "9291f358014c4736c951d04c789a008a0e5edbe09ddd77fafa646dcb0c9952c5"
     },
     {
       "path": "chapters/20a-dft-basics/ram_model.sv",
@@ -959,26 +954,6 @@
       "path": "docs/generated-files/README.md",
       "bytes": 28783,
       "sha256": "c4485a34f069ee1e5f8d6c69e98f5277fae2fa83433af887f7f2dc9a53d37ead"
-    },
-    {
-      "path": "instructor/answers/13.md",
-      "bytes": 2547,
-      "sha256": "6beef8e2e3dc34083c93e3dac98cc65df54736decd9a8a623881b1e580b0a6be"
-    },
-    {
-      "path": "instructor/answers/13a.md",
-      "bytes": 1459,
-      "sha256": "b6611d5a9fd86f91708ba64f81dadf3c5b47713c4e42397f3c71040854e00693"
-    },
-    {
-      "path": "instructor/answers/14.md",
-      "bytes": 2002,
-      "sha256": "8a32daba6efa860a3d0da890e6e93283816c58566e8adc3fa16985be8848cdea"
-    },
-    {
-      "path": "instructor/answers/16.md",
-      "bytes": 1010,
-      "sha256": "d2986d5e905695181141c9b183794379a23cac3835dd9c5f849c7f1376ca2c2c"
     },
     {
       "path": "results/13/rtl/VexRiscv.v",

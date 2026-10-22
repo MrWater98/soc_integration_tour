@@ -1,8 +1,8 @@
-# 00 —— 第一次运行前需要什么？
+# 00 —— 准备运行环境
 
 本章固定 LiteX、VexRiscv RTL 和仿真工具版本，并运行 LiteX 自带的 Wishbone 基础测试。通过本章表示主机环境可以构建项目；它还不证明 CPU 已运行固件。
 
-## 我们要运行什么？
+## 仿真系统的构成
 
 项目使用 LiteX 原生 `vexriscv` wrapper 的 `minimal` 变体。LiteX 从 `pythondata-cpu-vexriscv` 包加载预生成的 `VexRiscv_Min.v`；教程不需要 Scala/SBT 去生成 CPU。
 
@@ -12,13 +12,13 @@ LiteX + Migen ─ Builder ───────────> SoC RTL 和地址�
 SoC RTL + Verilator/C++ ───────────> 周期级仿真器
 ```
 
-## 问答
+## 实现说明
 
-### Migen 是 LiteX 的一部分吗？
+### Migen 与 LiteX
 
 Migen 是独立的 Python 硬件描述库。LiteX 构建在 Migen 之上，用它描述和连接硬件。运行时 Python 负责生成硬件结构；固件是在生成后的 SoC 上由 VexRiscv 执行的。
 
-### 每种工具负责什么？
+### 工具分工
 
 | 工具 | 输入 | 产物/职责 |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ Migen 是独立的 Python 硬件描述库。LiteX 构建在 Migen 之上，用�
 
 固件编译器不负责构造 CPU；Verilator 不编译 RISC-V 固件。
 
-### 为什么要固定版本？
+### 固定依赖版本
 
 LiteX wrapper、CPU RTL、仿真 API 和主机编译器必须兼容。固定版本能让构建失败可复现，也便于比较不同章节生成的结果。
 
@@ -41,7 +41,7 @@ LiteX wrapper、CPU RTL、仿真 API 和主机编译器必须兼容。固定版�
 | Verilator / C++ | Verilator 5 或更新版本、C++ 编译器 |
 | RISC-V 工具 | `riscv64-unknown-elf-gcc` 和 `objcopy`，支持 RV32I/ILP32 |
 
-### 怎么安装？
+### 安装依赖
 
 Debian/Ubuntu 主机可以安装这些系统工具；Python 包使用虚拟环境隔离：
 
@@ -65,7 +65,7 @@ python -m pip install pythondata-software-picolibc==1.7.9.post181 pythondata-sof
 
 若 LiteX 源码不在自动查找位置，设置 `LITEX_ROOT` 指向它。不要在运行章节时更新固定源码。
 
-### 怎么检查？
+### 环境检查
 
 ```sh
 python3 chapters/00-environment/check_env.py --strict --wishbone --soc

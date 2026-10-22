@@ -7,13 +7,13 @@ test master ── cyc/stb, adr, we, sel, dat_w ──> register slave
             <──────────── ack, err, dat_r ─────
 ```
 
-## Which LiteX and Migen interfaces are used here?
+## LiteX and Migen interfaces
 
 This chapter does not create a `SoCCore`. It uses LiteX's `wishbone.Interface` to describe the slave port, then Migen's `Module`, `Signal`, `comb`, and `sync` to implement the register behavior. The Python generator in `verify.py` is the test master: it drives the same bus signals cycle by cycle. `run_simulation` runs the master and slave together. This isolates the Wishbone response rules before an interface like this is attached to a full SoC.
 
 `RegisterSlave` combines `data_width=32`, `address_width=32`, and `addressing="word"`: each transfer carries 32 bits, and `adr` counts words rather than bytes, so byte address `0x1000` is `adr=0x400`. The four `sel` bits independently enable the four bytes. Changing `addressing` to `"byte"` without changing the test address would access a different location; changing the data width to 64 bits would also require widening the byte select and data mask.
 
-## How does `wishbone.Interface` become RTL?
+## From wishbone.Interface to RTL
 
 `wishbone.Interface(...)` creates a bundle of Migen signals. It is a connector, not a complete bus implementation: the master and slave use matching wires, while the module's assignments define what the slave does.
 
@@ -44,9 +44,9 @@ ack               0            0            1             0
 
 The initial register value is `0x11223344`. Seeing that value on `dat_r` while `ack=0` is not yet a completed read. The master only accepts the value on the response cycle.
 
-## Questions and answers
+## Implementation notes
 
-### What does each signal mean here?
+### Wishbone signals
 
 | Signal | Meaning in this test |
 | --- | --- |
@@ -58,7 +58,7 @@ The initial register value is `0x11223344`. Seeing that value on `dat_r` while `
 | `ack` | The slave has completed this request |
 | `err` | Error response; this test expects it to remain low |
 
-### How did we capture the failure instead of just seeing a failed run?
+### Failure capture and diagnosis
 
 The test checks protocol conditions at specific points and records every cycle to CSV and VCD. Before it starts a request, it requires ACK to be low. While requesting, it waits cycle by cycle up to a fixed limit. After ACK, it withdraws `cyc/stb` and requires ACK to return low. Those observations identify whether the problem occurred before, during, or after a transaction.
 
@@ -74,11 +74,11 @@ This is why the test has both a transaction checker and a passive cycle recorder
 
 The exact timeout number is a checker setting: `max_wait=6` means “allow six counted waits, then fail when the count becomes 7.” It is not a bus timing rule. The same bound is used for the unmapped-address case so both missing-response traces terminate predictably.
 
-### Why ACK must belong to the active request?
+### ACK and the active request
 
 The master interprets ACK as “this transaction is complete.” An ACK while idle can be mistaken for a response to a later request. An ACK held after completion can make one request look like multiple completions. Requiring a fresh, single response cycle tied to an active `cyc/stb` avoids stale or duplicate responses.
 
-### What do the byte-lane tests verify?
+### Byte-lane checks
 
 The test first writes `0xaabbccdd`, then writes each lane separately and reads the register back. Each `sel` bit controls one byte. A final `sel=0` write must leave the value unchanged. These checks catch a slave that ignores the byte enables or updates the wrong byte.
 
@@ -93,6 +93,6 @@ The default run covers normal read/write/readback, byte enables, zero select, tw
 
 Each run also exports the slave RTL for that constructor setting to `results/02/rtl/02-<case>.v`. The `unmapped` case changes only the Python test master's address, so it uses the normal slave RTL. Comparing `02-normal.v`, `02-wait2.v`, and `02-no_ack.v` shows how a Python parameter or fault branch changes the generated state machine.
 
-## What does a PASS prove?
+## Verified behavior and scope
 
 The normal-case PASS proves the register slave returns and stores the expected values under the tested timing and byte-enable rules. A negative-case PASS means the named protocol violation was detected. It does not prove that every Wishbone feature (bursts, multiple masters, or arbitration) is implemented; this is a single-master, single-slave Classic transaction model.

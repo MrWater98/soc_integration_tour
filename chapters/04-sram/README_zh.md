@@ -2,29 +2,29 @@
 
 第 03 章只有只读固件存储。本章在字节地址 `0x00010000` 加入 4 KiB Wishbone SRAM。固件检查首末字、更新单独的字节，并调用一个会把返回地址存入 SRAM 的函数。
 
-## 这里的 SRAM 是什么？
+## 本实验的 SRAM 实现
 
 系统使用 LiteX 的 `wishbone.SRAM`，它是由 Migen 描述、带 Wishbone 端口的行为存储器。在仿真中它属于生成的 SoC 硬件，不另用一个 SystemVerilog `tb.sv` 重写 SRAM。CPU 发总线事务，LiteX SRAM 模块负责应答。这样测试的总线接口和实际连接的存储器模型处在同一设计里。
 
 这个模型适合验证地址译码、读写、字节使能、初始化假设和固件访问；它不描述某颗芯片的模拟特性、建立保持时间、数据保持、功耗或专有时序角落。
 
-## LiteX 怎样把这块 SRAM 放进 SoC？
+## 使用 LiteX 集成 SRAM
 
 本章没有使用 `integrated_sram_size`，而是显式创建 `wishbone.SRAM(sram_size)`，再用 `bus.add_slave` 接到 Wishbone 主总线上。`SoCRegion(origin=0x10000, size=sram_size, mode="rw", cached=True)` 给出起点、容量、读写权限和可缓存属性。当前 VexRiscv `minimal` 没有缓存，所以这个标记不会额外生成缓存，也不会挡住 SRAM 总线事务。这里 4 KiB 的大小与固件首末地址 `0x10000`、`0x10ffc` 配套；负例把参数改成 256 字节，但仍访问 `0x10ffc`。栈被放在这 256 字节内部，让程序先完成栈操作，再访问预期的越界地址。
 
 `mode="rw"` 只声明区域权限，并不会生成另外一种 SRAM 电路；实际仿真应答来自 `wishbone.SRAM`。`cached=True` 是给支持缓存的 CPU 配置使用的区域属性，本身不会实例化缓存。本章的 VexRiscv `minimal` 没有缓存，因此每次 SRAM 访问仍会到达 Wishbone。完成寄存器标记 `cached=False`，用于表达设备区策略。真实硬件若换成 BRAM 或 SRAM macro，还要让 wrapper 的延迟、byte enable 和应答时序符合具体存储器接口。
 
-### FPGA 和 ASIC 里怎样接真实存储器？
+### FPGA 与 ASIC 存储器实现
 
 FPGA 综合时，推断出的存储器或厂商 block RAM primitive 通常会映射到器件内部 RAM 资源。要检查综合结果和时序报告，确认它实际映射到 BRAM，并核对读延迟和写掩码行为。仿真中的 LiteX RAM 本身不能证明 FPGA 已正确映射。
 
 ASIC SRAM 宏通常是由 memory compiler 或晶圆厂库提供的硬宏。它的引脚一般是时钟/使能、地址、数据、写使能或字节掩码、读数据等；通常不直接说 Wishbone。外围 wrapper 把 Wishbone 请求转成这些引脚信号，根据宏的延迟在合适周期返回 ACK 或 ERR。芯片验证中会用功能模型做常规测试，时序、功耗和物理特性另行检查。
 
-### 为什么不把 SRAM 行为写在 testbench 里？
+### 存储器硬件与测试平台的分工
 
 本章要测的是从 CPU 总线到 LiteX SRAM 模块的整条集成路径。如果唯一的存储器实现放在外部 testbench，SoC 本身就没有集成存储器，也可能掩盖设计接口和测试模型之间的不匹配。验证 SRAM wrapper 是否适配厂商宏时，单独的 testbench 模型很有用，但那是另一个测试边界。本章的目标设备就是 LiteX SRAM 模块。
 
-## 为什么固件要设置 `sp`？
+## 栈指针初始化
 
 栈是普通的可写 RAM，函数调用用它保存需要跨调用保留的状态。本处理器执行 `jal` 时不会自动建立栈帧。软件约定用 `sp`（`x2`）记录当前分配的栈空间；本例的栈向低地址增长。
 
@@ -40,7 +40,7 @@ ASIC SRAM 宏通常是由 memory compiler 或晶圆厂库提供的硬宏。它�
 
 入口 `_start` 把 `sp` 设成 `0x10f00`。进入 `work` 后执行 `addi sp,sp,-16`，分配 16 字节栈帧；`sw ra,12(sp)` 保存调用者的返回地址。接着 `jal ra,exercise_sram` 会把新的返回地址写入 `ra`。子函数返回后，`lw ra,12(sp)` 恢复 `work` 自己要用的返回地址，`addi sp,sp,16` 释放栈帧。
 
-### `sp` 和 `ra` 各指向什么？
+### 栈指针与返回地址
 
 `ra` 是寄存器 `x1`。`jal ra,target` 把下一条指令地址写入 `ra`，再跳到 `target`。`jalr zero,0(ra)` 跳回 `ra` 保存的地址。嵌套的第二次 `jal ra,...` 会覆盖 `ra`，所以仍需要旧返回地址的函数必须先保存它。
 
@@ -93,15 +93,15 @@ int fact(int n) {
 
 ## 常见问题
 
-### 这个测试只有一个小函数，为什么还要栈？
+### 固件中的栈使用
 
 嵌套调用能直接展示返回地址的生命周期：`_start` 调 `work`，`work` 再调 `exercise_sram`。第二次调用会改写 `ra`；先把旧 `ra` 存入 SRAM，`work` 才能正确返回 `_start`。递归、中断，以及任何还要继续调用其他函数的函数都会遇到类似需求。
 
-### 固件对 SRAM 做了什么？
+### SRAM 访问检查
 
 先向首字写 `0x11223344`，把最低字节改成 `0xaa`，再把高两个字节改成 `0xbbcc`，最后预期读到 `0xbbcc33aa`。它还会写入并读回末字 `0x00010ffc`。函数调用使用 SRAM 中另一个栈区域。
 
-### SRAM 太小时怎样抓到错误？
+### SRAM 容量不足的失效捕获
 
 运行器再用只有 256 字节的 SRAM 跑同一个程序。栈仍在这段范围内，最后访问的字节地址 `0x10ffc` 则在范围外，因此数据总线请求一直得不到 ACK。当前 VexRiscv `minimal` RTL 虽然有 Wishbone ERR 输入，但不会把无应答转成这里预期的 store access trap；本章如实捕获总线等待，不伪称读到了 `mcause`。
 
@@ -114,6 +114,6 @@ PYTHONHASHSEED=0 python3 chapters/04-sram/run.py
 
 正常的 4 KiB 运行应通过读回检查；256 字节负例应捕获越界 Wishbone 请求等待 ACK。查看 `results/04/` 和 `results/04-small-ram/` 下的固件镜像、地址表、日志和 VCD。这个 32 位、按字寻址的 Wishbone 接口上，字节地址 `0x10000` 对应字地址 `0x4000`。
 
-## PASS 能证明什么？
+## 已验证行为与范围
 
 正常 PASS 检查了仿真 SRAM 的首末位置、字节通道和栈访问。负例 PASS 检查了 CPU 发出了越界地址，而目标没有应答。它不证明某颗 FPGA BRAM 或 ASIC SRAM 宏的物理时序；那要使用具体存储器实现和对应验证流程。

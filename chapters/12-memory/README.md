@@ -10,7 +10,7 @@ This stage builds three separate SoCs around the same VexRiscv core. The CPU alw
 
 The SRAM and Flash tests use separate uncached IO regions so each bus read is visible as an external transaction. The SDRAM test maps DRAM as `main_ram` and uses the on-chip SRAM for its stack and C runtime during initialization. It checks data access; it does not execute code from SDRAM.
 
-## Why do the three `SoCCore` configurations differ?
+## The three SoCCore memory configurations
 
 All three builds keep the same VexRiscv, reset address `0`, and 4 KiB boot ROM. Their writable memories differ to match the job each firmware performs:
 
@@ -28,7 +28,7 @@ The repeated-looking values in these tables are configuration choices, not fixed
 
 LiteX `AsyncSRAM` bridges the CPU's Wishbone access to a byte-wide SRAM pin model. A 32-bit write is split across four byte lanes. `ce_n` selects the chip; `we_n` and `oe_n` control writes and reads. The bridge uses `read_cycles=2` and `write_cycles=3`; the whole 32-bit Wishbone transaction takes longer because it performs the lane operations and then acknowledges.
 
-### Why is there an external model if LiteX supplies the bridge?
+### Memory bridges and external models
 
 The LiteX bridge drives the SRAM interface pins, but this test still needs a memory device on the other side of those pins. `async_sram_model.v` stores bytes and responds to chip enable, output enable, write enable, address, and bidirectional data. The two pieces have separate jobs: LiteX translates Wishbone transactions; the Verilog model behaves like the external chip. The run checks full-word and partial-byte writes, the first and last byte, and sequential data.
 
@@ -38,7 +38,7 @@ The model geometry is 4 banks × 2048 rows × 256 columns × 16 bits = 4 MiB. Th
 
 These dimensions and the 50 MHz clock are parameters for this simulation model. Bank/row/column/data-width determine the model's capacity; `SDRAM_SIZE` must agree with that capacity and with the SoC region. If you change the clock, keep the SoC, PHY model and simulation clocks, generated timing settings, and any clock-derived wait expectations consistent. The 4 MiB geometry is a chosen test size, not a claim about every SDRAM device.
 
-### Why initialize SDRAM before using it?
+### SDRAM initialization
 
 SDRAM powers up requiring a command sequence before reads and writes are valid. Startup first places the stack and C runtime in on-chip SRAM. Firmware then uses LiteDRAM's generated `sdram_phy.h` initialization sequence and gives DFI control back to the controller. Only after the initialization marker does it test DRAM contents. LiteDRAM's controller also schedules refresh; the checker requires at least two refreshes after writes and validates data afterward.
 
@@ -50,23 +50,23 @@ The model image is 4 KiB. Its first 256 bytes contain a small project-specific i
 
 The 4 KiB mapped window and 256-byte test image are separate sizes: the image occupies only the beginning of the window. The 24-bit address is part of the bridge's SPI transaction format, and `0x03` is the read command implemented by this model. Changing window or image size requires updating bridge address slicing, model storage, firmware bounds/checksum, and the generated region; changing the command requires changing both the bridge and device model.
 
-### What happens on a CPU load from Flash?
+### CPU loads from SPI Flash
 
 For each 32-bit Wishbone read, `FlashReadBridge` lowers chip select, shifts out the `0x03` read command and a 24-bit byte address, then clocks in four response bytes. The complete frame contains 8 command bits + 24 address bits + 32 data bits = 64 clocks. The bridge reorders the received bytes into the CPU's little-endian word. The firmware checks the signature, length, checksum, and last word of the 4 KiB window. The Verilog model supports reads only; it does not model erase or programming.
 
 The runner flips one payload bit and runs the same CPU image again. The checksum check must report failure code `0xe3`, with no normal `0x5a` completion. It then restores the good model image.
 
-## Questions and answers
+## Implementation notes
 
-### Are these physical memory chips?
+### Simulation models and physical devices
 
 No. The asynchronous SRAM and SPI Flash are pin-level functional Verilog models; SDRAM uses LiteDRAM's SDRAMPHYModel. They let the CPU, bridge/controller, and device protocol interact in simulation. They do not model a board's electrical timing, FPGA pin delays, analog behavior, or a specific chip's full datasheet corners. Physical FPGA/ASIC integration needs device-specific implementations and timing checks.
 
-### Why three different maps?
+### Separate configurations and maps
 
 Each run constructs a different SoC. `0x40000000` refers to the LiteDRAM region in the SDRAM run and to on-chip main RAM in the SRAM and Flash runs. Each generated `csr.csv` is authoritative for its own build. Combining the three maps would assign the same address to incompatible memories.
 
-### What evidence distinguishes bridge/controller behavior from CPU behavior?
+### Controller checks and CPU execution evidence
 
 The endpoint probes show what the CPU read back. `ASRAM_ACK` and pin-write logs show byte lanes and wait cycles; SDRAM initialization/refresh logs show controller activity; `FLASH_READ` reports each command/address/frame length. A CPU completion marker alone would not show whether the external protocol was correct, so each runner checks both model-level events and firmware readback.
 
@@ -93,6 +93,6 @@ PYTHONHASHSEED=0 python3 chapters/12-memory/spi-flash/run.py
 
 Outputs are kept separately under `results/12-async-sram/`, `results/12-sdram/`, and `results/12-spi-flash/`, including the maps, firmware, logs, initialization files, and VCDs.
 
-## What does a PASS prove?
+## Verified behavior and scope
 
 Each pass proves that firmware accessed its mapped region through the relevant simulated interface and received the expected contents. The SDRAM pass also checks initialization and refresh; the Flash negative case checks data-integrity detection. None of these passes alone proves physical memory timing on a target board.

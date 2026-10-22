@@ -25,7 +25,7 @@ I²C: CPU → i2c_out CSR → SCL、SDA 释放/拉低 → 0x42 从设备
                                      从设备 SDA 拉低/释放 → i2c_input CSR → CPU
 ```
 
-## 这套 bit-bang SoC 用了哪些 LiteX 配置？
+## bit-bang SoC 的 LiteX 配置
 
 `SoCCore` 提供 CPU、复位地址为 0 的 ROM、4 KiB 片上 SRAM 和给裸机 C 程序使用的 16 KiB main RAM；默认 UART、Timer 和控制器都关闭。本章的 SPI/I²C 是小型 `AutoCSR` 模块，不是硬件控制器：`CSRStorage` 驱动输出引脚，`CSRStatus` 采样输入引脚，C 程序逐次写 CSR 形成协议边沿。完成寄存器则是位于 `0x80000000` 的独立、不可缓存 Wishbone 区域。
 
@@ -76,19 +76,19 @@ SOC_COMPLETE data=0x0000005a
 
 ## 常见问题
 
-### 这里用的是 LiteX 的 SPI/I²C 控制器吗？
+### CSR 位操作控制器
 
 不是。本章用本地 CSR 控制线脚，由 CPU 软件逐位生成 SPI 和 I²C 时序。这样每个边沿、片选和应答位都能从 C 代码追到波形。它适合学习协议与验证模型，不代表性能更高，也不替代 LiteX 或 FPGA 上的专用控制器。
 
-### 为什么 SPI 错误片选时仍能读到 `0xff`？
+### 错误片选时的 SPI 读值
 
 从设备没被选中时，MISO 保持空闲高电平，CPU 读到的 8 位自然是 `0xff`。关键证据是模型没有记录有效帧，而不是把这个空闲值当成 Flash/器件响应。正常帧还必须有正确 `CS_N`、命令和时钟数。
 
-### I²C 的 SDA 为什么不能由主机直接输出高？
+### I²C SDA 的开漏驱动
 
 I²C 是开漏结构：主机或从机只能拉低 SDA，想发 1 就释放线路，让上拉电阻把线拉高。若一端拉低、另一端硬推高，会形成电气冲突。仿真模型用双方 release 信号的组合表达“任意一方拉低，线路就是低”。
 
-### ACK 和 NACK 是谁发的？
+### ACK 与 NACK 的驱动方
 
 发送一个字节后，接收方控制第九个时钟的 SDA。接收方拉低表示 ACK，释放表示 NACK。写地址和数据后的 ACK 来自从设备；本章读完最后一个字节后，CPU 主机释放 SDA 发 NACK，表示不再请求更多字节。
 

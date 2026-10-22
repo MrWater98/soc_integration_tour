@@ -2,7 +2,7 @@
 
 Stages 01–05 made CPU reset, Wishbone response, ROM image, writable SRAM, and address decode visible one piece at a time. This stage describes the same kind of system with LiteX `SoCCore` and `Builder`, then checks LiteX's generated map against the firmware and runs the CPU.
 
-## What does LiteX take over?
+## LiteX integration responsibilities
 
 `SoCCore` registers the CPU and establishes common SoC infrastructure: the main bus, integrated ROM/SRAM, CSR access path, and CPU-related regions. `Builder` turns that Python description into gateware, simulator files, address/CSR tables, and software support files. The project still supplies a small completion endpoint so simulation can stop when firmware reaches its pass marker.
 
@@ -16,7 +16,7 @@ LiteX Builder: gateware, csr.csv/csr.json, simulator project
         └── compile Verilator model → run VexRiscv → check SOC_COMPLETE
 ```
 
-## What does this chapter configure with `SoCCore`?
+## SoCCore configuration in this experiment
 
 In this stage, the `SoCCore` configuration grows from the two-instruction CPU test into a mapped SoC with ROM and SRAM. LiteX Builder then exports the resulting address map. The `ProjectSoC` settings match the firmware checks:
 
@@ -33,13 +33,13 @@ The CPU, reset vector, simulation platform, and clock are configured in `super()
 
 The 4 KiB ROM/SRAM, 1024-word image, and disabled peripheral flags are this stage's configuration. They are selected to make the boundary reads easy to see and keep unrelated devices out. If you resize ROM, keep `write_rom_init`, `integrated_rom_size`, the linker/build image, and `check_generated_map` in agreement; if you resize SRAM or move either region, update the firmware addresses and expected map too. The numbers are not fixed LiteX requirements.
 
-### Why add a custom `CompletionSlave`?
+### The completion endpoint
 
 It is not a standard `SoCCore` peripheral. It is this chapter's simulation-only Wishbone slave: when firmware writes the expected completion code to its mapped address, it prints `SOC_COMPLETE` and ends simulation. That gives the runner evidence that the CPU executed to the firmware check, rather than merely constructing the SoC.
 
-## Questions and answers
+## Implementation notes
 
-### Why are there two CPU bus masters?
+### Instruction and data bus masters
 
 The VexRiscv wrapper exposes an instruction Wishbone interface and a data Wishbone interface. LiteX registers them as `cpu_bus0` and `cpu_bus1`. The shared bus arbiter chooses a requester, and the decoder routes its address to ROM, SRAM, or a device. This is direct Wishbone integration; there is no AXI-Lite adapter in this design.
 
@@ -51,11 +51,11 @@ VexRiscv dbus ─┘
 
 `bus_arbiter="transaction"` keeps the selected master until ACK/ERR. This matters because instruction fetch can remain active while a data access is pending.
 
-### What is `tour_paths.add_litex_to_path`?
+### LiteX source path setup
 
 It is a project helper in the shared root file `tour_paths.py`, not a LiteX function and not a hardware component. It looks for the LiteX checkout using `LITEX_ROOT` and the project's known source locations, then adds the source root to Python's import path. It does not install LiteX or download source. Each chapter keeps its own logic files; this shared helper only finds the dependency.
 
-### What do the other imported helpers do?
+### Chapter-local build helpers
 
 These are project scripts located beside this chapter's `run.py`, not LiteX APIs:
 
@@ -69,15 +69,15 @@ These are project scripts located beside this chapter's `run.py`, not LiteX APIs
 
 `build_and_run` is a wrapper written for this project; it is not a LiteX API. LiteX's API in that wrapper is `Builder`. Similarly, `build_program` is ordinary Python orchestration around the external RISC-V compiler; it does not compile the CPU hardware.
 
-### Why rebuild firmware after changing the map?
+### Memory-map changes and firmware rebuilds
 
 The firmware contains addresses in its instructions. Stage 05 placed SRAM at `0x00010000` and its register endpoint at `0x20000000`. LiteX's generated map in this stage places SRAM at `0x10000000` and the completion endpoint at `0x80000000`. Reusing the old firmware would make it access the wrong regions. This chapter assembles its own `program.S` for the generated LiteX map and compares expected origins and sizes with `csr.csv` before CPU simulation.
 
-### What does `csr.csv` prove, and what does it not prove?
+### The scope of csr.csv
 
 `csr.csv` and `csr.json` show addresses and sizes produced during construction. They prove which map LiteX generated. They do not prove the CPU fetched valid instructions or completed a bus transaction. The `SOC_COMPLETE` write in `run.log` is the runtime evidence that firmware reached the endpoint. The runner also performs a deliberate stale-map check: it expects the old Stage 05 map to be rejected and records the reason in `stale-map.log`.
 
-### Why does the completion log show `0x200003ff`?
+### Completion address and bus units
 
 The memory map lists byte addresses. The completion endpoint's last byte address is `0x80000fff`, and the firmware writes the final 32-bit word at byte address `0x80000ffc`. On the word-addressed Wishbone trace that is `0x80000ffc / 4 = 0x200003ff`. The log labels this value `word_address` so it is not confused with the software-visible byte address.
 
@@ -98,6 +98,6 @@ find LiteX source → assemble firmware for this map → create full ROM image
 
 Look at `results/06/builder/csr.csv` for Builder's map, `results/06/memory_map.csv` for the copied map, `build.log` for LiteX bus and memory construction, and `run.log` for CPU observations. `compile.log` captures the simulator build. `builder/gateware/sim.vcd` lets you follow clock/reset, CPU instruction/data Wishbone signals, the shared bus, and the completion endpoint.
 
-## What does a PASS prove?
+## Verified behavior and scope
 
 The map check proves the generated LiteX memory regions match the firmware contract. The runtime completion proves the CPU executed the image far enough to write the expected marker through the integrated system. Neither result alone covers board pin constraints, FPGA timing closure, or external memory hardware; those are later project stages.

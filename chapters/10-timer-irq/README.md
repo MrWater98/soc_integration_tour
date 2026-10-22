@@ -19,7 +19,7 @@ There is no PLIC in this SoC. LiteX's IRQ handler connects the source directly t
 
 The test's `load=600`, one-shot `load=300`, and periodic `reload=1200` are simulation parameters chosen to make transitions visible. They are not fixed Timer values. The same is true of test loop bounds and expected ISR counts.
 
-## Why doesn't the ISR claim a PLIC source?
+## LiteX interrupt routing without a PLIC
 
 A PLIC has claim/complete registers and arbitrates interrupt sources in systems that include one. This LiteX VexRiscv design has no PLIC. The CPU sees the LiteX IRQ line as a machine external interrupt. In this VexRiscv RTL, CSR `0xbc0` is an additional per-source mask: bit 0 must be set for `externalInterruptArray[0]` to contribute to `mip.MEIP`. Firmware then enables `mie.MEIE` (bit 11) and global `mstatus.MIE`. All three masks must allow delivery. The ISR clears the timer's own `ev_pending` bit before `mret`. If it leaves that source pending, the IRQ stays high and the CPU can trap again immediately.
 

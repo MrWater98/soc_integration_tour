@@ -47,6 +47,15 @@ def main() -> None:
             init_references += 1
             if not (path.parent / name).is_file():
                 errors.append(f'Missing initialization file: {path.relative_to(ROOT)} -> {name}')
+    # Keep imported course assessments out of the project walkthrough.
+    if (ROOT / 'instructor').exists():
+        errors.append('Unexpected instructor directory')
+    for path in (ROOT / 'chapters').rglob('*.md'):
+        if path.stem.lower() in ('review', 'small_quiz', 'quiz', 'questions', 'answers'):
+            errors.append(f'Unexpected assessment file: {path.relative_to(ROOT)}')
+        if re.search(r'^#{1,6}\s+(?:课堂回顾|Questions and answers|问答|参考答案)\s*$',
+                     path.read_text(), re.M | re.I):
+            errors.append(f'Unexpected assessment section: {path.relative_to(ROOT)}')
     tools = {}
     for name in TOOLS:
         local = ROOT / 'external/fpga-tools/oss-cad-suite/bin' / name

@@ -65,7 +65,7 @@ CPU 发起写入，CSRStorage 保存输出值，外设逻辑把它送到输出�
 
 ## 常见问题
 
-### 本章 GPIO 实验依赖哪些 SoC 配置？
+### GPIO 配置
 
 `SoCCore` 保留 4 KiB ROM、4 KiB 集成 SRAM 和 16 KiB main RAM，供裸机 C 镜像与运行时使用，同时关闭默认 UART、Timer 和控制器。GPIO bank 是本章自己写的 CSR 模块，不是 LiteX 的 `GPIOIn` / `GPIOOut` 实例：`GPIOInput` 用 `CSRStatus(4)` 暴露输入，并用两级 `MultiReg` 同步；`GPIOOutput` 用 `CSRStorage(4, reset=0)` 保存输出值，再直接驱动引脚。这里的位宽和复位值配置的是 GPIO 引脚组，不是内存区域。
 
@@ -73,23 +73,23 @@ CPU 发起写入，CSRStorage 保存输出值，外设逻辑把它送到输出�
 
 第 1000 个 `sys` 时钟后改变输入，只是仿真激励选择的时刻，不是 GPIO 必须等待的时间，也不是同步器固定延迟。输入何时被本地逻辑看见由两级 `MultiReg` 决定；若把激励提前或推后，要确认 CPU 轮询仍能先读到初值、再读到变化后的值，事件顺序检查也仍然成立。
 
-### CSR 是什么，C 代码怎么访问？
+### C 代码访问 CSR
 
 CSR 是映射到 CPU 地址空间的一组小型控制/状态寄存器。LiteX Builder 分配寄存器地址并生成 `generated/csr.h`，头文件里的 `gpio_out_output_write()` 和 `gpio_in_input_read()` 最后会变成 CPU 的 load/store，再经 CSR bridge 到达外设。GPIO 不是直接连到 C 变量。
 
-### 为什么输入 CSR 只能读？
+### 只读输入寄存器
 
 输入状态来自引脚。软件可以采样，不能靠写寄存器改变外部输入。本程序故意对生成地址做一次原始写，再读回来，必须仍为 `0x5`。这可以排除“软件把想要的值写进去，再假装从输入读到”的假成功。
 
-### `MultiReg` 有什么作用？
+### MultiReg 输入同步
 
 仿真输入引脚相对本地逻辑是外部信号。`MultiReg` 用两个本地时钟级采样，降低亚稳态传播的风险；CPU 读到同步后的值会比 pad 变化晚几个周期。本实验展示信号路径，不代替板级 CDC 和电气检查。
 
-### 为什么编译 C 之前要先生成 `csr.h`？
+### CSR 头文件与固件编译
 
 增加 CSR bank 会改变 CSR 地址分配。本章生成的 `gpio_in_input` 位于 `0xf0000000`，`gpio_out_output` 位于 `0xf0000800`；新增 bank 后 identifier CSR 也发生移动。运行器先生成并检查本章 `csr.csv` 和 `csr.h`，再用该头文件编译 C；最终 SoC 再次生成并核对相同地址，避免固件沿用旧常量。
 
-### 日志怎样证明 CPU 看到了输入变化？
+### 输入变化的运行证据
 
 `GPIO_INPUT_DRIVE value=0x5` 是仿真环境改变引脚的记录。前后的 `SOC_PROBE data=0x00000000` 和 `SOC_PROBE data=0x00000005` 是 CPU 读完输入后主动写入的观察值。运行器检查事件顺序，并确认输出有 `0→a` 变化。只看最终值无法证明 CPU 先读到 0、后来读到新值。
 

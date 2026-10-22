@@ -15,7 +15,7 @@ main(): check globals, scratch RAM, nested calls
     └── write 0x5a to completion endpoint → simulation PASS
 ```
 
-## What gets placed where?
+## Program sections and memory placement
 
 | Region | Byte address | Contents |
 | --- | --- | --- |
@@ -26,7 +26,7 @@ main(): check globals, scratch RAM, nested calls
 
 The linker script defines the memory regions and output sections. The `.data` section has a load address (LMA) in ROM and a virtual/runtime address (VMA) in main RAM. `.bss` is `NOBITS`, so it has no initialized bytes in the ROM image and must be cleared by startup code.
 
-## What does this chapter add to the SoC configuration?
+## Bare-metal SoC configuration
 
 This chapter keeps the CPU, reset vector, ROM, and LiteX SRAM setup, then adds writable main RAM for C `.data`, `.bss`, and the stack. The settings remain in the `super().__init__(...)` call in `ProjectSoC`:
 
@@ -40,7 +40,7 @@ The reset address is still zero, and the ROM still starts there. The linker scri
 
 This chapter's `CompletionSlave` handles the test finish: the CPU writes `0x5a`, and the endpoint prints `SOC_COMPLETE` and ends simulation. It is not part of the C runtime and does not copy `.data` or clear `.bss`.
 
-## How does `.data` get from ROM into RAM?
+## Copying .data from ROM to RAM
 
 ROM does not push the contents into RAM, and LiteX does not perform a hidden copy when simulation starts. The linker assigns the source and destination addresses; the CPU executes ordinary load and store instructions in `_start` to copy each word.
 
@@ -65,7 +65,7 @@ addi t1, t1, 4    # advance destination by four bytes
 
 `la` loads a linker-provided symbol address into a register. The loop stops when the destination reaches `__data_end`. `lw` reads ROM and `sw` writes RAM as normal CPU load/store transactions; the SoC address decoder routes each access to the selected memory. `t3` temporarily holds the copied word in the CPU.
 
-## Why clear `.bss`?
+## BSS zero initialization
 
 `.bss` holds static-storage variables that C requires to start at zero. Both `zero_initialized` and the uninitialized global array `scratch[4]` belong there. The linker marks `.bss` as `NOLOAD`, so it has no initial zero bytes in the ROM image to copy.
 
@@ -81,25 +81,25 @@ main() observes:          00 00 00 00 00 00 ...
                           └─ zero_initialized and scratch[0] pass
 ```
 
-## Questions and answers
+## Implementation notes
 
-### Why does reset need startup code before `main()`?
+### Reset and C runtime startup
 
 Reset makes the CPU fetch from the reset address; it does not perform the C runtime's memory work. `_start` copies each initialized `.data` word from its ROM load address to its RAM runtime address, writes zero through `.bss`, sets `sp`, and then calls `main`. Without those steps, initialized globals and zero-initialized globals would not have the values the C program expects.
 
-### What are LMA and VMA in this program?
+### Load and runtime addresses
 
 LMA is where the initial bytes are stored in the load image. VMA is where the program uses the section while running. `initialized_data` is stored after `.text` in ROM but its C address is in main RAM. The startup copy connects these two locations. Read `sections.txt` or `objdump -h` to compare them.
 
-### Why does the check fail if `.bss` is not cleared?
+### BSS initialization and firmware checks
 
 By C rules, the global `zero_initialized` and `scratch` variables must start at zero, but they live in `.bss` and occupy no initialized ROM bytes. LiteX simulation pre-fills main RAM with `0xa5a5a5a5`, and startup must overwrite `.bss` word by word. Before changing `scratch[0]`, `main()` checks both `zero_initialized==0` and `scratch[0]==0`; without the clear, they read as `0xa5a5a5a5`, so firmware writes a failure code instead of `0x5a`. The prefill is a simulation sentinel. Real RAM may power up with other contents, but software must not assume it starts at zero.
 
-### Why does this test inspect `ra` and `sp` again?
+### Saved return addresses and stack frames
 
 `main()` calls `stack_roundtrip()`, which calls `use_stack()`. A non-leaf function must preserve its return address if another `jal` will overwrite `ra`. The runner checks the disassembly for `sw ra,...(sp)` and `lw ra,...(sp)`, then the CPU completion marker confirms the nested calls returned and the C checks passed. The linker also reserves room between heap candidate space and stack space.
 
-### What does the 256-byte negative case prove?
+### The 256-byte negative case
 
 The linker script contains an `ASSERT` that sections plus the minimum stack margin fit in RAM. The runner links the same program against 256 bytes and expects that assertion to fail. This proves a build-time capacity check works; it does not claim that the CPU ran with 256 bytes of RAM.
 
@@ -112,6 +112,6 @@ PYTHONHASHSEED=0 python3 chapters/07-bare-metal/run.py
 
 Expected output includes `EXPECTED_FAIL 07-SMALL-RAM`, followed by `SOC_COMPLETE ... data=0x0000005a` and `PASS 07`. Check `results/07/firmware/program.map`, `sections.txt`, and `disassembly.txt` against `linker.ld`; `builder/csr.csv` and `memory_map.csv` show the generated SoC map; `builder/gateware/sim_main_ram.init` proves the nonzero prefill; `small-ram/negative.log` records the rejected link; `run.log` and the VCD show runtime completion.
 
-## What does a PASS prove?
+## Verified behavior and scope
 
 The negative PASS proves that inadequate RAM is caught by the linker. The normal PASS proves that the real VexRiscv ran ROM startup, copied `.data`, cleared `.bss`, used main RAM and the stack, completed nested C calls, and reached the endpoint. ELF metadata alone proves none of that runtime behavior.

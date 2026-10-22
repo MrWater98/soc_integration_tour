@@ -1,8 +1,8 @@
-# 00 — What do we need before the first run?
+# 00 — Environment setup
 
 This chapter pins LiteX, VexRiscv RTL, and simulation tools, then runs LiteX's Wishbone baseline test. Passing means the host can build the project; it does not yet prove that the CPU has executed firmware.
 
-## What are we building?
+## The simulation system
 
 The project uses LiteX's native `vexriscv` wrapper with its `minimal` variant. LiteX loads the pre-generated `VexRiscv_Min.v` from `pythondata-cpu-vexriscv`; this flow does not need Scala or SBT to generate the CPU.
 
@@ -12,13 +12,13 @@ LiteX + Migen ─ Builder ────────────> SoC RTL and soft
 SoC RTL + Verilator/C++ ────────────> cycle-level simulator
 ```
 
-## Questions and answers
+## Implementation notes
 
-### Is Migen part of LiteX?
+### Migen and LiteX
 
 Migen is a separate Python hardware-description library. LiteX is built on it and uses it to describe and connect hardware. Python generates the hardware structure; VexRiscv executes the firmware on the generated SoC.
 
-### What does each tool do?
+### Tool responsibilities
 
 | Tool | Input | Output / job |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ Migen is a separate Python hardware-description library. LiteX is built on it an
 
 The firmware compiler does not build the CPU. Verilator does not compile RISC-V firmware.
 
-### Why pin versions?
+### Pinned versions
 
 The LiteX wrapper, CPU RTL, simulation API, and host compiler must work together. Fixed versions make failures reproducible and let us compare generated results across chapters.
 
@@ -41,7 +41,7 @@ The LiteX wrapper, CPU RTL, simulation API, and host compiler must work together
 | Verilator / C++ | Verilator 5 or newer and a C++ compiler |
 | RISC-V tools | `riscv64-unknown-elf-gcc` and `objcopy` supporting RV32I/ILP32 |
 
-### How do I install the dependencies?
+### Install dependencies
 
 On Debian or Ubuntu, install the host tools and use a Python virtual environment for packages:
 
@@ -65,7 +65,7 @@ python -m pip install pythondata-software-picolibc==1.7.9.post181 pythondata-sof
 
 If LiteX is outside the paths checked automatically, set `LITEX_ROOT` to its source directory. Do not update pinned source checkouts while running a chapter.
 
-### How do I check the setup?
+### Check the environment
 
 ```sh
 python3 chapters/00-environment/check_env.py --strict --wishbone --soc
